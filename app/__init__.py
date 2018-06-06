@@ -6,12 +6,12 @@ db = SQLAlchemy()
 
 
 blueprints = [
-    'app.users.routes.user:main',
+    'app.users.routes:user',
 
-    'app.gate.routes.machine:main',
-    'app.gate.routes.card:main',
-    'app.gate.routes.staticTest:main',
-    'app.gate.routes.attendance:main',
+    'app.gate.routes:machine',
+    'app.gate.routes:card',
+    'app.gate.routes:staticTest',
+    'app.gate.routes:attendance',
 ]
 
 
