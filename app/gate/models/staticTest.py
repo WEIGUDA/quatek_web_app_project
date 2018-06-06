@@ -1,8 +1,8 @@
 from . import *
 
 
-class Test(db.Model, ModelHelper):
-    __tablename__ = 'test'
+class StaticTest(db.Model, ModelHelper):
+    __tablename__ = 'staticTest'
 
     id = db.Column(db.Integer, primary_key=True)
     state = db.Column(db.Boolean)                  # 是否检测

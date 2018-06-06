@@ -1,5 +1,5 @@
-from gate.routes import *
-from gate.models.user import User
+from . import *
+from app.users.models.user import User
 
 main = Blueprint('user', __name__)
 

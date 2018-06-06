@@ -1,15 +1,17 @@
 from flask import Flask
 from werkzeug.utils import import_string
+from flask_sqlalchemy import SQLAlchemy
 
-from models import db
+db = SQLAlchemy()
 
 
 blueprints = [
-    'gate.routes.user:main',
-    'gate.routes.machine:main',
-    'gate.routes.card:main',
-    'gate.routes.test:main',
-    'gate.routes.attendance:main',
+    'app.users.routes.user:main',
+
+    'app.gate.routes.machine:main',
+    'app.gate.routes.card:main',
+    'app.gate.routes.staticTest:main',
+    'app.gate.routes.attendance:main',
 ]
 
 

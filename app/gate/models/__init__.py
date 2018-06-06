@@ -1,9 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
 import time
-
-
-db = SQLAlchemy()
-
+from app import db
 
 # 写个函数返回本地时间
 def current_time():
