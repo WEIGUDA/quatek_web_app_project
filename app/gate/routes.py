@@ -1,4 +1,3 @@
-from flask import render_template
 from flask import Blueprint
 
 from app.gate.models import Attendance

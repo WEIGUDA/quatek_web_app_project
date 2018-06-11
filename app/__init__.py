@@ -2,12 +2,11 @@ import time
 
 from flask import Flask
 from werkzeug.utils import import_string
-from flask_sqlalchemy import SQLAlchemy
+from flask_mongoengine import MongoEngine
 
-db = SQLAlchemy()
+db = MongoEngine()
 
 
-# 写个函数返回本地时间
 def current_time():
     format = '%Y/%m/%d %H:%M:%S'
     value = time.localtime()
@@ -15,31 +14,13 @@ def current_time():
     return dt
 
 
-# 定义一个能被所有数据模型继承使用的基类
-class ModelHelper(object):
-    def __repr__(self):
-        class_name = self.__class__.__name__
-        properties = ('{0} = {1}'.format(k, v) for k, v in self.__dict__.items())
-        return '<{0}: \n  {1}\n>'.format(class_name, '\n  '.join(properties))
-
-    # 利用请求上下文添加和提交
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
-
-    # 利用请求上下文删除和提交
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-
-
 blueprints = [
     'app.users.routes:user',
 
-    'app.gate.routes:machine',
-    'app.gate.routes:card',
-    'app.gate.routes:staticTest',
-    'app.gate.routes:attendance',
+    # 'app.gate.routes:machine',
+    # 'app.gate.routes:card',
+    # 'app.gate.routes:staticTest',
+    # 'app.gate.routes:attendance',
 ]
 
 

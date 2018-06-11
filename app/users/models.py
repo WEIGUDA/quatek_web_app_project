@@ -1,30 +1,39 @@
-import time
+from datetime import datetime
 from app import db
-from app import ModelHelper
 
 
-USER_CATEGORY = (
+USER_TYPE = (
         (1, "普通员工"),
         (2, "操作员"),
         (3, "管理员"),
     )
 
 
-class User(db.Model, ModelHelper):
-    __tablename__ = 'user'
+class User(db.Document):
+    meta = {
+        'collection': 'user'
+    }
+    # 姓名
+    username = db.StringField()
+    # 密码
+    password = db.StringField()
+    # 用户类别
+    category = db.IntField(default=1)
 
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20))          # 姓名
-    password = db.Column(db.String(20))          # 密码
-    category = db.Column(db.Integer, default=1)  # 用户类别
+    # 工号
+    job_number = db.IntField()
+    # 性别
+    gender = db.StringField()
+    # 电话
+    telephone = db.StringField()
+    # 职位
+    title = db.StringField()
+    # 部门
+    department = db.StringField()
+    # # 受雇时间
+    hireDate = db.StringField()
 
-    job_number = db.Column(db.Integer)           # 工号
-    gender = db.Column(db.String(2))             # 性别
-    telephone = db.Column(db.String(11))         # 电话
-    title = db.Column(db.String(20))             # 职位
-    department = db.Column(db.String(20))        # 部门
-    hireDate = db.Column(db.String(50))           # 受雇时间
+    # 是否通过ESD培训
+    train_state = db.BooleanField(default=False)
 
-    train_state = db.Column(db.Boolean)          # 是否通过ESD培训
-
-    created_time = db.Column(db.DateTime)
+    created_time = db.DateTimeField(default=datetime.now)
