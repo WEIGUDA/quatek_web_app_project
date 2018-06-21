@@ -29,7 +29,6 @@ def create_app(config):
     app.config.from_object(config)
 
     db.init_app(app)
-
     for name in blueprints:
         bp = import_string(name)
         app.register_blueprint(bp)

@@ -12,6 +12,9 @@ class Attendance(db.Document):
     # 出勤时间
     working_time = db.IntField()
 
+    # 所属用户
+    job_number = db.IntField()
+
     created_time = db.DateTimeField(default=datetime.now)
 
 
@@ -33,7 +36,7 @@ class Card(db.Document):
     # 卡类别
     category = db.IntField(default=3)
     # 所属用户
-    username = db.StringField()
+    job_number = db.IntField()
 
     created_time = db.DateTimeField(default=datetime.now)
 
@@ -56,9 +59,18 @@ class Machine(db.Document):
     # 脚下限值
     foot_lower = db.IntField()
     # 闸机开关状态
-    db.BooleanField(default=False)
+    state = db.StringField()
 
     created_time = db.DateTimeField(default=datetime.now)
+
+    def __init__(self, dic):
+        self.name = dic.get('machine_name')
+        self.number = int(dic.get('machine_number'))
+        self.hand_upper = int(dic.get('hand_upper'))
+        self.hand_lower = int(dic.get('hand_lower'))
+        self.foot_upper = int(dic.get('foot_upper'))
+        self.foot_lower = int(dic.get('foot_lower'))
+        self.state = dic.get('state')
 
 
 class StaticTest(db.Document):
@@ -67,14 +79,16 @@ class StaticTest(db.Document):
     }
 
     # 是否检测
-    db.BooleanField(default=False)
+    state = db.BooleanField(default=False)
     # 通行结果
-    db.BooleanField(default=False)
+    result = db.BooleanField(default=False)
     # 手腕检测值
     foot_lower = db.IntField()
     # 左脚检测值
     left_foot = db.IntField()
     # 右脚检测值
     right_foot = db.IntField()
+    # 所属用户
+    job_number = db.IntField()
 
     created_time = db.DateTimeField(default=datetime.now)
