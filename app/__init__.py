@@ -15,12 +15,12 @@ def current_time():
 
 
 blueprints = [
-    'app.users.routes:user',
+    'app.users.routes:user_blueprint',
 
-    'app.gate.routes:machine',
-    'app.gate.routes:card',
-    'app.gate.routes:staticTest',
-    'app.gate.routes:attendance',
+    'app.gate.routes:machine_blueprint',
+    'app.gate.routes:card_blueprint',
+    'app.gate.routes:staticTest_blueprint',
+    'app.gate.routes:attendance_blueprint',
 ]
 
 

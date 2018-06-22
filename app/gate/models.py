@@ -49,7 +49,7 @@ class Machine(db.Document):
     # 闸机名
     name = db.StringField()
     # 闸机编号
-    number = db.IntField()
+    number = db.StringField()
     # 手上限值
     hand_upper = db.IntField()
     # 手下限值
@@ -63,9 +63,9 @@ class Machine(db.Document):
 
     created_time = db.DateTimeField(default=datetime.now)
 
-    def __init__(self, dic):
+    def set_attribute(self, dic):
         self.name = dic.get('machine_name')
-        self.number = int(dic.get('machine_number'))
+        self.number = dic.get('machine_number')
         self.hand_upper = int(dic.get('hand_upper'))
         self.hand_lower = int(dic.get('hand_lower'))
         self.foot_upper = int(dic.get('foot_upper'))
