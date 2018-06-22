@@ -19,7 +19,7 @@ blueprints = [
 
     'app.gate.routes:machine_blueprint',
     'app.gate.routes:card_blueprint',
-    'app.gate.routes:staticTest_blueprint',
+    'app.gate.routes:static_blueprint',
     'app.gate.routes:attendance_blueprint',
 ]
 
