@@ -12,10 +12,8 @@ from app.gate.models import Card
 from app.gate.models import StaticTest
 
 
-attendance_blueprint = Blueprint('attendance', __name__)
-card_blueprint = Blueprint('card', __name__)
-machine_blueprint = Blueprint('machine', __name__)
-static_blueprint = Blueprint('staticTest', __name__)
+gate_blueprint = Blueprint('gate', __name__)
+gate_api = Api(gate_blueprint)
 
 
 class MachineResource(Resource):
@@ -129,8 +127,7 @@ class MachineResource(Resource):
             return message
 
 
-machine_api = Api(machine_blueprint)
-machine_api.add_resource(MachineResource, '/machine')
+gate_api.add_resource(MachineResource, '/gate/machine')
 
 
 class StaticResource(Resource):
@@ -200,8 +197,7 @@ class StaticResource(Resource):
             return message
 
 
-static_api = Api(static_blueprint)
-static_api.add_resource(StaticResource, '/static_test')
+gate_api.add_resource(StaticResource, '/gate/static_test')
 
 
 class CardResource(Resource):
@@ -295,8 +291,7 @@ class CardResource(Resource):
             return message
 
 
-card_api = Api(card_blueprint)
-card_api.add_resource(CardResource, '/card')
+gate_api.add_resource(CardResource, '/gate/card')
 
 
 class AttendanceResource(Resource):
@@ -357,5 +352,4 @@ class AttendanceResource(Resource):
             return message
 
 
-attendance_api = Api(attendance_blueprint)
-attendance_api.add_resource(AttendanceResource, '/attendance')
+gate_api.add_resource(AttendanceResource, '/gate/attendance')

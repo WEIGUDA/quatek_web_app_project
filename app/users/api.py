@@ -6,6 +6,7 @@ from flask_restful import Api, Resource
 from app.users.models import User
 
 user_blueprint = Blueprint('user', __name__)
+user_api = Api(user_blueprint)
 
 
 @user_blueprint.route("/")
@@ -148,7 +149,6 @@ class UserResource(Resource):
             return message
 
 
-user_api = Api(user_blueprint)
 user_api.add_resource(UserResource, '/user')
 
 
