@@ -16,29 +16,47 @@ gate_blueprint = Blueprint('gate', __name__)
 gate_api = Api(gate_blueprint)
 
 
+def get_machine(machine):
+    machine_dic = dict(
+        machine_type=machine.machine_type,
+        machine_name=machine.machine_name,
+        machine_number=machine.machine_number,
+        hand_upper=machine.hand_upper,
+        hand_lower=machine.hand_lower,
+        foot_upper=machine.foot_upper,
+        foot_lower=machine.foot_lower,
+        state=machine.state,
+    )
+    return machine_dic
+
+
 class MachineResource(Resource):
     def get(self):
         args = request.args
-        machine_type = args.get('machine_type', 'type1')
-        setoff = int(args.get('setoff', '0'))
-        limit = int(args.get('limit', '10'))
+        machine_number = args.get('machine_number')
+        machine_type = args.get('machine_type')
+        setoff = args.get('setoff')
+        limit = args.get('limit')
 
         try:
-            machines = Machine.objects(machine_type=machine_type).skip(setoff).limit(limit)
-            machine_list = []
-            for machine in machines:
-                machine_dic = dict(
-                    machine_type=machine_type,
-                    machine_name=machine.machine_name,
-                    machine_number=machine.machine_number,
-                    hand_upper=machine.hand_upper,
-                    hand_lower=machine.hand_lower,
-                    foot_upper=machine.foot_upper,
-                    foot_lower=machine.foot_lower,
-                    state=machine.state,
-                )
-                machine_list.append(machine_dic)
-            return jsonify(machine_list)
+            if machine_number is not None and machine_type is None and setoff is None and limit is None:
+                machine = Machine.objects(machine_number=machine_number).first()
+                machine_dic = get_machine(machine)
+                return jsonify(machine_dic)
+            if machine_number is None and machine_type is None and setoff is None and limit is None:
+                machines = Machine.objects.all()
+                machine_list = []
+                for machine in machines:
+                    machine_dic = get_machine(machine)
+                    machine_list.append(machine_dic)
+                return jsonify(machine_list)
+            if machine_number is None and machine_type is not None and setoff is not None and limit is not None:
+                machines = Machine.objects(machine_type=machine_type).skip(int(setoff)).limit(int(limit))
+                machine_list = []
+                for machine in machines:
+                    machine_dic = get_machine(machine)
+                    machine_list.append(machine_dic)
+                return jsonify(machine_list)
         except:
             message = "get machines failed"
             return message
@@ -130,34 +148,39 @@ class MachineResource(Resource):
 gate_api.add_resource(MachineResource, '/gate/machine')
 
 
+def get_static(test):
+    test_dic = dict(
+        test_state=test.test_state,
+        test_result=test.test_result,
+        hand=test.hand,
+        left_foot=test.left_foot,
+        right_foot=test.right_foot,
+        job_number=test.job_number,
+        machine_number=test.machine_number,
+    )
+    return test_dic
+
+
 class StaticResource(Resource):
     def get(self):
         args = request.args
         job_number = args.get('job_number')
-        setoff = int(args.get('setoff', '0'))
-        limit = int(args.get('limit', '10'))
+        setoff = args.get('setoff')
+        limit = args.get('limit')
 
-        if job_number is not None:
-            try:
-                tests = StaticTest.objects(job_number=job_number).skip(setoff).limit(limit)
-                test_list = []
-                for test in tests:
-                    test_dic = dict(
-                        test_state=test.test_state,
-                        test_result=test.test_result,
-                        hand=test.hand,
-                        left_foot=test.left_foot,
-                        right_foot=test.right_foot,
-                        job_number=test.job_number,
-
-                    )
-                    test_list.append(test_dic)
-                return jsonify(test_list)
-            except:
-                message = "get static tests failed"
-                return message
-        else:
-            message = "who's tests you want to query should not be ignored"
+        try:
+            tests = []
+            if job_number is not None and setoff is None and limit is None:
+                tests = StaticTest.objects(job_number=job_number).all()
+            if job_number is not None and setoff is not None and limit is not None:
+                tests = StaticTest.objects(job_number=job_number).skip(int(setoff)).limit(int(limit))
+            test_list = []
+            for test in tests:
+                test_dic = get_static(test)
+                test_list.append(test_dic)
+            return jsonify(test_list)
+        except:
+            message = "get static tests failed"
             return message
 
     def post(self):
@@ -168,6 +191,7 @@ class StaticResource(Resource):
         left_foot = json.get('left_foot')
         right_foot = json.get('right_foot')
         job_number = json.get('job_number')
+        machine_number = json.get('machine_number')
 
         dic = dict(
             test_state=test_state,
@@ -176,6 +200,7 @@ class StaticResource(Resource):
             left_foot=left_foot,
             right_foot=right_foot,
             job_number=job_number,
+            machine_number=machine_number,
         )
 
         all_exist = True
@@ -196,27 +221,49 @@ class StaticResource(Resource):
             message = "static test add failed"
             return message
 
+    def delete(self):
+        args = request.args
+        job_number = args.get('job_number')
+        try:
+            tests = StaticTest.objects(job_number=job_number).all()
+            for test in tests:
+                test.delete()
+            message = "{}'s tests have been deleted successfully".format(job_number)
+            return message
+        except:
+            message = "{}'s tests have been deleted successfully".format(job_number)
+            return message
+
 
 gate_api.add_resource(StaticResource, '/gate/static_test')
+
+
+def get_card(card):
+    card_dic = dict(
+        card_id=card.card_id,
+        category=card.category,
+        job_number=card.job_number,
+        department=card.department,
+    )
+    return card_dic
 
 
 class CardResource(Resource):
     def get(self):
         args = request.args
         department = args.get('department')
-        setoff = int(args.get('setoff', '0'))
-        limit = int(args.get('limit', '10'))
+        setoff = args.get('setoff')
+        limit = args.get('limit')
 
         try:
-            cards = Card.objects(department=department).skip(setoff).limit(limit)
+            cards = []
+            if department is not None and setoff is None and limit is None:
+                cards = Card.objects(department=department).all()
+            if department is not None and setoff is not None and limit is not None:
+                cards = Card.objects(department=department).skip(int(setoff)).limit(int(limit))
             card_list = []
             for card in cards:
-                card_dic = dict(
-                    card_id=card.card_id,
-                    category=card.category,
-                    job_number=card.job_number,
-                    department=card.department,
-                )
+                card_dic = get_card(card)
                 card_list.append(card_dic)
             return jsonify(card_list)
         except:
@@ -294,31 +341,36 @@ class CardResource(Resource):
 gate_api.add_resource(CardResource, '/gate/card')
 
 
+def get_attendance(attendance):
+    attendance_dic = dict(
+        state=attendance.state,
+        working_time=attendance.working_time,
+        job_number=attendance.job_number,
+
+    )
+    return attendance_dic
+
+
 class AttendanceResource(Resource):
     def get(self):
         args = request.args
         job_number = args.get('job_number')
-        setoff = int(args.get('setoff', '0'))
-        limit = int(args.get('limit', '10'))
+        setoff = args.get('setoff')
+        limit = args.get('limit')
 
-        if job_number is not None:
-            try:
-                attendances = Attendance.objects(job_number=job_number).skip(setoff).limit(limit)
-                attendance_list = []
-                for attendance in attendances:
-                    attendance_dic = dict(
-                        state=attendance.state,
-                        working_time=attendance.working_time,
-                        job_number=attendance.job_number,
-
-                    )
-                    attendance_list.append(attendance_dic)
-                return jsonify(attendance_list)
-            except:
-                message = "get attendances failed"
-                return message
-        else:
-            message = "who's attendances you want to query should not be ignored"
+        try:
+            attendances = []
+            if job_number is not None and setoff is None and limit is None:
+                attendances = Attendance.objects(job_number=job_number).all()
+            if job_number is not None and setoff is not None and limit is not None:
+                attendances = Attendance.objects(job_number=job_number).skip(int(setoff)).limit(int(limit))
+            attendance_list = []
+            for attendance in attendances:
+                attendance_dic = get_attendance(attendance)
+                attendance_list.append(attendance_dic)
+            return jsonify(attendance_list)
+        except:
+            message = "get attendances failed"
             return message
 
     def post(self):
@@ -351,5 +403,19 @@ class AttendanceResource(Resource):
             message = "attendance add failed"
             return message
 
+    def delete(self):
+        args = request.args
+        job_number = args.get('job_number')
+        try:
+            attendances = Attendance.objects(job_number=job_number).all()
+            for attendance in attendances:
+                attendances.delete()
+            message = "{}'s attendances have been deleted successfully".format(job_number)
+            return message
+        except:
+            message = "{}'s attendances have been deleted successfully".format(job_number)
+            return message
+
 
 gate_api.add_resource(AttendanceResource, '/gate/attendance')
+

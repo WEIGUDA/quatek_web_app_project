@@ -27,31 +27,49 @@ def hello():
     return message
 
 
+def get_user(user):
+    user_dic = dict(
+        category=user.category,
+        username=user.username,
+        password=user.password,
+        job_number=user.job_number,
+        gender=user.gender,
+        telephone=user.telephone,
+        title=user.title,
+        department=user.department,
+        hire_date=user.hire_date,
+        train_state=user.train_state,
+    )
+    return user_dic
+
+
 class UserResource(Resource):
     def get(self):
         args = request.args
-        category = args.get('category', '1')
-        setoff = int(args.get('setoff', '0'))
-        limit = int(args.get('limit', '10'))
+        job_number = args.get('job_number')
+        category = args.get('category')
+        setoff = args.get('setoff')
+        limit = args.get('limit')
 
         try:
-            users = User.objects(category=category).skip(setoff).limit(limit)
-            user_list = []
-            for user in users:
-                user_dic = dict(
-                    category=category,
-                    username=user.username,
-                    password=user.password,
-                    job_number=user.job_number,
-                    gender=user.gender,
-                    telephone=user.telephone,
-                    title=user.title,
-                    department=user.department,
-                    hire_date=user.hire_date,
-                    train_state=user.train_state,
-                )
-                user_list.append(user_dic)
-            return jsonify(user_list)
+            if job_number is not None and category is None and setoff is None and limit is None:
+                user = User.objects(job_number=job_number).first()
+                user_dic = get_user(user)
+                return jsonify(user_dic)
+            if job_number is None and category is not None and setoff is not None and limit is not None:
+                users = User.objects(category=category).skip(int(setoff)).limit(int(limit))
+                user_list = []
+                for user in users:
+                    user_dic = get_user(user)
+                    user_list.append(user_dic)
+                return jsonify(user_list)
+            if job_number is None and category is None and setoff is None and limit is None:
+                users = User.objects.all()
+                user_list = []
+                for user in users:
+                    user_dic = get_user(user)
+                    user_list.append(user_dic)
+                return jsonify(user_list)
         except:
             message = "get users failed"
             return message

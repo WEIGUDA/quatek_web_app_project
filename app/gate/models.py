@@ -94,6 +94,7 @@ class StaticTest(db.Document):
         'collection': 'static_test'
     }
 
+    test_id = db.IntField()
     # 是否检测
     test_state = db.StringField()
     # 通行结果
@@ -106,6 +107,8 @@ class StaticTest(db.Document):
     right_foot = db.IntField()
     # 所属用户
     job_number = db.StringField()
+    # 所属闸机
+    machine_number = db.StringField()
 
     created_time = db.DateTimeField(default=datetime.now)
 
@@ -116,6 +119,7 @@ class StaticTest(db.Document):
         self.left_foot = int(dic.get('left_foot'))
         self.right_foot = int(dic.get('right_foot'))
         self.job_number = dic.get('job_number')
+        self.machine_number = dic.get('machine_number')
 
 
 if __name__ == "__main__":
