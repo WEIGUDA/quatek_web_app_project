@@ -192,7 +192,7 @@ input json
 >查询所有机器 
 
 >`127.0.0.1:3000/gate/machine?machine_type=type1&setoff=0&limit=10`  
->根据机器类别进行分页
+>对所有机器进行分页
 
 ```
 result
@@ -311,10 +311,10 @@ input json
 	"machine_type": "type1",
 	"machine_name": "machine1",
 	"machine_number": "0001",
-	"hand_upper": "100",
-	"hand_lower": "0",
-	"foot_upper": "100",
-	"foot_lower": "0",
+	"hand_max": "100",
+	"hand_min": "0",
+	"foot_max": "100",
+	"foot_min": "0",
 	"state": "false"
 }
 
@@ -570,8 +570,7 @@ input json
 {
 	"card_id": "00001",
 	"category": "3",
-	"job_number": "00001",
-	"department": "生产"
+	"job_number": "00001"
 }
 
 
@@ -665,7 +664,8 @@ post example
 {
 	"state": "false",
 	"working_time": "8",
-	"job_number": "00001"
+	"job_number": "00001",
+	"machine_number": "0001"
 }
 ```
 >所有字段都要，不能省略

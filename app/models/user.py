@@ -1,5 +1,4 @@
-from datetime import datetime
-from app import db
+from . import *
 from hashlib import sha256
 
 
@@ -17,34 +16,36 @@ def get_hash(str):
     return hash.hexdigest()
 
 
-class User(db.Document):
+class User(DynamicDocument):
     meta = {
         'collection': 'user'
     }
     # 姓名
-    username = db.StringField()
+    username = StringField()
     # 密码
-    password = db.StringField()
+    password = StringField()
     # 用户类别
-    category = db.IntField(default=1)
+    category = IntField(default=1)
 
     # 工号
-    job_number = db.StringField()
+    job_number = StringField()
     # 性别
-    gender = db.StringField()
+    gender = StringField()
+    # 出生
+    birthday = StringField()
     # 电话
-    telephone = db.StringField()
+    telephone = StringField()
     # 职位
-    title = db.StringField()
+    title = StringField()
     # 部门
-    department = db.StringField()
+    department = StringField()
     # # 受雇时间
-    hire_date = db.StringField()
+    hire_date = StringField()
 
     # 是否通过ESD培训
-    train_state = db.StringField()
+    train_state = StringField()
 
-    created_time = db.DateTimeField(default=datetime.now)
+    created_time = DateTimeField(default=datetime.now)
 
     def set_attribute(self, dic):
         self.username = dic.get('username')
@@ -52,12 +53,9 @@ class User(db.Document):
         self.category = int(dic.get('category'))
         self.job_number = dic.get('job_number')
         self.gender = dic.get('gender')
+        self.birthday = dic.get('birthday')
         self.telephone = dic.get('telephone')
         self.title = dic.get('title')
         self.department = dic.get('department')
         self.hire_date = dic.get('hire_date')
         self.train_state = dic.get('train_state')
-
-
-if __name__ == "__main__":
-    print(get_hash("chandler"))
