@@ -34,6 +34,7 @@ def get_user(user):
         department=user.department,
         hire_date=user.hire_date,
         train_state=user.train_state,
+        created_time=user.created_time,
     )
     return user_dic
 
@@ -42,24 +43,26 @@ class UserResource(Resource):
     def get(self):
         args = request.args
         job_number = args.get('job_number')
-        category = args.get('category')
         setoff = args.get('setoff')
         limit = args.get('limit')
 
         try:
-            if job_number is not None and category is None and setoff is None and limit is None:
+            # 获取单个用户
+            if job_number is not None and setoff is None and limit is None:
                 user = User.objects(job_number=job_number).first()
                 user_dic = get_user(user)
                 return jsonify(user_dic)
-            if job_number is None and category is not None and setoff is not None and limit is not None:
-                users = User.objects(category=category).skip(int(setoff)).limit(int(limit))
+            # 获取所有用户
+            if job_number is None and setoff is None and limit is None:
+                users = User.objects.all()
                 user_list = []
                 for user in users:
                     user_dic = get_user(user)
                     user_list.append(user_dic)
                 return jsonify(user_list)
-            if job_number is None and category is None and setoff is None and limit is None:
-                users = User.objects.all()
+            # 按 setoff 和 limit 获取用户
+            if job_number is None and setoff is not None and limit is not None:
+                users = User.objects().skip(int(setoff)).limit(int(limit))
                 user_list = []
                 for user in users:
                     user_dic = get_user(user)

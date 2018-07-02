@@ -5,38 +5,38 @@ main = Blueprint('static', __name__)
 static_api = Api(main)
 
 
-def get_static(test, user, card):
+def get_static(test):
     test_dic = dict(
-        username=user.username,
-        job_number=test.job_number,
-        machine_number=test.machine_number,
-        category=card.category,
-        department=user.department,
-        test_result=test.test_result,
         test_state=test.test_state,
+        test_result=test.test_result,
         hand=test.hand,
         left_foot=test.left_foot,
         right_foot=test.right_foot,
+        job_number=test.job_number,
+        machine_number=test.machine_number,
         created_time=test.created_time,
-        test_id=test.test_id,
     )
     return test_dic
 
 
-class StaticTemplate(Resource):
+class StaticResource(Resource):
     def get(self):
         args = request.args
-        setoff = args.get('setoff', '0')
-        limit = args.get('limit', '10')
+        job_number = args.get('job_number')
+        setoff = args.get('setoff')
+        limit = args.get('limit')
 
         try:
-            tests = StaticTest.objects().skip(int(setoff)).limit(int(limit)).order_by("job_number")
+            tests = []
+            # 获取某一用户所有的静电测试
+            if job_number is not None and setoff is None and limit is None:
+                tests = StaticTest.objects(job_number=job_number).all()
+            # 按 setoff 和 limit 获取某一用户的静电测试
+            if job_number is not None and setoff is not None and limit is not None:
+                tests = StaticTest.objects(job_number=job_number).skip(int(setoff)).limit(int(limit))
             test_list = []
             for test in tests:
-                job_number = test.job_number
-                user = User.objects(job_number=job_number).first()
-                card = Card.objects(job_number=job_number).first()
-                test_dic = get_static(test, user, card)
+                test_dic = get_static(test)
                 test_list.append(test_dic)
             return jsonify(test_list)
         except:
@@ -84,7 +84,6 @@ class StaticTemplate(Resource):
     def delete(self):
         args = request.args
         job_number = args.get('job_number')
-
         try:
             tests = StaticTest.objects(job_number=job_number).all()
             for test in tests:
@@ -92,15 +91,58 @@ class StaticTemplate(Resource):
             message = "{}'s tests have been deleted successfully".format(job_number)
             return message
         except:
-            message = "{}'s tests have been deleted failed".format(job_number)
+            message = "{}'s tests have been deleted successfully".format(job_number)
             return message
 
 
-static_api.add_resource(StaticTemplate, '/gate/static_test')
+static_api.add_resource(StaticResource, '/gate/static')
+
+
+def get_static_template(test, user, card):
+    test_dic = dict(
+        username=user.username,
+        job_number=test.job_number,
+        machine_number=test.machine_number,
+        category=card.category,
+        department=user.department,
+        test_result=test.test_result,
+        test_state=test.test_state,
+        hand=test.hand,
+        left_foot=test.left_foot,
+        right_foot=test.right_foot,
+        created_time=test.created_time,
+        test_id=test.test_id,
+    )
+    return test_dic
+
+
+class StaticTemplate(Resource):
+    def get(self):
+        args = request.args
+        setoff = args.get('setoff', '0')
+        limit = args.get('limit', '10')
+
+        try:
+            tests = StaticTest.objects().skip(int(setoff)).limit(int(limit)).order_by("job_number")
+            test_list = []
+            for test in tests:
+                job_number = test.job_number
+                user = User.objects(job_number=job_number).first()
+                card = Card.objects(job_number=job_number).first()
+                test_dic = get_static_template(test, user, card)
+                test_list.append(test_dic)
+            return jsonify(test_list)
+        except:
+            message = "get static tests failed"
+            return message
+
+
+static_api.add_resource(StaticTemplate, '/gate/static/template')
 
 
 class SearchStatic(Resource):
-    # 姓名 工号 机器号 部门 手腕带 左脚 右脚
+    # 姓名 工号 机器号 部门   *支持
+    # 手腕带 左脚 右脚       *暂不支持
     def get(self):
         args = request.args
         content = args.get('query')
@@ -129,7 +171,7 @@ class SearchStatic(Resource):
                 if test is not None:
                     card = Card.objects(job_number=job_number).first()
                     if card is not None:
-                        test_dic = get_static(test, user, card)
+                        test_dic = get_static_template(test, user, card)
                         test_list.append(test_dic)
 
         for test in tests:
@@ -138,7 +180,7 @@ class SearchStatic(Resource):
             user = User.objects(job_number=job_number).first()
             card = Card.objects(job_number=job_number).first()
             if card is not None:
-                test_dic = get_static(test, user, card)
+                test_dic = get_static_template(test, user, card)
                 added = False
                 for i in test_list:
                     if i["test_id"] == test_id:
@@ -148,4 +190,4 @@ class SearchStatic(Resource):
         return jsonify(test_list)
 
 
-static_api.add_resource(SearchStatic, '/gate/static_test/search')
+static_api.add_resource(SearchStatic, '/gate/static/template/search')

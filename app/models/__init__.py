@@ -1,7 +1,9 @@
 import time
 from datetime import datetime
 from mongoengine import *
-connect("quatek")
+
+from instance.dev import MONGODB_DB
+connect(MONGODB_DB)
 
 
 def current_time():
