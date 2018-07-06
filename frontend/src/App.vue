@@ -69,4 +69,7 @@ export default {
 #app {
   font-family: 'Helvetica Neue', Helvetica, Arial, 'STXihei', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
 }
+.navbar {
+  margin-bottom: 20px;
+}
 </style>
