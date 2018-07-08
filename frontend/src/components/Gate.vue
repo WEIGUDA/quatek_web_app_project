@@ -1,45 +1,45 @@
 <template>
-    <div class="col-md-3 text-center gate-box">
-        <p class="text-right gate-indicator-row">
-            <span class="badge gate-badge">
-                <font-awesome-icon icon="circle" />
-            </span>
-        </p>
+  <div class="col-md-3 text-center gate-box">
+    <p class="text-right gate-indicator-row">
+      <span class="badge gate-badge">
+        <font-awesome-icon icon="circle" />
+      </span>
+    </p>
 
-        <img src="@/assets/gate.png" class="img-fluid gate-img" alt="Gate image">
-        <div class="w-100"></div>
-        <div class="btn-group btn-group-sm text-center" role="group" aria-label="On OFF Buttons">
-            <button type="button" class="btn gate-btn-on-off" :class="{ 'btn-dark': isOn }" @click.prevent="toggleIsOn()">ON</button>
-            <button type="button" class="btn gate-btn-on-off" :class="{ 'btn-dark': !isOn }" @click.prevent="toggleIsOn()">OFF</button>
-        </div>
-        <div class="w-100">
-            <table class="gate-table">
-                <tr>
-                    <td rowspan="2" class="text-center align-middle gate-icon">
-                        <font-awesome-icon icon="shoe-prints" :transform="{ rotate: 270 }" size="2x" />
-                    </td>
-
-                    <td class="gate-max-min-left-td">max</td>
-                    <td class="gate-value-left-td">value</td>
-                    <td></td>
-                    <td class="gate-value-right-td">value</td>
-                    <td class="gate-max-min-right-td">max</td>
-
-                    <td rowspan="2" class="text-center align-middle gate-icon">
-                        <font-awesome-icon icon="hand-paper" size="2x" />
-                    </td>
-                </tr>
-                <tr>
-                    <td class="gate-max-min-left-td">min</td>
-                    <td class="gate-value-left-td">value</td>
-                    <td></td>
-                    <td class="gate-value-right-td">value</td>
-                    <td class="gate-max-min-right-td">min</td>
-                </tr>
-            </table>
-        </div>
-
+    <img src="@/assets/gate.png" class="img-fluid gate-img" alt="Gate image">
+    <div class="w-100"></div>
+    <div class="btn-group btn-group-sm text-center" role="group" aria-label="On OFF Buttons">
+      <button type="button" class="btn gate-btn-on-off" :class="{ 'btn-dark': isOn }" @click.prevent="toggleIsOn()">ON</button>
+      <button type="button" class="btn gate-btn-on-off" :class="{ 'btn-dark': !isOn }" @click.prevent="toggleIsOn()">OFF</button>
     </div>
+    <div class="w-100">
+      <table class="gate-table">
+        <tr>
+          <td rowspan="2" class="text-center align-middle gate-icon">
+            <font-awesome-icon icon="shoe-prints" :transform="{ rotate: 270 }" size="2x" />
+          </td>
+
+          <td class="gate-max-min-left-td">max</td>
+          <td class="gate-value-left-td">value</td>
+          <td></td>
+          <td class="gate-value-right-td">value</td>
+          <td class="gate-max-min-right-td">max</td>
+
+          <td rowspan="2" class="text-center align-middle gate-icon">
+            <font-awesome-icon icon="hand-paper" size="2x" />
+          </td>
+        </tr>
+        <tr>
+          <td class="gate-max-min-left-td">min</td>
+          <td class="gate-value-left-td">value</td>
+          <td></td>
+          <td class="gate-value-right-td">value</td>
+          <td class="gate-max-min-right-td">min</td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
 </template>
 <script>
 export default {
@@ -96,9 +96,11 @@ export default {
 }
 .gate-value-left-td {
   border: 1px solid #898989;
+  color: #898989;
 }
 .gate-value-right-td {
   border: 1px solid #898989;
+  color: #898989;
 }
 .gate-max-min-left-td {
   color: #898989;

@@ -8,6 +8,28 @@
         <div class="row">
             <app-gate v-for="gate in 10" :key="gate"></app-gate>
         </div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm justify-content-center">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">上一页</span>
+                    </a>
+
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link">第 {{currentPage}} 页</a>
+                </li>
+
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">下一页</span>
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
     </div>
 </template>
 
@@ -17,6 +39,7 @@ export default {
   name: 'Gates',
   data: function() {
       return {
+          currentPage: 1,
           
       };
   },
@@ -38,6 +61,9 @@ export default {
 }
 .btn-quatek {
   background-color: #059c66;
+}
+.page-link {
+  color: #059c66;
 }
 @media (min-width: 576px) {
 }

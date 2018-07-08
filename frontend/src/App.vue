@@ -11,11 +11,11 @@
       <b-collapse is-nav id="nav_collapse">
 
         <b-navbar-nav>
-          <b-nav-item href="#" to="/" exact>首页</b-nav-item>
-          <b-nav-item href="#" to="gates">闸机列表</b-nav-item>
-          <b-nav-item href="#">卡片管理</b-nav-item>
-          <b-nav-item href="#">静电测试</b-nav-item>
-          <b-nav-item href="#">考勤管理</b-nav-item>
+          <b-nav-item to="/" exact>首页</b-nav-item>
+          <b-nav-item to="/gates">闸机列表</b-nav-item>
+          <b-nav-item to="/cards">卡片管理</b-nav-item>
+          <b-nav-item>静电测试</b-nav-item>
+          <b-nav-item>考勤管理</b-nav-item>
           <!-- <b-nav-item href="#">帮助</b-nav-item> -->
         </b-navbar-nav>
 
