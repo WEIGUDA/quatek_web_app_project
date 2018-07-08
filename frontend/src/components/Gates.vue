@@ -9,7 +9,7 @@
             <app-gate v-for="gate in 10" :key="gate"></app-gate>
         </div>
         <nav aria-label="Page navigation">
-            <ul class="pagination pagination-sm justify-content-center">
+            <ul class="pagination justify-content-center">
                 <li class="page-item">
                     <a class="page-link" href="#" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
