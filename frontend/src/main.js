@@ -18,12 +18,27 @@ import {
   faUserPlus,
   faTrashAlt,
   faPencilAlt,
+  faCaretSquareLeft,
+  faCaretSquareRight,
+  faSearch,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 Vue.use(BootstrapVue);
 
-library.add(faCircle, faShoePrints, faHandPaper, faUpload, faDownload, faUserPlus, faPencilAlt, faTrashAlt);
+library.add(
+  faCircle,
+  faShoePrints,
+  faHandPaper,
+  faUpload,
+  faDownload,
+  faUserPlus,
+  faPencilAlt,
+  faTrashAlt,
+  faCaretSquareLeft,
+  faCaretSquareRight,
+  faSearch,
+);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.config.productionTip = false;
