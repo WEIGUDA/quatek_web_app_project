@@ -26,6 +26,9 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 Vue.use(BootstrapVue);
 
+import vueMoment from 'vue-moment';
+Vue.use(vueMoment);
+
 library.add(
   faCircle,
   faShoePrints,

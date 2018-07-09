@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Index from '@/components/Index';
 import Gates from '@/components/Gates';
 import Cards from '@/components/Cards';
+import CardCreate from '@/components/CardCreate';
 
 Vue.use(Router);
 
@@ -22,6 +23,11 @@ export default new Router({
       path: '/cards',
       name: 'Cards',
       component: Cards,
+    },
+    {
+      path: '/card-create',
+      name: 'CardCreate',
+      component: CardCreate,
     },
   ],
 });

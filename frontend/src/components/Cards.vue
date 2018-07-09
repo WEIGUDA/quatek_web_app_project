@@ -17,7 +17,7 @@
                 <button type="button" class="btn btn-secondary btn-row-btn btn-sm">
                     <font-awesome-icon icon="download" />
                 </button>
-                <button type="button" class="btn btn-secondary btn-row-btn btn-sm">
+                <button type="button" class="btn btn-secondary btn-row-btn btn-sm" @click="cardAdd()">
                     <font-awesome-icon icon="user-plus" />
                 </button>
             </p>
@@ -95,6 +95,11 @@ export default {
           
       };
   },
+  methods: {
+      cardAdd() {
+          this.$router.push({name: 'CardCreate'});
+      }
+  },
   props: {
  
   }
@@ -144,9 +149,6 @@ export default {
 
 /*  Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
-  /* .btn-row {
-    text-align: right !important;
-  } */
 }
 </style>
 
