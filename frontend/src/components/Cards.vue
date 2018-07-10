@@ -11,13 +11,13 @@
         </div>
         <div class="row btn-row">
             <p class="w-100 text-right">
-                <button type="button" class="btn btn-secondary btn-row-btn btn-sm">
+                <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="上传">
                     <font-awesome-icon icon="upload" />
                 </button>
-                <button type="button" class="btn btn-secondary btn-row-btn btn-sm">
+                <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="下载">
                     <font-awesome-icon icon="download" />
                 </button>
-                <button type="button" class="btn btn-secondary btn-row-btn btn-sm" @click="cardAdd()">
+                <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="添加卡片" @click="cardAdd()">
                     <font-awesome-icon icon="user-plus" />
                 </button>
             </p>
@@ -111,12 +111,6 @@ export default {
 /* Extra small devices (portrait phones, less than 576px)
  No media query for `xs` since this is the default in Bootstrap */
 /*  Small devices (landscape phones, 576px and up) */
-/* .btn-row {
-  text-align: center;
-}
-.btn-quatek {
-  background-color: #059c66;
-} */
 .search-row {
   margin-bottom: 20px;
 }

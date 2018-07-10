@@ -21,6 +21,7 @@ import {
   faCaretSquareLeft,
   faCaretSquareRight,
   faSearch,
+  faEnvelope,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
@@ -41,6 +42,7 @@ library.add(
   faCaretSquareLeft,
   faCaretSquareRight,
   faSearch,
+  faEnvelope,
 );
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 

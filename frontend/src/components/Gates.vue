@@ -1,12 +1,16 @@
 <template>
     <div class="container">
+
         <div class="row btn-row">
-            <p class="w-100">
-                <button type="button" class="btn btn-success btn-quatek btn-sm">LOG导出</button>
+            <p class="w-100 text-right">
+                <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="导出">
+                    <font-awesome-icon icon="download" />
+                </button>
             </p>
         </div>
+        <hr>
         <div class="row">
-            <app-gate v-for="gate in 10" :key="gate"></app-gate>
+            <AppGate v-for="gate in 10" :key="gate"></AppGate>
         </div>
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
@@ -59,9 +63,11 @@ export default {
 .btn-row {
   text-align: center;
 }
-.btn-quatek {
-  background-color: #059c66;
+.btn-row-btn {
+  margin: 0 5px;
+  background-color: #868686;
 }
+
 .page-link {
   color: #059c66;
 }

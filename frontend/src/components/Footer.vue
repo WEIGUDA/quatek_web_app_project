@@ -1,32 +1,15 @@
 <template>
-  <div id="app">
-    <AppHeader></AppHeader>
-    <router-view/>
-    <AppFooter></AppFooter>
-  </div>
-
+    <p class="text-center text-muted">Professional technology. Successful partnership.</p>
 </template>
-
 <script>
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 export default {
-  components: {
-    AppHeader: Header,
-    AppFooter: Footer,
-  }
+    
 }
 </script>
-
-
-<style>
+<style scoped>
 /* Extra small devices (portrait phones, less than 576px)
  No media query for `xs` since this is the default in Bootstrap */
 /*  Small devices (landscape phones, 576px and up) */
-#app {
-  font-family: 'Helvetica Neue', Helvetica, Arial, 'STXihei', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-}
-
 @media (min-width: 576px) {
 }
 
@@ -42,3 +25,4 @@ export default {
 @media (min-width: 1200px) {
 }
 </style>
+
