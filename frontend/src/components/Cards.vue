@@ -23,7 +23,7 @@
             </p>
         </div>
         <div class="row">
-            <table class="table table-striped">
+            <table class="table table-striped table-responsive-md">
                 <thead>
                     <tr>
                         <th scope="col">姓名</th>
