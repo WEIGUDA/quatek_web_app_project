@@ -32,15 +32,14 @@
             <div class="form-group row">
                 <label for="enterDate" class="col-sm-2 col-form-label">入职时间</label>
                 <div class="col-sm-10">
-                    <!-- <input type="text" class="form-control" id="enterDate"> -->
-                    <datepicker v-model="date1" name="enterDate" id="enterDate" input-class="form-control" format="yyyy-MM-dd"></datepicker>
+                    <datetime v-model="date1" type="date" input-class="form-control" format="yyyy-MM-dd" :phrases="{ok: '确定', cancel: '取消'}" :minute-step="10"></datetime>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="jobNumber" class="col-sm-2 col-form-label">工号 *</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="jobNumber" />>
+                    <input type="text" class="form-control" id="jobNumber" />
                 </div>
             </div>
 
@@ -80,8 +79,8 @@
             <div class="form-group row">
                 <label for="birthday" class="col-sm-2 col-form-label">出生</label>
                 <div class="col-sm-10">
-                    <!-- <input type="text" class="form-control" id="birthday"> {{date1}} -->
-                    <datepicker v-model="date1" name="birthday" id="birthday" input-class="form-control" format="yyyy-MM-dd"></datepicker>
+                    <datetime v-model="date1" type="date" input-class="form-control" format="yyyy-MM-dd" :phrases="{ok: '确定', cancel: '取消'}" :minute-step="10"></datetime>
+
                 </div>
             </div>
 

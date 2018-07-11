@@ -1,6 +1,17 @@
 <template>
     <div class="container">
-        <div class="row search-row">
+        <div class="form-row search-row">
+            <div class="input-group">
+                <!-- <input type="text" class="col-sm-4 form-control"> -->
+                <datetime v-model="date3" type="datetime" input-class="form-control" format="yyyy-MM-dd HH:mm" :phrases="{ok: '确定', cancel: '取消'}" :minute-step="10"></datetime>
+
+                <!-- <datepicker v-model="date1" name="dateFrom" id="dateFrom" wrapper-class="col-sm-2" :bootstrap-styling="true" format="yyyy-MM-dd"></datepicker> -->
+                <label class="col-sm-1 text-center search-space"> 至 </label>
+                <!-- <input type="text" class="col-sm-4 form-control"> -->
+                <datetime v-model="date3" type="datetime" input-class="form-control" format="yyyy-MM-dd HH:mm" :phrases="{ok: '确定', cancel: '取消'}" :minute-step="10"></datetime>
+
+            </div>
+            <div class="w-100"><br></div>
             <div class="input-group">
                 <input type="text" class="form-control" aria-label="Search string" aria-describedby="basic-addon2">
                 <div class="input-group-append">
@@ -85,11 +96,16 @@ export default {
   name: '',
   data: function() {
       return {
-          
+          currentPage: 1,
+          date1: this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
+          date2: this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
+          date3: this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
       };
   },
   props: {
  
+  },
+  components: {
   }
 }
 </script>
@@ -101,7 +117,10 @@ export default {
  No media query for `xs` since this is the default in Bootstrap */
 /*  Small devices (landscape phones, 576px and up) */
 .search-row {
-  margin-bottom: 20px;
+  margin: 0 0 20px 0;
+}
+.search-space {
+  padding-top: 5px;
 }
 .btn-outline-quatek {
   color: #059c66;
@@ -119,6 +138,9 @@ export default {
 .page-link {
   color: #059c66;
 }
+.vdatetime {
+  width: 100%;
+}
 @media (min-width: 576px) {
 }
 
@@ -132,5 +154,11 @@ export default {
 
 /*  Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
+  .search-row {
+    margin: 0 -15px 20px -15px;
+  }
+  .vdatetime {
+    width: 20%;
+  }
 }
 </style>

@@ -24,11 +24,13 @@ import {
   faEnvelope,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import vueMoment from 'vue-moment';
+import Datetime from 'vue-datetime';
+import 'vue-datetime/dist/vue-datetime.css';
 
 Vue.use(BootstrapVue);
-
-import vueMoment from 'vue-moment';
 Vue.use(vueMoment);
+Vue.use(Datetime);
 
 library.add(
   faCircle,

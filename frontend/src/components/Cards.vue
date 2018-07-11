@@ -112,7 +112,7 @@ export default {
  No media query for `xs` since this is the default in Bootstrap */
 /*  Small devices (landscape phones, 576px and up) */
 .search-row {
-  margin-bottom: 20px;
+  margin: 0 0 20px 0;
 }
 .btn-outline-quatek {
   color: #059c66;
@@ -143,6 +143,9 @@ export default {
 
 /*  Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
+  .search-row {
+    margin: 0 -15px 20px -15px;
+  }
 }
 </style>
 
