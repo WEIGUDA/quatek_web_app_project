@@ -107,7 +107,6 @@
 </template>
 
 <script>
-import Datepicker from 'vuejs-datepicker';
 export default {
   name: '',
   data: function() {
@@ -120,7 +119,6 @@ export default {
  
   },
   components: {
-      Datepicker
     }
 }
 </script>
@@ -132,6 +130,9 @@ export default {
 /*  Small devices (landscape phones, 576px and up) */
 .submit-btn {
   color: #ffffff;
+  background-color: #059c66;
+}
+.vdatetime-popup__header {
   background-color: #059c66;
 }
 
