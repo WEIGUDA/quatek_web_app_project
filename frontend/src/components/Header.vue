@@ -14,7 +14,7 @@
                 <b-nav-item :to="{name: 'Gates'}">闸机列表</b-nav-item>
                 <b-nav-item :to="{name: 'Cards'}">卡片管理</b-nav-item>
                 <b-nav-item :to="{name: 'CardTests'}">静电测试</b-nav-item>
-                <b-nav-item>考勤管理</b-nav-item>
+                <b-nav-item :to="{name: 'Attendances'}">考勤管理</b-nav-item>
                 <!-- <b-nav-item href="#">帮助</b-nav-item> -->
             </b-navbar-nav>
 
