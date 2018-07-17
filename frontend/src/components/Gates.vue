@@ -14,8 +14,8 @@
         </div>
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous">
+                <li class="page-item" :class="{disabled: currentPage<=1}">
+                    <a class="page-link" href="#" aria-label="Previous" @click="prevPage(currentPage)">
                         <span aria-hidden="true">&laquo;</span>
                         <span class="sr-only">上一页</span>
                     </a>
@@ -26,7 +26,7 @@
                 </li>
 
                 <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
+                    <a class="page-link" href="#" aria-label="Next" @click="nextPage(currentPage)">
                         <span aria-hidden="true">&raquo;</span>
                         <span class="sr-only">下一页</span>
                     </a>
@@ -47,6 +47,34 @@ export default {
       currentPage: 1,
       gates: null,
     };
+  },
+  methods: {
+    prevPage(currentPage) {
+      let offset = (currentPage - 2) * 50;
+      this.$http.get(`gates?offset=${offset}`).then(
+        (response) => {
+          console.log(response.body);
+          this.gates = response.body;
+          this.currentPage--;
+        },
+        (response) => {
+          console.log(response);
+        },
+      );
+    },
+    nextPage(currentPage) {
+      let offset = currentPage * 50;
+      this.$http.get(`gates?offset=${offset}`).then(
+        (response) => {
+          console.log(response.body);
+          this.gates = response.body;
+          this.currentPage++;
+        },
+        (response) => {
+          console.log(response);
+        },
+      );
+    },
   },
   props: {},
   components: {
