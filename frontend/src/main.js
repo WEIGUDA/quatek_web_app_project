@@ -27,10 +27,19 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import vueMoment from 'vue-moment';
 import Datetime from 'vue-datetime';
 import 'vue-datetime/dist/vue-datetime.css';
+import VueResource from 'vue-resource';
 
 Vue.use(BootstrapVue);
 Vue.use(vueMoment);
 Vue.use(Datetime);
+Vue.use(VueResource);
+const IP_ADDRESS = location.hostname;
+const PORT = '5000';
+Vue.http.options.root = `http://${IP_ADDRESS}:${PORT}`;
+console.log('backend: ' + `http://${IP_ADDRESS}:${PORT}`);
+
+// const jwt = localStorage.getItem('jwt');
+// Vue.http.headers.common['Authorization'] = `Bear ${jwt}`;
 
 library.add(
   faCircle,

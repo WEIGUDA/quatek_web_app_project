@@ -20,9 +20,9 @@
           </td>
 
           <td class="gate-max-min-left-td">max</td>
-          <td class="gate-value-left-td">value</td>
+          <td class="gate-value-left-td">{{gate.hand_max}}</td>
           <td></td>
-          <td class="gate-value-right-td">value</td>
+          <td class="gate-value-right-td">{{gate.foot_max}}</td>
           <td class="gate-max-min-right-td">max</td>
 
           <td rowspan="2" class="text-center align-middle gate-icon">
@@ -31,9 +31,9 @@
         </tr>
         <tr>
           <td class="gate-max-min-left-td">min</td>
-          <td class="gate-value-left-td">value</td>
+          <td class="gate-value-left-td">{{gate.hand_min}}</td>
           <td></td>
-          <td class="gate-value-right-td">value</td>
+          <td class="gate-value-right-td">{{gate.foot_min}}</td>
           <td class="gate-max-min-right-td">min</td>
         </tr>
       </table>
@@ -44,25 +44,22 @@
 <script>
 export default {
   name: 'Gate',
-  data: function() {
-      return {
-          gate:{
-              
-          },
-          isOn: true,
-      };
+  data() {
+    return {
+      isOn: this.gate.is_on,
+    };
   },
   props: {
- 
+    gate: null,
   },
-  methods:{
-      toggleIsOn() {
-          this.isOn = !this.isOn
-      }
+  methods: {
+    toggleIsOn() {
+      this.isOn = !this.isOn;
+    },
   },
-  components: {
-  }
-}
+  components: {},
+  created() {},
+};
 </script>
 
 <style scoped>

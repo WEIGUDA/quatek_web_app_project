@@ -10,7 +10,7 @@
         </div>
         <hr>
         <div class="row">
-            <AppGate v-for="gate in 10" :key="gate"></AppGate>
+            <AppGate v-for="gate in gates" :gate=gate :key="gate._id.$oid"></AppGate>
         </div>
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
@@ -39,21 +39,41 @@
 
 <script>
 import Gate from '@/components/Gate';
+
 export default {
   name: 'Gates',
-  data: function() {
-      return {
-          currentPage: 1,
-          
-      };
+  data() {
+    return {
+      currentPage: 1,
+      gates: null,
+    };
   },
-  props: {
- 
-  },
+  props: {},
   components: {
-      AppGate: Gate,
-  }
-}
+    AppGate: Gate,
+  },
+
+  created() {
+    this.$http.get('gates').then(
+      (response) => {
+        console.log(response.body);
+        this.gates = response.body;
+      },
+      (response) => {
+        console.log(response);
+      },
+    );
+
+    // this.$http.post('gates', { foo: 'bar' }).then(
+    //   (response) => {
+    //     console.log(response.body);
+    //   },
+    //   (response) => {
+    //     console.log(response);
+    //   },
+    // );
+  },
+};
 </script>
 
 <style scoped>

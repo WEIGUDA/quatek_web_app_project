@@ -4,9 +4,10 @@
             <div class="form-group row">
                 <label for="name" class="col-sm-2 col-form-label">姓名 *</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="name">
+                    <input type="text" class="form-control" id="name" v-model="ooo.key1">
                 </div>
             </div>
+            {{ooo.key1}}
 
             <div class="form-group row">
                 <label for="cardNumber" class="col-sm-2 col-form-label">卡号 *</label>
@@ -99,7 +100,7 @@
 
             <div class="form-group row text-center">
                 <div class="col-sm-12">
-                    <button type="submit" class="btn btn-success btn-block submit-btn"> 保存 </button>
+                    <button type="submit" class="btn btn-success btn-block submit-btn" @click.prevent="submitOoo()"> 保存 </button>
                 </div>
             </div>
         </form>
@@ -112,6 +113,7 @@ export default {
   data: function() {
       return {
           date1: this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
+          ooo: {key1: '', key2: ''}
           
       };
   },
@@ -119,6 +121,11 @@ export default {
  
   },
   components: {
+    },
+    methods: {
+     submitOoo() {
+         console.log(this.ooo);
+     }   
     }
 }
 </script>
