@@ -2,9 +2,9 @@
     <div class="container">
         <div class="row search-row">
             <div class="input-group">
-                <input type="text" class="form-control" aria-label="Search string" aria-describedby="basic-addon2">
+                <input type="text" class="form-control" aria-label="Search string" aria-describedby="basic-addon2" v-model="query_string">
                 <div class="input-group-append">
-                    <button class="btn btn-outline-success btn-outline-quatek" type="button">
+                    <button class="btn btn-outline-success btn-outline-quatek" type="button" @click="search()">
                         <font-awesome-icon icon="search" /> Search</button>
                 </div>
             </div>
@@ -37,12 +37,12 @@
                 </thead>
                 <tbody>
 
-                    <tr v-for="card in 25" :key="card">
-                        <td>姓名1</td>
-                        <td>12938475</td>
-                        <td>384758692747387</td>
-                        <td>卡类型1</td>
-                        <td>部门1</td>
+                    <tr v-for="card in cards" :key="card._id.$oid">
+                        <td>{{card.name}}</td>
+                        <td>{{card.job_number}}</td>
+                        <td>{{card.card_number}}</td>
+                        <td>{{card.card_category}}</td>
+                        <td>{{card.department}}</td>
                         <td>
                             <button type="button" class="btn btn-secondary btn-quatek btn-sm">
                                 <font-awesome-icon icon="pencil-alt" />
@@ -60,10 +60,9 @@
         </div>
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">
-                            <font-awesome-icon icon="caret-square-left" /> </span>
+                <li class="page-item" :class="{disabled: currentPage<=1}">
+                    <a class="page-link" href="#" aria-label="Previous" @click="prevPage()">
+                        <span aria-hidden="true">&laquo;</span>
                         <span class="sr-only">上一页</span>
                     </a>
 
@@ -73,9 +72,8 @@
                 </li>
 
                 <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">
-                            <font-awesome-icon icon="caret-square-right" /> </span>
+                    <a class="page-link" href="#" aria-label="Next" @click="nextPage()">
+                        <span aria-hidden="true">&raquo;</span>
                         <span class="sr-only">下一页</span>
                     </a>
                 </li>
@@ -86,24 +84,81 @@
 </template>
 
 <script>
-
 export default {
   name: 'Cards',
-  data: function() {
-      return {
-          currentPage:  1,
-          
-      };
+  data() {
+    return {
+      currentPage: 1,
+      cards: null,
+      query_string: '',
+    };
+  },
+  computed: {
+    q() {
+      return this.query_string.trim();
+    },
   },
   methods: {
-      cardAdd() {
-          this.$router.push({name: 'CardCreate'});
-      }
+    cardAdd() {
+      this.$router.push({ name: 'CardCreate' });
+    },
+    search() {
+      console.log(this.query_string);
+
+      this.$http.get(`cards?q=${this.q}`).then(
+        (response) => {
+          console.log(response.body);
+          this.cards = response.body;
+          this.currentPage = 1;
+        },
+        (response) => {
+          console.log(response);
+        },
+      );
+    },
+    prevPage() {
+      let offset = (this.currentPage - 2) * 50;
+      this.$http.get(`cards?offset=${offset}&q=${this.q}`).then(
+        (response) => {
+          console.log(response.body);
+          this.cards = response.body;
+          this.currentPage--;
+        },
+        (response) => {
+          console.log(response);
+        },
+      );
+    },
+    nextPage() {
+      let offset = this.currentPage * 50;
+      this.$http.get(`cards?offset=${offset}&q=${this.q}`).then(
+        (response) => {
+          if (response.body.length !== 0) {
+            console.log(response.body);
+            this.cards = response.body;
+            this.currentPage++;
+          } else {
+            alert('已经到达最后一页!');
+          }
+        },
+        (response) => {
+          console.log(response);
+        },
+      );
+    },
   },
-  props: {
- 
-  }
-}
+  created() {
+    this.$http.get('cards').then(
+      (response) => {
+        console.log(response.body);
+        this.cards = response.body;
+      },
+      (response) => {
+        console.log(response);
+      },
+    );
+  },
+};
 </script>
 
 

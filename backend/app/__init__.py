@@ -87,6 +87,13 @@ def create_app(config=None):
 
     # @socketio.on('json')
     # def handle_json(json):
-    #     print('received json: ' + str(json))w
+    #     print('received json: ' + str(json))
+
+    from app.mod_gate.models import Card, CardTest, Gate
+    from app.mod_auth.models import User
+
+    @app.shell_context_processor
+    def make_shell_context():
+        return {'app': app, 'User': User, 'CardTest': CardTest, 'Gate': Gate, 'Card': Card}
 
     return app
