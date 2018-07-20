@@ -2,7 +2,7 @@ import datetime
 from flask import Blueprint, request, jsonify, make_response, current_app, abort
 from mongoengine.queryset.visitor import Q
 
-from app.mod_gate.models import Gate, Card
+from app.mod_gate.models import Gate, Card, CardTest
 
 bp = Blueprint('mod_gate', __name__)
 
@@ -27,7 +27,6 @@ def gates():
 @bp.route('/cards', methods=['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])
 def cards():
     query_string = request.args.get('q', None)
-    print(query_string)
 
     q_object = Q()
 
@@ -48,6 +47,35 @@ def cards():
             return make_response(cards.to_json())
         except:
             current_app.logger.exception('get cards failed')
+            abort(500)
+
+    elif request.method == 'POST':
+        pass
+
+
+@bp.route('/cardtests', methods=['GET', 'POST'])
+def cardtests():
+    if request.method == 'GET':
+        query_string = request.args.get('q', None)
+        datetime_from = request.args.get('datetime_from', None)
+        datetime_to = request.args.get('datetime_to', None)
+
+        q_object = Q(test_datetime__gte=datetime_from) \
+            & Q(test_datetime__lte=datetime_to)
+
+        if query_string:
+            q_object = q_object \
+                | Q(job_number__icontains=query_string) \
+                | Q(gate_number__icontains=query_string)
+
+        offset = request.args.get('offset', 0)
+        limit = request.args.get('limit', 50)
+
+        try:
+            cards = CardTest.objects.filter(q_object).order_by('-created_time').skip(int(offset)).limit(int(limit))
+            return make_response(cards.to_json())
+        except:
+            current_app.logger.exception('get cardtests failed')
             abort(500)
 
     elif request.method == 'POST':

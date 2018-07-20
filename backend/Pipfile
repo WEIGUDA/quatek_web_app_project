@@ -11,6 +11,8 @@ flask-mongoengine = "*"
 flask-socketio = "*"
 eventlet = "*"
 redis = "*"
+celery = "*"
+pytest = "*"
 
 [dev-packages]
 pylint = "*"
