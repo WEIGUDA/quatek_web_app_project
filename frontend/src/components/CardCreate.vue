@@ -4,10 +4,9 @@
             <div class="form-group row">
                 <label for="name" class="col-sm-2 col-form-label">姓名 *</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="name" v-model="ooo.key1">
+                    <input type="text" class="form-control" id="name">
                 </div>
             </div>
-            {{ooo.key1}}
 
             <div class="form-group row">
                 <label for="cardNumber" class="col-sm-2 col-form-label">卡号 *</label>
@@ -111,23 +110,20 @@
 export default {
   name: '',
   data: function() {
-      return {
-          date1: this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
-          ooo: {key1: '', key2: ''}
-          
-      };
+    return {
+      date1: this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
+      ooo: { key1: '', key2: '' },
+      file1: '',
+    };
   },
-  props: {
- 
-  },
-  components: {
+  props: {},
+  components: {},
+  methods: {
+    submitOoo() {
+      console.log(this.file1);
     },
-    methods: {
-     submitOoo() {
-         console.log(this.ooo);
-     }   
-    }
-}
+  },
+};
 </script>
 
 

@@ -4,7 +4,7 @@
         <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
         <b-navbar-brand href="#">
-            <img src="@/assets/logo.png" alt="Quatek">
+            <img @click="toIndex()" src="@/assets/logo.png" alt="Quatek">
         </b-navbar-brand>
 
         <b-collapse is-nav id="nav_collapse">
@@ -47,6 +47,18 @@
         </b-collapse>
     </b-navbar>
 </template>
+<script>
+export default {
+  methods: {
+    toIndex() {
+      this.$router.push({ name: 'Index' });
+    },
+  },
+};
+</script>
+
+
+
 
 <style scoped>
 /* Extra small devices (portrait phones, less than 576px)
