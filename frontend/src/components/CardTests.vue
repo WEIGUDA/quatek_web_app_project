@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-    <div class="row btn-row" v-if="this.cardtests.length">
+    <div class="row btn-row" v-if="cardtests.length">
       <p class="w-100 text-right">
         <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="email发送测试">
           <font-awesome-icon icon="envelope" />
@@ -27,11 +27,11 @@
 
       </p>
     </div>
-    <div class="row" v-if="!this.cardtests.length">
+    <div class="row" v-if="!cardtests.length">
       <p class="w-100 text-center no-result">没有搜索到结果</p>
     </div>
 
-    <div class="row" v-if="this.cardtests.length">
+    <div class="row" v-if="cardtests.length">
       <table class="table table-striped table-responsive-md">
         <thead>
           <tr>

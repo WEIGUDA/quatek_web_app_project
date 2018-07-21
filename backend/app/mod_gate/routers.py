@@ -1,5 +1,5 @@
 import datetime
-from flask import Blueprint, request, make_response, current_app, abort
+from flask import Blueprint, request, make_response, current_app, abort, jsonify
 from mongoengine.queryset.visitor import Q
 
 from app.mod_gate.models import Gate, Card, CardTest
@@ -27,7 +27,29 @@ def gates():
             abort(500)
 
     elif request.method == 'POST':
-        pass
+        gates_list = request.json
+        return_list = []
+        try:
+            for index, gate in enumerate(gates_list):
+                if index == 0:
+                    continue
+                g1 = Gate(name=gate[0],
+                          number=gate[1],
+                          category=gate[2],
+                          mc_id=gate[3],
+                          hand_max=gate[4],
+                          hand_min=gate[5],
+                          foot_max=gate[6],
+                          foot_min=gate[7],
+                          ip=gate[8],
+                          port=gate[9].replace('\r', ''),
+                          )
+                g1.save()
+                return_list.append(g1)
+        except:
+            return make_response('{"result": "failed"}')
+
+        return make_response(jsonify({'result': len(return_list)}))
 
 
 @bp.route('/cards', methods=['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])
@@ -38,10 +60,10 @@ def cards():
 
     if query_string:
         q_object = q_object \
-            | Q(card_number__icontains=query_string) \
-            | Q(card_category__icontains=query_string) \
-            | Q(name__icontains=query_string) \
-            | Q(job_number__icontains=query_string) \
+            | Q(card_number__icontains=query_string)\
+            | Q(card_category__icontains=query_string)\
+            | Q(name__icontains=query_string)\
+            | Q(job_number__icontains=query_string)\
             | Q(department__icontains=query_string)
 
     if request.method == 'GET':

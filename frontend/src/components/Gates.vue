@@ -20,8 +20,12 @@
         </button>
       </p>
     </div>
-    <hr>
-    <div class="row">
+
+    <hr v-if="gates.length">
+    <div class="row" v-if="!gates.length">
+      <p class="w-100 text-center no-result">没有搜索到结果</p>
+    </div>
+    <div class="row" v-if="gates.length">
       <AppGate v-for="gate in gates" :gate=gate :key="gate._id.$oid"></AppGate>
     </div>
     <nav aria-label="Page navigation">
@@ -52,7 +56,8 @@
           <a class="template_download" href="" @click.prevent="download_gates_upload_template()">闸机信息模版.csv</a>
         </b-row>
         <b-row>
-          <input type="file" class="form-control-file" @change="file_input_change($event)" accept="text/csv">
+          <!-- <input type="file" class="form-control-file" @change="file_input_change($event)" accept="text/csv"> -->
+          <b-form-file v-model="gates_upload_file" placeholder="请选择文件..."></b-form-file>
         </b-row>
         <b-row>
 
@@ -64,23 +69,199 @@
 
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
-import Gate from '@/components/Gate';
-import axios from 'axios';
-export default Vue.extend({
-  data();,
-});
-</script>
+
 
 
 <script>
-import Vue from 'vue';
-import Gate from '@/components/Gate';
 import axios from 'axios';
-export default Vue.extend({
-  data();,
-});
+import Gate from '@/components/Gate';
+const IP_ADDRESS = location.hostname;
+const PORT = '5000';
+
+export default {
+  name: 'Gates',
+  data() {
+    return {
+      currentPage: 1,
+      gates: [],
+      query_string: '',
+      show_modal: false,
+      gates_upload_file: null,
+    };
+  },
+
+  methods: {
+    search() {
+      console.log(this.query_string);
+
+      this.$http.get(`gates?q=${this.query_string}`).then(
+        (response) => {
+          console.log(response.body);
+          this.gates = response.body;
+          this.currentPage = 1;
+        },
+        (response) => {
+          console.log(response);
+        },
+      );
+    },
+
+    upload_show() {
+      this.show_modal = true;
+    },
+
+    file_input_change(event) {
+      this.gates_upload_file = event.target.files[0];
+    },
+
+    upload() {
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        let result = event.target.result;
+        result = result.split('\n');
+        for (let [index, item] of result.entries()) {
+          result[index] = item.split(',');
+        }
+        console.log(result);
+        axios
+          .post(`http://${IP_ADDRESS}:${PORT}/gates`, result)
+          .then((response) => {
+            console.log(response.body);
+          })
+          .catch((response) => {
+            console.log(response);
+          });
+      };
+      reader.readAsText(this.gates_upload_file);
+    },
+
+    download_gates_upload_template() {
+      try {
+        let title = 'gates_upload_template';
+        let csv_header =
+          'gate_name*,gate_number*,gate_category*,mc_number,hand_max*,hand_min*,foot_max*,foot_min*,gate_ip,gate_port\n';
+        let csv = [];
+        let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
+        let link = document.createElement('a');
+
+        link.id = 'csv-download-id';
+        link.href = uri;
+
+        document.body.appendChild(link);
+
+        document.getElementById(link.id).style.visibility = 'hidden';
+        document.getElementById(link.id).download = title + '.csv';
+
+        document.body.appendChild(link);
+        document.getElementById(link.id).click();
+
+        setTimeout(function() {
+          document.body.removeChild(link);
+        });
+        return true;
+      } catch (err) {
+        return false;
+      }
+    },
+    prevPage() {
+      let offset = (this.currentPage - 2) * 50;
+      this.$http.get(`gates?offset=${offset}&q=${this.query_string}`).then(
+        (response) => {
+          console.log(response.body);
+          this.gates = response.body;
+          this.currentPage--;
+        },
+        (response) => {
+          console.log(response);
+        },
+      );
+    },
+    nextPage() {
+      let offset = this.currentPage * 50;
+      this.$http.get(`gates?offset=${offset}&q=${this.query_string}`).then(
+        (response) => {
+          if (response.body.length !== 0) {
+            console.log(response.body);
+            this.gates = response.body;
+            this.currentPage++;
+          } else {
+            alert('已经到达最后一页!');
+          }
+        },
+        (response) => {
+          console.log(response);
+        },
+      );
+    },
+
+    download_csv() {
+      try {
+        let title = 'gates';
+        let gate_array = [];
+        let csv_header =
+          'id,name,number,category,mc_id,hand_max,hand_min,foot_max,foot_min,created_time,is_on,is_online\n';
+        let csv = [];
+
+        for (let gate of this.gates) {
+          gate_array.push(
+            [
+              gate._id.$oid,
+              gate.name,
+              gate.number,
+              gate.category,
+              gate.mc_id,
+              gate.hand_max,
+              gate.hand_min,
+              gate.foot_max,
+              gate.foot_min,
+              this.$moment(gate.created_time.$date).format(),
+              gate.is_on,
+              gate.is_online,
+            ].join(','),
+          );
+        }
+        csv = gate_array.join('\n');
+
+        let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
+
+        let link = document.createElement('a');
+
+        link.id = 'csv-download-id';
+        link.href = uri;
+
+        document.body.appendChild(link);
+
+        document.getElementById(link.id).style.visibility = 'hidden';
+        document.getElementById(link.id).download = title + '.csv';
+
+        document.body.appendChild(link);
+        document.getElementById(link.id).click();
+
+        setTimeout(function() {
+          document.body.removeChild(link);
+        });
+        return true;
+      } catch (err) {
+        return false;
+      }
+    },
+  },
+  components: {
+    AppGate: Gate,
+  },
+
+  created() {
+    this.$http.get('gates').then(
+      (response) => {
+        console.log(response.body);
+        this.gates = response.body;
+      },
+      (response) => {
+        console.log(response);
+      },
+    );
+  },
+};
 </script>
 
 <style scoped>
@@ -108,6 +289,10 @@ export default Vue.extend({
 .btn-success {
   color: #059c66;
 }
+.no-result {
+  height: 300px;
+  color: #868686;
+}
 @media (min-width: 576px) {
 }
 
@@ -126,6 +311,9 @@ export default Vue.extend({
   } */
   .search-row {
     margin: 0 -15px 20px -15px;
+  }
+  .no-result {
+    height: 400px;
   }
 }
 </style>
