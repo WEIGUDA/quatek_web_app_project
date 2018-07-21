@@ -20,6 +20,10 @@ pylint-flask = "*"
 "autopep8" = "*"
 "flake8" = "*"
 rope = "*"
+ptvsd = "*"
 
 [requires]
 python_version = "3.6"
+
+[pipenv]
+allow_prereleases = true

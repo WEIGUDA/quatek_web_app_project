@@ -1,22 +1,14 @@
-import datetime
 import os
 
-from flask import Flask, make_response, Response, request, jsonify, abort, redirect, session
+from flask import Flask
 from flask_mongoengine import MongoEngine
-from flask_socketio import SocketIO, send, emit
+from flask_socketio import SocketIO
 from flask_cors import CORS
 
 
 db = MongoEngine()
 socketio = SocketIO()
 cors = CORS()
-
-
-def utc_now(convert_to_str=False):
-    now = datetime.datetime.now(datetime.timezone.utc)
-    if convert_to_str:
-        return now.strftime('%Y-%m-%d %H:%M:%S %Z')
-    return now
 
 
 def create_app(config=None):
@@ -29,17 +21,7 @@ def create_app(config=None):
         pass
 
     # load default config
-    app.config.from_mapping({'ENV': 'production',
-                             'DEBUG': False,
-                             'SECRET_KEY': os.urandom(24),
-                             'MONGODB_SETTINGS': {
-                                 'db': 'quatek_web_app',
-                                 'host': '127.0.0.1',
-                                 'port': 27017,
-                                 #  'username': 'webapp',
-                                 #  'password': 'pwd123'
-                             }
-                             })
+    app.config.from_pyfile('config_default.py')
 
     if config is None:
         # load the instance config, if it exists, when not testing
@@ -47,39 +29,44 @@ def create_app(config=None):
         # config python file format:
         # DEBUG = True
         # ENV = 'development'
-        app.config.from_pyfile('dev.py', silent=True)
+        app.config.from_pyfile('config_dev.py', silent=True)
         # load config from instance/pro.py, if exists override the all the configs below,
         # else keep silent; for security in production environment
-        app.config.from_pyfile('pro.py', silent=True)
+        app.config.from_pyfile('config_pro.py', silent=True)
     else:
         # load the test config if passed in
-        app.config.from_mapping(config)
+        if type(config) is str:
+            app.config.from_pyfile(config)
+        elif type(config) is dict:
+            app.config.from_mapping(config)
 
+    # init extentions
     db.init_app(app)
     socketio.init_app(app)
     cors.init_app(app)
 
+    # register blueprints
     from app.mod_gate.routers import bp as mod_gate_bp
     from app.mod_auth.routers import bp as mod_auth_bp
     app.register_blueprint(mod_gate_bp)
     app.register_blueprint(mod_auth_bp)
 
-    @app.route('/', methods=['GET', 'POST'])
-    def default():
-        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S %Z'))
-        print(str(request.data))
-        print(str(request.args))
-        return make_response(jsonify(
-            {'request.data': str(request.data),
-             'request.json': str(request.json),
-             'request.args': str(request.args),
-             'request.method': str(request.method),
-             'request.form': str(request.form),
-             'request.files': str(request.files),
-             'request.cookies': str(request.cookies),
-             'request.mimetype': str(request.mimetype),
-             'session': str(session),
-             }))
+    # @app.route('/', methods=['GET', 'POST'])
+    # def default():
+    #     current_app.logger.debug(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S %Z'))
+    #     current_app.logger.debug(str(request.data))
+    #     current_app.logger.debug(str(request.args))
+    #     return make_response(jsonify(
+    #         {'request.data': str(request.data),
+    #          'request.json': str(request.json),
+    #          'request.args': str(request.args),
+    #          'request.method': str(request.method),
+    #          'request.form': str(request.form),
+    #          'request.files': str(request.files),
+    #          'request.cookies': str(request.cookies),
+    #          'request.mimetype': str(request.mimetype),
+    #          'session': str(session),
+    #          }))
 
     # @socketio.on('message')
     # def handle_message(message):
