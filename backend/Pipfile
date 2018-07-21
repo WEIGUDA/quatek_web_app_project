@@ -11,8 +11,9 @@ flask-mongoengine = "*"
 flask-socketio = "*"
 eventlet = "*"
 redis = "*"
-celery = "*"
 pytest = "*"
+"flask-rq2" = "*"
+python-dateutil = "*"
 
 [dev-packages]
 pylint = "*"

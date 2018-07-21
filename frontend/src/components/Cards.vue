@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row search-row">
       <div class="input-group">
-        <input type="text" class="form-control" aria-label="Search string" aria-describedby="basic-addon2" v-model.trim="query_string">
+        <input type="text" class="form-control" aria-label="Search string" aria-describedby="basic-addon2" v-model.trim="query_string" placeholder="可搜索卡号, 卡类别, 姓名, 工号和部门">
         <div class="input-group-append">
           <button class="btn btn-outline-success btn-outline-quatek" type="button" @click="search()">
             <font-awesome-icon icon="search" /> Search</button>

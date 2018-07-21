@@ -16,13 +16,7 @@ def client():
 
     with app.app_context():
         # init database
-        dt = datetime.datetime.utcnow()
-        for i in range(100):
-            cardtest = CardTest(gate_number='cardtest' + str(i),
-                                test_datetime=dt + datetime.timedelta(minutes=i * 10),
-                                job_number='jobnumber' + str(i)
-                                )
-            cardtest.save()
+        pass
 
     yield client
 
@@ -31,14 +25,77 @@ def client():
     mongo_client.drop_database(app.config['MONGODB_SETTINGS']['db'])
 
 
-def test_cardtests_search(client):
+def test_gates_filter(client):
+    for i in range(10):
+        gate = Gate(name='gate1_' + str(i), category='category1')
+        gate.save()
+
+    for i in range(10):
+        gate = Gate(name='gate2_' + str(i), category='category2')
+        gate.save()
+
+    rv = client.get('/gates?q=category1')
+    gates = json.loads(rv.data.decode())
+    assert len(gates) == 10
+
+
+def test_cardtests_search_with_no_query_string(client):
+    """ GIVEN 120 cardtests, 1 cardtest/min
+        WHEN query with datetime_from and datetime_to, without query_string
+        THEN check returned cardtests lengths
+    """
+    dt = datetime.datetime.utcnow()
+    for i in range(120):
+        cardtest = CardTest(gate_number='cardtest' + str(i),
+                            test_datetime=dt + datetime.timedelta(minutes=i),
+                            job_number='jobnumber' + str(i)
+                            )
+        cardtest.save()
+
     now = datetime.datetime.utcnow()
     datetime_from = now.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-    datetime_to = (now + datetime.timedelta(hours=5)).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    datetime_to = (now + datetime.timedelta(minutes=40)).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
     rv = client.get('/cardtests?datetime_from={}&datetime_to={}'.format(datetime_from, datetime_to))
-    cardtests = json.loads(rv.data.decode())
+    cardtests1 = json.loads(rv.data.decode())
 
-    assert len(cardtests) == 30
+    datetime_from = dt.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    datetime_to = (dt + datetime.timedelta(minutes=40)).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    rv = client.get('/cardtests?datetime_from={}&datetime_to={}'.format(datetime_from, datetime_to))
+    cardtests2 = json.loads(rv.data.decode())
+
+    assert len(cardtests1) == 40
+    assert len(cardtests2) == 41
+
+
+def test_cardtests_search_with_query_string(client):
+    """ GIVEN 120 cardtests, 1 cardtest/min
+        WHEN query with datetime_from, datetime_to and query_string
+        THEN check returned cardtests lengths
+    """
+    dt = datetime.datetime.utcnow()
+
+    for i in range(120):
+        cardtest = CardTest(gate_number='cardtest' + str(i),
+                            test_datetime=dt + datetime.timedelta(minutes=i),
+                            job_number='jobnumber' + str(i)
+                            )
+        cardtest.save()
+
+    now = datetime.datetime.utcnow()
+    datetime_from = now.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    datetime_to = (now + datetime.timedelta(minutes=40)).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+
+    query_string1 = 'cardtest19'
+
+    rv1 = client.get('/cardtests?datetime_from={}&datetime_to={}&q={}'.format(datetime_from, datetime_to, query_string1))
+    cardtests1 = json.loads(rv1.data.decode())
+    assert len(cardtests1) == 1
+
+    query_string2 = 'cardtest0'
+
+    rv2 = client.get('/cardtests?datetime_from={}&datetime_to={}&q={}'.format(datetime_from, datetime_to, query_string2))
+    cardtests2 = json.loads(rv2.data.decode())
+    assert len(cardtests2) == 0
 
 
 # def test_json(client):

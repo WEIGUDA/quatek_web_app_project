@@ -6,6 +6,7 @@ class Gate(db.Document):
     name = db.StringField(default='')  # 闸机名
     number = db.StringField(default='')  # 闸机编号
     category = db.StringField(default='')  # 闸机分类
+    mc_id = db.StringField(default='')  # 闸机 mc id
     hand_max = db.IntField(null=True, default=None)  # 手上限值
     hand_min = db.IntField(null=True, default=None)  # 手下限值
     foot_max = db.IntField(null=True, default=None)  # 脚上限值

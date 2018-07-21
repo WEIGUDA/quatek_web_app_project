@@ -1,8 +1,20 @@
 <template>
   <div class="container">
+    <div class="row search-row">
+      <div class="input-group">
+        <input type="text" class="form-control" aria-label="Search string" aria-describedby="basic-addon2" v-model.trim="query_string" placeholder="可搜索门禁类别">
+        <div class="input-group-append">
+          <button class="btn btn-outline-success btn-outline-quatek" type="button" @click="search()">
+            <font-awesome-icon icon="search" /> Search</button>
+        </div>
+      </div>
+    </div>
 
     <div class="row btn-row">
       <p class="w-100 text-right">
+        <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="上传" @click="upload_show()">
+          <font-awesome-icon icon="upload" />
+        </button>
         <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="导出" @click="download_csv()">
           <font-awesome-icon icon="download" />
         </button>
@@ -34,124 +46,50 @@
 
       </ul>
     </nav>
+    <b-modal v-model="show_modal" title="上传闸机信息" ok-only ok-title="上传" :lazy="true" @ok="upload()" ok-variant="success">
+      <b-container fluid>
+        <b-row>
+          <a class="template_download" href="" @click.prevent="download_gates_upload_template()">闸机信息模版.csv</a>
+        </b-row>
+        <b-row>
+          <input type="file" class="form-control-file" @change="file_input_change($event)" accept="text/csv">
+        </b-row>
+        <b-row>
+
+        </b-row>
+      </b-container>
+
+    </b-modal>
   </div>
+
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import Gate from '@/components/Gate';
+import axios from 'axios';
+export default Vue.extend({
+  data();,
+});
+</script>
 
-export default {
-  name: 'Gates',
-  data() {
-    return {
-      currentPage: 1,
-      gates: null,
-    };
-  },
-  methods: {
-    prevPage() {
-      let offset = (this.currentPage - 2) * 50;
-      this.$http.get(`gates?offset=${offset}`).then(
-        (response) => {
-          console.log(response.body);
-          this.gates = response.body;
-          this.currentPage--;
-        },
-        (response) => {
-          console.log(response);
-        },
-      );
-    },
-    nextPage() {
-      let offset = this.currentPage * 50;
-      this.$http.get(`gates?offset=${offset}`).then(
-        (response) => {
-          if (response.body.length !== 0) {
-            console.log(response.body);
-            this.gates = response.body;
-            this.currentPage++;
-          } else {
-            alert('已经到达最后一页!');
-          }
-        },
-        (response) => {
-          console.log(response);
-        },
-      );
-    },
 
-    download_csv() {
-      try {
-        let title = 'gates';
-        let gate_array = [];
-        let csv_header = 'id,name,number,category,hand_max,hand_min,foot_max,foot_min,created_time,is_on,is_online\n';
-        let csv = [];
-
-        for (let gate of this.gates) {
-          gate_array.push(
-            [
-              gate._id.$oid,
-              gate.name,
-              gate.number,
-              gate.category,
-              gate.hand_max,
-              gate.hand_min,
-              gate.foot_max,
-              gate.foot_min,
-              this.$moment(gate.created_time.$date).format(),
-              gate.is_on,
-              gate.is_online,
-            ].join(','),
-          );
-        }
-        csv = gate_array.join('\n');
-
-        let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
-
-        let link = document.createElement('a');
-
-        link.id = 'csv-download-id';
-        link.href = uri;
-
-        document.body.appendChild(link);
-
-        document.getElementById(link.id).style.visibility = 'hidden';
-        document.getElementById(link.id).download = title + '.csv';
-
-        document.body.appendChild(link);
-        document.getElementById(link.id).click();
-
-        setTimeout(function() {
-          document.body.removeChild(link);
-        });
-        return true;
-      } catch (err) {
-        return false;
-      }
-    },
-  },
-  components: {
-    AppGate: Gate,
-  },
-
-  created() {
-    this.$http.get('gates').then(
-      (response) => {
-        console.log(response.body);
-        this.gates = response.body;
-      },
-      (response) => {
-        console.log(response);
-      },
-    );
-  },
-};
+<script>
+import Vue from 'vue';
+import Gate from '@/components/Gate';
+import axios from 'axios';
+export default Vue.extend({
+  data();,
+});
 </script>
 
 <style scoped>
 /* Extra small devices (portrait phones, less than 576px)
  No media query for `xs` since this is the default in Bootstrap */
 /*  Small devices (landscape phones, 576px and up) */
+.search-row {
+  margin: 0 0 20px 0;
+}
 .btn-row {
   text-align: center;
 }
@@ -161,6 +99,13 @@ export default {
 }
 
 .page-link {
+  color: #059c66;
+}
+.template_download {
+  color: #059c66;
+  margin-bottom: 10px;
+}
+.btn-success {
   color: #059c66;
 }
 @media (min-width: 576px) {
@@ -176,8 +121,11 @@ export default {
 
 /*  Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
-  .btn-row {
+  /* .btn-row {
     text-align: right !important;
+  } */
+  .search-row {
+    margin: 0 -15px 20px -15px;
   }
 }
 </style>
