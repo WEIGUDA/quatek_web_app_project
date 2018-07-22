@@ -11,7 +11,7 @@
     </div>
     <div class="row btn-row">
       <p class="w-100 text-right">
-        <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="上传">
+        <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="上传" @click="upload_show()">
           <font-awesome-icon icon="upload" />
         </button>
         <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="下载">
@@ -80,10 +80,25 @@
 
       </ul>
     </nav>
+    <b-modal v-model="show_modal" title="上传卡片信息" ok-only ok-title="上传" :lazy="true" @ok="upload()" ok-variant="success">
+      <b-container fluid>
+        <b-row>
+          <a class="template_download" href="" @click.prevent="download_cards_upload_template()">卡片信息模版.csv</a>
+        </b-row>
+        <b-row>
+          <b-form-file v-model="cards_file" placeholder="请选择文件..." accept="text/csv"></b-form-file>
+        </b-row>
+        <b-row>
+
+        </b-row>
+      </b-container>
+
+    </b-modal>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'Cards',
   data() {
@@ -91,6 +106,8 @@ export default {
       currentPage: 1,
       cards: null,
       query_string: '',
+      show_modal: false,
+      cards_file: '',
     };
   },
   // computed: {},
@@ -101,58 +118,115 @@ export default {
     search() {
       console.log(this.query_string);
 
-      this.$http.get(`cards?q=${this.query_string}`).then(
-        (response) => {
-          console.log(response.body);
-          this.cards = response.body;
-          this.currentPage = 1;
-        },
-        (response) => {
+      axios
+        .get(`cards?q=${this.query_string}`)
+        .then((response) => {
           console.log(response);
-        },
-      );
+          this.cards = response.data;
+          this.currentPage = 1;
+        })
+        .catch((response) => {
+          console.log(response);
+        });
     },
+
+    upload_show() {
+      this.show_modal = true;
+    },
+
+    upload() {
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        let result = event.target.result;
+        result = result.split('\n');
+        for (let [index, item] of result.entries()) {
+          result[index] = item.split(',');
+        }
+        console.log(result);
+        axios
+          .post('cards', result)
+          .then((response) => {
+            console.log(response);
+            alert(`${response.data.result}张卡片信息上传成功!`);
+          })
+          .catch((response) => {
+            console.log(response);
+            alert('上传失败!');
+          });
+      };
+      reader.readAsText(this.cards_file);
+    },
+
+    download_cards_upload_template() {
+      try {
+        let title = 'cards_upload_template';
+        let csv_header =
+          '*card_number,*card_category(1:vip|2:hands_only|3:feet_only|4:test_both),*name,*job_number,*department,*gender(0:female|1:male),note\n';
+        let csv = [];
+        let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
+        let link = document.createElement('a');
+
+        link.id = 'csv-download-id';
+        link.href = uri;
+
+        document.body.appendChild(link);
+
+        document.getElementById(link.id).style.visibility = 'hidden';
+        document.getElementById(link.id).download = title + '.csv';
+
+        document.body.appendChild(link);
+        document.getElementById(link.id).click();
+
+        setTimeout(function() {
+          document.body.removeChild(link);
+        });
+        return true;
+      } catch (err) {
+        return false;
+      }
+    },
+
     prevPage() {
       let offset = (this.currentPage - 2) * 50;
-      this.$http.get(`cards?offset=${offset}&q=${this.query_string}`).then(
-        (response) => {
-          console.log(response.body);
-          this.cards = response.body;
-          this.currentPage--;
-        },
-        (response) => {
+      axios
+        .get(`cards?offset=${offset}&q=${this.query_string}`)
+        .then((response) => {
           console.log(response);
-        },
-      );
+          this.cards = response.data;
+          this.currentPage--;
+        })
+        .catch((response) => {
+          console.log(response);
+        });
     },
     nextPage() {
       let offset = this.currentPage * 50;
-      this.$http.get(`cards?offset=${offset}&q=${this.query_string}`).then(
-        (response) => {
-          if (response.body.length !== 0) {
-            console.log(response.body);
-            this.cards = response.body;
+      axios
+        .get(`cards?offset=${offset}&q=${this.query_string}`)
+        .then((response) => {
+          if (response.data.length !== 0) {
+            console.log(response);
+            this.cards = response.data;
             this.currentPage++;
           } else {
             alert('已经到达最后一页!');
           }
-        },
-        (response) => {
+        })
+        .catch((response) => {
           console.log(response);
-        },
-      );
+        });
     },
   },
   created() {
-    this.$http.get('cards').then(
-      (response) => {
-        console.log(response.body);
-        this.cards = response.body;
-      },
-      (response) => {
+    axios
+      .get('cards')
+      .then((response) => {
         console.log(response);
-      },
-    );
+        this.cards = response.data;
+      })
+      .catch((response) => {
+        console.log(response);
+      });
   },
 };
 </script>
@@ -179,6 +253,9 @@ export default {
 }
 
 .page-link {
+  color: #059c66;
+}
+.template_download {
   color: #059c66;
 }
 @media (min-width: 576px) {

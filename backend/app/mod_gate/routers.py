@@ -78,7 +78,27 @@ def cards():
             abort(500)
 
     elif request.method == 'POST':
-        pass
+        cards_list = request.json
+        return_list = []
+        try:
+            for index, card in enumerate(cards_list):
+                if index == 0:
+                    continue
+                c1 = Card(
+                    card_number=card[0],
+                    card_category=card[1],
+                    name=card[2],
+                    job_number=card[3],
+                    department=card[4],
+                    gender=card[5],
+                    note=card[6].replace('\r', ''),
+                )
+                c1.save()
+                return_list.append(c1)
+        except:
+            return make_response('{"result": "failed"}')
+
+        return make_response(jsonify({'result': len(return_list)}))
 
 
 @bp.route('/cardtests', methods=['GET', 'POST'])
