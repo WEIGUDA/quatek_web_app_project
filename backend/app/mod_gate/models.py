@@ -19,7 +19,7 @@ class Gate(db.Document):
 
 
 class Card(db.Document):
-    card_number = db.StringField(default='', index=True)  # 卡号
+    card_number = db.StringField(default='')  # 卡号
     card_category = db.StringField(  # 卡类别
         default='4',
         choices=(('1', 'vip'),
@@ -30,8 +30,10 @@ class Card(db.Document):
     name = db.StringField(default='')  # 姓名
     job_number = db.StringField(default='')  # 工号
     department = db.StringField(default='')  # 部门
-    gender = db.StringField(default='M', choices=(('1', '男'), ('0', '女')),)  # 性别
+    gender = db.StringField(default='1', choices=(('1', '男'), ('0', '女')),)  # 性别
     note = db.StringField(default='')  # 其他说明
+    belong_to_mc = db.StringField(default='')  # 属于mc/闸机 name1|name2|name3
+    number_in_mc = db.StringField(default='')  # 闸机中编号 name1:1|name2:1|name3:1
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
 
 

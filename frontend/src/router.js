@@ -27,8 +27,13 @@ export default new Router({
       component: Cards,
     },
     {
-      path: '/card-create',
+      path: '/card-create/',
       name: 'CardCreate',
+      component: CardCreate,
+    },
+    {
+      path: '/card-edit/:card_id',
+      name: 'CardEdit',
       component: CardCreate,
     },
     {

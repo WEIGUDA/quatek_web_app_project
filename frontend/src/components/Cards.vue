@@ -14,7 +14,7 @@
         <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="上传" @click="upload_show()">
           <font-awesome-icon icon="upload" />
         </button>
-        <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="下载">
+        <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="下载" @click="download_csv()">
           <font-awesome-icon icon="download" />
         </button>
         <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="添加卡片" @click="cardAdd()">
@@ -47,7 +47,7 @@
             <td>{{card.card_category}}</td>
             <td>{{card.department}}</td>
             <td>
-              <button type="button" class="btn btn-secondary btn-quatek btn-sm">
+              <button type="button" class="btn btn-secondary btn-quatek btn-sm" @click="edit_card(card._id.$oid)">
                 <font-awesome-icon icon="pencil-alt" />
               </button>
             </td>
@@ -133,6 +133,10 @@ export default {
         });
     },
 
+    edit_card(card_id) {
+      this.$router.push({ name: 'CardEdit', params: { card_id: card_id } });
+    },
+
     upload_show() {
       this.show_modal = true;
     },
@@ -164,7 +168,7 @@ export default {
       try {
         let title = 'cards_upload_template';
         let csv_header =
-          '*card_number,*card_category(1:vip|2:hands_only|3:feet_only|4:test_both),*name,*job_number,*department,*gender(0:female|1:male),note\n';
+          '*card_number,*card_category(1:vip|2:hands_only|3:feet_only|4:test_both),*name,*job_number,*department,*gender(0:female|1:male),note,\n';
         let csv = [];
         let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
         let link = document.createElement('a');
@@ -193,6 +197,7 @@ export default {
       let delete_confirmed = prompt('请输入 YES 确认删除!');
       if (delete_confirmed === 'YES') {
         let delete_array = JSON.stringify(cards_array);
+        console.log(delete_array);
         axios
           .delete(`cards?delete_array=${delete_array}`)
           .then((response) => {
@@ -240,7 +245,58 @@ export default {
           console.log(response);
         });
     },
+    download_csv() {
+      try {
+        let title = 'cards_page_' + this.currentPage;
+        let card_array = [];
+        let csv_header =
+          'id,card_number,card_category,name,job_number,department,gender,note,belong_to_mc,number_in_mc,created_time\n';
+        let csv = [];
+
+        for (let card of this.cards) {
+          card_array.push(
+            [
+              card._id.$oid,
+              card.card_number,
+              card.card_category,
+              card.name,
+              card.job_number,
+              card.department,
+              card.gender,
+              card.note,
+              card.belong_to_mc,
+              card.number_in_mc,
+              this.$moment(card.created_time.$date).format(),
+            ].join(','),
+          );
+        }
+        csv = card_array.join('\n');
+
+        let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
+
+        let link = document.createElement('a');
+
+        link.id = 'csv-download-id';
+        link.href = uri;
+
+        document.body.appendChild(link);
+
+        document.getElementById(link.id).style.visibility = 'hidden';
+        document.getElementById(link.id).download = title + '.csv';
+
+        document.body.appendChild(link);
+        document.getElementById(link.id).click();
+
+        setTimeout(function() {
+          document.body.removeChild(link);
+        });
+        return true;
+      } catch (err) {
+        return false;
+      }
+    },
   },
+
   created() {
     axios
       .get('cards')

@@ -22,10 +22,11 @@ def gates():
 
         try:
             gates = Gate.objects.filter(q_object).order_by('-created_time').skip(int(offset)).limit(int(limit))
-            return make_response(gates.to_json())
         except:
             current_app.logger.exception('get gates failed')
             abort(500)
+        else:
+            return make_response(gates.to_json())
 
     elif request.method == 'POST':
         gates_list = request.json
@@ -48,9 +49,10 @@ def gates():
                 g1.save()
                 return_list.append(g1)
         except:
-            return make_response('{"result": "failed"}')
-
-        return make_response(jsonify({'result': len(return_list)}))
+            current_app.logger.exception('post gates failed')
+            abort(500)
+        else:
+            return make_response(jsonify({'result': len(return_list)}))
 
 
 @bp.route('/cards', methods=['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])
@@ -66,17 +68,20 @@ def cards():
                 | Q(card_category__icontains=query_string)\
                 | Q(name__icontains=query_string)\
                 | Q(job_number__icontains=query_string)\
-                | Q(department__icontains=query_string)
+                | Q(department__icontains=query_string)\
+                | Q(id=query_string)
 
         offset = request.args.get('offset', 0)
         limit = request.args.get('limit', 50)
 
         try:
             cards = Card.objects.filter(q_object).order_by('-created_time').skip(int(offset)).limit(int(limit))
-            return make_response(cards.to_json())
+
         except:
             current_app.logger.exception('get cards failed')
             abort(500)
+        else:
+            return make_response(cards.to_json())
 
     elif request.method == 'POST':
         cards_list = request.json
@@ -97,9 +102,11 @@ def cards():
                 c1.save()
                 return_list.append(c1)
         except:
-            return make_response('{"result": "failed"}')
+            current_app.logger.exception('post cards failed')
+            abort(500)
 
-        return make_response(jsonify({'result': len(return_list)}))
+        else:
+            return make_response(jsonify({'result': len(return_list)}))
 
     elif request.method == 'DELETE':
         cards_to_delete = json.loads(request.args['delete_array'])
@@ -107,10 +114,50 @@ def cards():
             for card in cards_to_delete:
                 Card.objects.get(pk=card).delete()
         except:
-            return make_response('{"result": "failed"}')
+            current_app.logger.exception('delete cards failed')
+            abort(500)
 
         else:
             return make_response(jsonify({'result': len(cards_to_delete)}))
+
+
+@bp.route('/cards/create', methods=['POST', 'PATCH'])
+def card_create():
+    if request.method == 'POST':
+        data = request.json
+        try:
+            card = Card(card_number=data['card_number'],
+                        card_category=data['card_category'],
+                        name=data['name'],
+                        job_number=data['job_number'],
+                        department=data['department'],
+                        gender=data['gender'], note=data['note'],
+                        belong_to_mc=data['belong_to_mc'])
+            card.save()
+        except:
+            current_app.logger.exception('create card failed')
+            abort(500)
+        else:
+            return make_response(card.to_json())
+
+    elif request.method == 'PATCH':
+        data = request.json
+        try:
+            card = Card.objects.get(id=data['id'])
+            card.card_number = data['card_number']
+            card.card_category = data['card_category']
+            card.name = data['name']
+            card.job_number = data['job_number']
+            card.department = data['department']
+            card.gender = data['gender']
+            card.note = data['note']
+            card.belong_to_mc = data['belong_to_mc']
+            card.save()
+        except:
+            current_app.logger.exception('create card failed')
+            abort(500)
+        else:
+            return make_response(card.to_json())
 
 
 @bp.route('/cardtests', methods=['GET', 'POST'])

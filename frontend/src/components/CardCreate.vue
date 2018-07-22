@@ -1,127 +1,162 @@
 <template>
-    <div class="container">
-        <form class="card-create-form">
-            <div class="form-group row">
-                <label for="name" class="col-sm-2 col-form-label">姓名 *</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="name">
-                </div>
-            </div>
+  <div class="container">
+    <form class="card-create-form">
+      <div class="form-group row">
+        <label for="cardNumber" class="col-sm-2 col-form-label">卡号 *</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="cardNumber" v-model="card.card_number">
 
-            <div class="form-group row">
-                <label for="cardNumber" class="col-sm-2 col-form-label">卡号 *</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="cardNumber">
-                </div>
-            </div>
+        </div>
 
-            <div class="form-group row">
-                <label for="phone" class="col-sm-2 col-form-label">电话</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="phone">
-                </div>
-            </div>
+      </div>
 
-            <div class="form-group row">
-                <label for="position" class="col-sm-2 col-form-label">职位</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="position">
-                </div>
-            </div>
+      <div class="form-group row">
+        <label for="card_category" class="col-sm-2 col-form-label">卡类别 *</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="card_category" v-model="card.card_category">
+          <small class="form-text text-muted">1: VIP, 2: 只测手, 3: 只测脚, 4: 手脚同测</small>
+        </div>
+      </div>
 
-            <div class="form-group row">
-                <label for="enterDate" class="col-sm-2 col-form-label">入职时间</label>
-                <div class="col-sm-10">
-                    <datetime v-model="date1" type="date" input-class="form-control" format="yyyy-MM-dd" :phrases="{ok: '确定', cancel: '取消'}" :minute-step="10"></datetime>
-                </div>
-            </div>
+      <div class="form-group row">
+        <label for="name" class="col-sm-2 col-form-label">姓名 *</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="name" v-model="card.name">
+        </div>
+      </div>
 
-            <div class="form-group row">
-                <label for="jobNumber" class="col-sm-2 col-form-label">工号 *</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="jobNumber" />
-                </div>
-            </div>
+      <div class="form-group row">
+        <label for="job_number" class="col-sm-2 col-form-label">工号 *</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="job_number" v-model="card.job_number">
+        </div>
+      </div>
 
-            <fieldset class="form-group">
-                <div class="row">
-                    <legend class="col-form-label col-sm-2 pt-0">性别</legend>
-                    <div class="col-sm-10">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
-                            <label class="form-check-label" for="gridRadios1">
-                                男
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
-                            <label class="form-check-label" for="gridRadios2">
-                                女
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
+      <div class="form-group row">
+        <label for="department" class="col-sm-2 col-form-label">部门 *</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="department" v-model="card.department">
+        </div>
+      </div>
 
-            <div class="form-group row">
-                <label for="cardCategory" class="col-sm-2 col-form-label">卡类型</label>
-                <div class="col-sm-10">
-                    <select class="form-control" id="cardCategory">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                    </select>
-                </div>
-            </div>
+      <div class="form-group row">
+        <label for="gender" class="col-sm-2 col-form-label">性别 *</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="gender" v-model="card.gender">
+          <small class="form-text text-muted">0: 女, 1: 男</small>
+        </div>
+      </div>
 
-            <div class="form-group row">
-                <label for="birthday" class="col-sm-2 col-form-label">出生</label>
-                <div class="col-sm-10">
-                    <datetime v-model="date1" type="date" input-class="form-control" format="yyyy-MM-dd" :phrases="{ok: '确定', cancel: '取消'}" :minute-step="10"></datetime>
+      <div class="form-group row">
+        <label for="note" class="col-sm-2 col-form-label">其他</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="note" v-model="card.note">
+        </div>
+      </div>
 
-                </div>
-            </div>
+      <div class="form-group row">
+        <label for="belong_to_mc" class="col-sm-2 col-form-label">对应闸机</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="belong_to_mc" v-model="card.belong_to_mc">
+          <small class="form-text text-muted">format: "gate_number_1|gate_number_2|gate_number_3" 不填代表对应所有闸机</small>
+        </div>
+      </div>
 
-            <div class="form-group row">
-                <label for="department" class="col-sm-2 col-form-label">部门</label>
-                <div class="col-sm-10">
-                    <select class="form-control" id="department">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group row text-center">
-                <div class="col-sm-12">
-                    <button type="submit" class="btn btn-success btn-block submit-btn" @click.prevent="submitOoo()"> 保存 </button>
-                </div>
-            </div>
-        </form>
-    </div>
+      <div class="form-group row text-center">
+        <div class="col-sm-12">
+          <button type="submit" class="btn btn-success btn-block submit-btn" @click.prevent="submit()" :disabled="submit_is_disabled"> 保存 </button>
+        </div>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: '',
   data: function() {
     return {
-      date1: this.$moment().format('YYYY-MM-DDTHH:mm:ss'),
-      ooo: { key1: '', key2: '' },
-      file1: '',
+      card: {
+        id: '',
+        card_number: '',
+        card_category: '',
+        name: '',
+        job_number: '',
+        department: '',
+        gender: '',
+        note: '',
+        belong_to_mc: '',
+      },
+      submit_is_disabled: false,
     };
   },
-  props: {},
-  components: {},
   methods: {
-    submitOoo() {
-      console.log(this.file1);
+    submit() {
+      this.submit_is_disabled = true;
+      console.log(this.card);
+      if (
+        this.card.card_number &&
+        this.card.card_category &&
+        this.card.name &&
+        this.card.job_number &&
+        this.card.department &&
+        this.card.gender
+      ) {
+        if (this.card.id) {
+          axios
+            .patch('cards/create', this.card)
+            .then((response) => {
+              console.log(response);
+              alert('保存成功!');
+              this.$router.push({ name: 'Cards' });
+            })
+            .catch((response) => {
+              console.log(response);
+              alert('保存失败!');
+              this.submit_is_disabled = false;
+            });
+        } else {
+          axios
+            .post('cards/create', this.card)
+            .then((response) => {
+              console.log(response);
+              alert('保存成功!');
+              this.$router.push({ name: 'Cards' });
+            })
+            .catch((response) => {
+              console.log(response);
+              alert('保存失败!');
+              this.submit_is_disabled = false;
+            });
+        }
+      } else {
+        alert('带*的信息不能为空!');
+      }
     },
+  },
+  created() {
+    if (this.$route.params.card_id) {
+      this.card.id = this.$route.params.card_id;
+      axios
+        .get(`cards?q=${this.card.id}`)
+        .then((response) => {
+          console.log(response);
+          this.card.card_number = response.data[0].card_number;
+          this.card.card_category = response.data[0].card_category;
+          this.card.name = response.data[0].name;
+          this.card.job_number = response.data[0].job_number;
+          this.card.department = response.data[0].department;
+          this.card.gender = response.data[0].gender;
+          this.card.note = response.data[0].note;
+          this.card.belong_to_mc = response.data[0].belong_to_mc;
+          this.card.number_in_mc = response.data[0].number_in_mc;
+          console.log(this.card);
+        })
+        .catch((response) => {
+          console.log(response);
+        });
+    }
   },
 };
 </script>
