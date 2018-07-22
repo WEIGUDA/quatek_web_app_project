@@ -2,7 +2,7 @@ import datetime
 from app import db
 
 
-class Gate(db.Document):
+class Gate(db.DynamicDocument):
     name = db.StringField(default='')  # 闸机名
     number = db.StringField(default='')  # 闸机编号
     category = db.StringField(default='')  # 闸机分类
@@ -18,7 +18,7 @@ class Gate(db.Document):
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
 
 
-class Card(db.Document):
+class Card(db.DynamicDocument):
     card_number = db.StringField(default='')  # 卡号
     card_category = db.StringField(  # 卡类别
         default='4',
@@ -37,7 +37,7 @@ class Card(db.Document):
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
 
 
-class CardTest(db.Document):
+class CardTest(db.DynamicDocument):
     gate_number = db.StringField(default='')  # 闸机编号
     test_result = db.StringField(default='')  # 通行结果
     test_value = db.StringField(default='')  # 检测值

@@ -21,8 +21,9 @@
     </div>
     <div class="row btn-row" v-if="cardtests.length">
       <p class="w-100 text-right">
-        <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="email发送测试">
-          <font-awesome-icon icon="envelope" />
+        <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="下载" @click="download_csv()">
+          <!-- <font-awesome-icon icon="envelope" /> -->
+          <font-awesome-icon icon="download" />
         </button>
 
       </p>
@@ -52,14 +53,14 @@
             <td>{{cardtest.card_number}}</td>
             <td>{{cardtest.test_datetime.$date | moment('YYYY-MM-DD HH:mm')}}</td>
             <td>
-              <button type="button" class="btn btn-secondary btn-quatek btn-sm">
+              <!-- <button type="button" class="btn btn-secondary btn-quatek btn-sm">
                 <font-awesome-icon icon="pencil-alt" />
-              </button>
+              </button> -->
             </td>
             <td>
-              <button type="button" class="btn btn-secondary btn-quatek btn-sm">
+              <!-- <button type="button" class="btn btn-secondary btn-quatek btn-sm">
                 <font-awesome-icon icon="trash-alt" />
-              </button>
+              </button> -->
             </td>
           </tr>
         </tbody>
@@ -109,7 +110,6 @@ export default {
         .format('YYYY-MM-DDTHH:mm'),
     };
   },
-  //   computed() {},
   methods: {
     search() {
       console.log(this.query_string);
@@ -126,6 +126,51 @@ export default {
             console.log(response);
           },
         );
+    },
+
+    download_csv() {
+      try {
+        let title = 'cardtests_page_' + this.currentPage;
+        let cardtest_array = [];
+        let csv_header = 'id,gate_number,result,job_number,card_number,test_time\n';
+        let csv = [];
+
+        for (let cardtest of this.cardtests) {
+          cardtest_array.push(
+            [
+              cardtest._id.$oid,
+              cardtest.gate_number,
+              cardtest.test_result,
+              cardtest.job_number,
+              cardtest.card_number,
+              this.$moment(cardtest.test_datetime.$date).format(),
+            ].join(','),
+          );
+        }
+        csv = cardtest_array.join('\n');
+
+        let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
+
+        let link = document.createElement('a');
+
+        link.id = 'csv-download-id';
+        link.href = uri;
+
+        document.body.appendChild(link);
+
+        document.getElementById(link.id).style.visibility = 'hidden';
+        document.getElementById(link.id).download = title + '.csv';
+
+        document.body.appendChild(link);
+        document.getElementById(link.id).click();
+
+        setTimeout(function() {
+          document.body.removeChild(link);
+        });
+        return true;
+      } catch (err) {
+        return false;
+      }
     },
 
     prevPage() {
