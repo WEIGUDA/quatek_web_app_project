@@ -188,7 +188,7 @@ export default {
 
     download_csv() {
       try {
-        let title = 'gates';
+        let title = 'gates_page_' + this.currentPage;
         let gate_array = [];
         let csv_header =
           'id,name,number,category,mc_id,hand_max,hand_min,foot_max,foot_min,created_time,is_on,is_online\n';

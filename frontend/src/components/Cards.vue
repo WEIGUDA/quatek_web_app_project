@@ -22,7 +22,10 @@
         </button>
       </p>
     </div>
-    <div class="row">
+    <div class="row" v-if="!cards.length">
+      <p class="w-100 text-center no-result">没有搜索到结果</p>
+    </div>
+    <div class="row" v-if="cards.length">
       <table class="table table-striped table-responsive-md">
         <thead>
           <tr>
@@ -58,7 +61,7 @@
 
       </table>
     </div>
-    <nav aria-label="Page navigation">
+    <nav aria-label="Page navigation" v-if="cards.length">
       <ul class="pagination justify-content-center">
         <li class="page-item" :class="{disabled: currentPage<=1}">
           <a class="page-link" href="#" aria-label="Previous" @click="prevPage()">
@@ -279,6 +282,10 @@ export default {
 .template_download {
   color: #059c66;
 }
+.no-result {
+  height: 300px;
+  color: #868686;
+}
 @media (min-width: 576px) {
 }
 
@@ -294,6 +301,9 @@ export default {
 @media (min-width: 1200px) {
   .search-row {
     margin: 0 -15px 20px -15px;
+  }
+  .no-result {
+    height: 400px;
   }
 }
 </style>
