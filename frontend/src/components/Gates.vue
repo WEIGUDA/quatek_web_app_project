@@ -56,8 +56,7 @@
           <a class="template_download" href="" @click.prevent="download_gates_upload_template()">闸机信息模版.csv</a>
         </b-row>
         <b-row>
-          <!-- <input type="file" class="form-control-file" @change="file_input_change($event)" accept="text/csv"> -->
-          <b-form-file v-model="gates_upload_file" placeholder="请选择文件..."></b-form-file>
+          <b-form-file v-model="gates_upload_file" placeholder="请选择文件..." accept="text/csv"></b-form-file>
         </b-row>
         <b-row>
 
@@ -69,14 +68,9 @@
 
 </template>
 
-
-
-
 <script>
 import axios from 'axios';
 import Gate from '@/components/Gate';
-const IP_ADDRESS = location.hostname;
-const PORT = '5000';
 
 export default {
   name: 'Gates',
@@ -86,7 +80,7 @@ export default {
       gates: [],
       query_string: '',
       show_modal: false,
-      gates_upload_file: null,
+      gates_upload_file: '',
     };
   },
 
@@ -94,24 +88,20 @@ export default {
     search() {
       console.log(this.query_string);
 
-      this.$http.get(`gates?q=${this.query_string}`).then(
-        (response) => {
-          console.log(response.body);
-          this.gates = response.body;
-          this.currentPage = 1;
-        },
-        (response) => {
+      axios
+        .get(`gates?q=${this.query_string}`)
+        .then((response) => {
           console.log(response);
-        },
-      );
+          this.gates = response.data;
+          this.currentPage = 1;
+        })
+        .catch((response) => {
+          console.log(response);
+        });
     },
 
     upload_show() {
       this.show_modal = true;
-    },
-
-    file_input_change(event) {
-      this.gates_upload_file = event.target.files[0];
     },
 
     upload() {
@@ -124,12 +114,14 @@ export default {
         }
         console.log(result);
         axios
-          .post(`http://${IP_ADDRESS}:${PORT}/gates`, result)
+          .post('gates', result)
           .then((response) => {
-            console.log(response.body);
+            console.log(response);
+            alert(`${response.data.result}台闸机信息上传成功!`);
           })
           .catch((response) => {
             console.log(response);
+            alert('上传失败!');
           });
       };
       reader.readAsText(this.gates_upload_file);
@@ -165,33 +157,33 @@ export default {
     },
     prevPage() {
       let offset = (this.currentPage - 2) * 50;
-      this.$http.get(`gates?offset=${offset}&q=${this.query_string}`).then(
-        (response) => {
-          console.log(response.body);
-          this.gates = response.body;
-          this.currentPage--;
-        },
-        (response) => {
+      axios
+        .get(`gates?offset=${offset}&q=${this.query_string}`)
+        .then((response) => {
           console.log(response);
-        },
-      );
+          this.gates = response.data;
+          this.currentPage--;
+        })
+        .catch((response) => {
+          console.log(response);
+        });
     },
     nextPage() {
       let offset = this.currentPage * 50;
-      this.$http.get(`gates?offset=${offset}&q=${this.query_string}`).then(
-        (response) => {
-          if (response.body.length !== 0) {
-            console.log(response.body);
-            this.gates = response.body;
+      axios
+        .get(`gates?offset=${offset}&q=${this.query_string}`)
+        .then((response) => {
+          if (response.data.length !== 0) {
+            console.log(response);
+            this.gates = response.data;
             this.currentPage++;
           } else {
             alert('已经到达最后一页!');
           }
-        },
-        (response) => {
+        })
+        .catch((response) => {
           console.log(response);
-        },
-      );
+        });
     },
 
     download_csv() {
@@ -251,15 +243,15 @@ export default {
   },
 
   created() {
-    this.$http.get('gates').then(
-      (response) => {
-        console.log(response.body);
-        this.gates = response.body;
-      },
-      (response) => {
+    axios
+      .get('gates')
+      .then((response) => {
         console.log(response);
-      },
-    );
+        this.gates = response.data;
+      })
+      .catch((response) => {
+        console.log(response);
+      });
   },
 };
 </script>
