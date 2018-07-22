@@ -131,7 +131,7 @@ export default {
       try {
         let title = 'gates_upload_template';
         let csv_header =
-          'gate_name*,gate_number*,gate_category*,mc_number,hand_max*,hand_min*,foot_max*,foot_min*,gate_ip,gate_port\n';
+          '*gate_name,*gate_number,*gate_category,*mc_number,*hand_max,*hand_min,*foot_max,*foot_min,gate_ip,gate_port\n';
         let csv = [];
         let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
         let link = document.createElement('a');
