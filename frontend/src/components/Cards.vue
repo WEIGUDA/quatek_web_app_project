@@ -49,7 +49,7 @@
               </button>
             </td>
             <td>
-              <button type="button" class="btn btn-secondary btn-quatek btn-sm">
+              <button type="button" class="btn btn-secondary btn-quatek btn-sm" @click="delete_cards([card._id.$oid,])">
                 <font-awesome-icon icon="trash-alt" />
               </button>
             </td>
@@ -104,7 +104,7 @@ export default {
   data() {
     return {
       currentPage: 1,
-      cards: null,
+      cards: [],
       query_string: '',
       show_modal: false,
       cards_file: '',
@@ -183,6 +183,27 @@ export default {
         return true;
       } catch (err) {
         return false;
+      }
+    },
+
+    delete_cards(cards_array) {
+      let delete_confirmed = prompt('请输入 YES 确认删除!');
+      if (delete_confirmed === 'YES') {
+        let delete_array = JSON.stringify(cards_array);
+        axios
+          .delete(`cards?delete_array=${delete_array}`)
+          .then((response) => {
+            console.log(response);
+            alert('删除成功!');
+          })
+          .catch((response) => {
+            console.log(response);
+            alert('无法删除!');
+          });
+      } else if (delete_confirmed === null) {
+        console.log('canceled');
+      } else {
+        alert('输入错误');
       }
     },
 

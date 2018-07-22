@@ -28,7 +28,7 @@
     <div class="row" v-if="gates.length">
       <AppGate v-for="gate in gates" :gate=gate :key="gate._id.$oid"></AppGate>
     </div>
-    <nav aria-label="Page navigation">
+    <nav aria-label="Page navigation" v-if="gates.length">
       <ul class="pagination justify-content-center">
         <li class="page-item" :class="{disabled: currentPage<=1}">
           <a class="page-link" href="#" aria-label="Previous" @click="prevPage()">

@@ -1,4 +1,5 @@
 import datetime
+import json
 from flask import Blueprint, request, make_response, current_app, abort, jsonify
 from mongoengine.queryset.visitor import Q
 
@@ -54,19 +55,19 @@ def gates():
 
 @bp.route('/cards', methods=['GET', 'POST', 'PATCH', 'PUT', 'DELETE'])
 def cards():
-    query_string = request.args.get('q', None)
-
-    q_object = Q()
-
-    if query_string:
-        q_object = q_object \
-            | Q(card_number__icontains=query_string)\
-            | Q(card_category__icontains=query_string)\
-            | Q(name__icontains=query_string)\
-            | Q(job_number__icontains=query_string)\
-            | Q(department__icontains=query_string)
-
     if request.method == 'GET':
+        query_string = request.args.get('q', None)
+
+        q_object = Q()
+
+        if query_string:
+            q_object = q_object \
+                | Q(card_number__icontains=query_string)\
+                | Q(card_category__icontains=query_string)\
+                | Q(name__icontains=query_string)\
+                | Q(job_number__icontains=query_string)\
+                | Q(department__icontains=query_string)
+
         offset = request.args.get('offset', 0)
         limit = request.args.get('limit', 50)
 
@@ -99,6 +100,17 @@ def cards():
             return make_response('{"result": "failed"}')
 
         return make_response(jsonify({'result': len(return_list)}))
+
+    elif request.method == 'DELETE':
+        cards_to_delete = json.loads(request.args['delete_array'])
+        try:
+            for card in cards_to_delete:
+                Card.objects.get(pk=card).delete()
+        except:
+            return make_response('{"result": "failed"}')
+
+        else:
+            return make_response(jsonify({'result': len(cards_to_delete)}))
 
 
 @bp.route('/cardtests', methods=['GET', 'POST'])
