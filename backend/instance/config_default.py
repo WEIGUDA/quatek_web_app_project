@@ -9,3 +9,5 @@ MONGODB_SETTINGS = {
     'port': 27017,
 }
 REDIS_URL = 'redis://127.0.0.1'
+SOCKET_HOST = '127.0.0.1'
+SOCKET_PORT = 5858

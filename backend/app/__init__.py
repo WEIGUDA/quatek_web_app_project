@@ -37,8 +37,6 @@ def create_app(config=None):
     db.init_app(app)
     socketio.init_app(app)
     cors.init_app(app)
-    app.redis = Redis.from_url(app.config['REDIS_URL'])
-    app.task_queue = rq.Queue('quatek-rq', connection=app.redis)
 
     # register blueprints
     from app.mod_gate.routers import bp as mod_gate_bp

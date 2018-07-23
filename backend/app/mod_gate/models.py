@@ -4,7 +4,7 @@ from app import db
 
 class Gate(db.DynamicDocument):
     name = db.StringField(default='')  # 闸机名
-    number = db.StringField(default='')  # 闸机编号
+    number = db.StringField(default='')  # 闸机mc id
     category = db.StringField(default='')  # 闸机分类
     mc_id = db.StringField(default='')  # 闸机 mc id
     hand_max = db.IntField(null=True, default=None)  # 手上限值
@@ -21,20 +21,21 @@ class Gate(db.DynamicDocument):
 class Card(db.DynamicDocument):
     card_number = db.StringField(default='')  # 卡号
     card_category = db.StringField(  # 卡类别
-        default='4',
-        choices=(('1', 'vip'),
-                 ('2', '只测手'),
-                 ('3', '只测脚'),
-                 ('4', '手脚同测'),)
+        default='0',
+        choices=(('0', '手脚都测'),
+                 ('1', '只测手'),
+                 ('2', '只测脚'),
+                 ('3', 'vip'),)
     )
     name = db.StringField(default='')  # 姓名
     job_number = db.StringField(default='')  # 工号
     department = db.StringField(default='')  # 部门
-    gender = db.StringField(default='1', choices=(('1', '男'), ('0', '女')),)  # 性别
+    gender = db.StringField(default='1', choices=(('0', '女'), ('1', '男')),)  # 性别
     note = db.StringField(default='')  # 其他说明
-    belong_to_mc = db.StringField(default='')  # 属于mc/闸机 name1|name2|name3
-    number_in_mc = db.StringField(default='')  # 闸机中编号 name1:1|name2:1|name3:1
+    belong_to_mc = db.StringField(default='all')
+    # 闸机中权限 name1:1|name2:0|name3 0:可进可出, 1:禁止进入/可出, 2:禁止出去/可进, 3:禁止进出  or all:所有闸机都可进可出
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
+    card_counter = db.SequenceField(collection_name='card_counter')  # 闸机卡号编号
 
 
 class CardTest(db.DynamicDocument):

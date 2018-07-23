@@ -15,6 +15,7 @@ pytest = "*"
 python-dateutil = "*"
 celery = "*"
 rq = "*"
+rq-scheduler = "*"
 
 [dev-packages]
 pylint = "*"

@@ -20,7 +20,7 @@ def get_logger(file):
     consoleHandler = logging.StreamHandler(sys.stdout)
     consoleHandler.setFormatter(logFormatter)
 
-    # logger.addHandler(fileHandler)
+    logger.addHandler(fileHandler)
     logger.addHandler(consoleHandler)
 
     return logger
@@ -29,14 +29,6 @@ def get_logger(file):
 logger = get_logger(__file__)
 
 if __name__ == "__main__":
-    while True:
-        try:
-            app = create_app({'DEBUG': False, 'ENV': 'production'})
-            logger.info('start a flask server')
-            socketio.run(app)
-
-        except:
-            logger.exception('Exception')
-
-        else:
-            break
+    app = create_app({'DEBUG': False, 'ENV': 'production'})
+    logger.info('start a flask server')
+    socketio.run(app)

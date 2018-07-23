@@ -14,7 +14,7 @@
         <label for="card_category" class="col-sm-2 col-form-label">卡类别 *</label>
         <div class="col-sm-10">
           <input type="text" class="form-control" id="card_category" v-model="card.card_category">
-          <small class="form-text text-muted">1: VIP, 2: 只测手, 3: 只测脚, 4: 手脚同测</small>
+          <small class="form-text text-muted">0: 手脚同测, 1: 只测手, 2: 只测脚, 4: VIP</small>
         </div>
       </div>
 
@@ -55,10 +55,10 @@
       </div>
 
       <div class="form-group row">
-        <label for="belong_to_mc" class="col-sm-2 col-form-label">对应闸机</label>
+        <label for="belong_to_mc" class="col-sm-2 col-form-label">对应闸机&权限</label>
         <div class="col-sm-10">
           <input type="text" class="form-control" id="belong_to_mc" v-model="card.belong_to_mc">
-          <small class="form-text text-muted">format: "gate_number_1|gate_number_2|gate_number_3" 不填代表对应所有闸机</small>
+          <small class="form-text text-muted">format: "gate_1:0|gate_2:1|gate_3:3"; 其中0:可进可出, 1:禁止进入/可出, 2:禁止出去/可进, 3:禁止进出; "all"填代表对应所有闸机</small>
         </div>
       </div>
 
