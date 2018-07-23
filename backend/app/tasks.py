@@ -1,14 +1,11 @@
 import socketserver
 import time
-import json
 import logging
+import datetime
 import os
 import sys
-import socket
 import threading
-from time import sleep
 from logging import handlers
-from datetime import datetime, timedelta
 from redis import Redis
 import rq
 
@@ -99,7 +96,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
             for card in cards.find():
                 belong_to_mc = card['belong_to_mc']
                 # add to all mc
-                if belong_to_mc == 'all':
+                if belong_to_mc == 'all' or not belong_to_mc:
                     self.request.sendall(
                         '\rSET CARD;{card_counter};{card_number};{job_number};{name};{department};{gender};{cart_category};0;{note}\n'.format(**card).encode())
                     data = self.recv(1024).decode()

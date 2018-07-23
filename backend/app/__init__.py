@@ -1,7 +1,4 @@
 import os
-import rq
-
-from redis import Redis
 from flask import Flask
 from flask_mongoengine import MongoEngine
 from flask_socketio import SocketIO
