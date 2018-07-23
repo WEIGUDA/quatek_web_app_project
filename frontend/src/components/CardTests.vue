@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-    <div class="row btn-row" v-if="cardtests.length">
+    <div class="row btn-row">
       <p class="w-100 text-right">
         <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="下载" @click="download_csv()">
           <!-- <font-awesome-icon icon="envelope" /> -->
@@ -257,6 +257,7 @@ export default {
   height: 300px;
   color: #868686;
 }
+
 @media (min-width: 576px) {
 }
 

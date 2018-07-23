@@ -30,14 +30,6 @@ logger = get_logger(__file__)
 
 
 if __name__ == "__main__":
-    while True:
-        try:
-            app = create_app()
-            logger.info('start a flask server')
-            socketio.run(app)
-
-        except:
-            logger.exception('Exception')
-
-        else:
-            break
+    app = create_app()
+    app.run()
+    # socketio.run(app)

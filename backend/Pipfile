@@ -12,8 +12,9 @@ flask-socketio = "*"
 eventlet = "*"
 redis = "*"
 pytest = "*"
-"flask-rq2" = "*"
 python-dateutil = "*"
+celery = "*"
+rq = "*"
 
 [dev-packages]
 pylint = "*"
@@ -22,6 +23,7 @@ pylint-flask = "*"
 "flake8" = "*"
 rope = "*"
 ptvsd = "*"
+ipython = "*"
 
 [requires]
 python_version = "3.6"
