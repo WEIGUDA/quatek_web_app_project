@@ -2,13 +2,12 @@ import socketserver
 import time
 import logging
 import datetime
-import dateutil
 import os
 import sys
 import threading
 from logging import handlers
-from redis import Redis
-import rq
+from celery import Celery
+from celery.schedules import crontab
 
 from pymongo import MongoClient
 
@@ -43,9 +42,9 @@ gates = db.gate
 cardtests = db.cardtest
 users = db.user
 
-# rq
-redis = Redis.from_url(REDIS_URL)
-task_queue = rq.Queue('quatek-rq', connection=redis)
+
+# celery
+app = Celery('quatek-task', broker='redis://127.0.0.1/', result_backend='redis://127.0.0.1/')
 
 
 class UploadAllCardsHandler(socketserver.BaseRequestHandler):
@@ -347,3 +346,15 @@ def get_logs_from_mc():
     server.shutdown()
     server.server_close()
     logger.info("start the get_logs_from_mc task...")
+
+
+@app.task()
+def test_task(seconds):
+    for i in range(seconds):
+        logger.info(str(i))
+        time.sleep(1)
+
+
+@app.on_after_configure.connect()
+def setup_periodic_tasks(sender, **kwargs):
+    sender.add_periodic_task(10, test_task.s(5), name='add every 10')

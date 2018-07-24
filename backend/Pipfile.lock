@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3af3491233fedc355be586c52869477eb6d744fa4945b23d59a2415ffdc8bee6"
+            "sha256": "96c7aa53a93e42555d6121faa1cac3c2663c887270fd482ff346d109d784690b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -57,12 +57,6 @@
                 "sha256:f15516df478d5a56180fbf80e68f206010e6d160fc39fa508b65e035fd75130b"
             ],
             "version": "==6.7"
-        },
-        "croniter": {
-            "hashes": [
-                "sha256:4e9cb809d8879372e179cabfb7dc15432815b62be034713cc7d9dc09d62ebf02"
-            ],
-            "version": "==0.3.24"
         },
         "eventlet": {
             "hashes": [
@@ -272,22 +266,6 @@
             ],
             "index": "pypi",
             "version": "==2.10.6"
-        },
-        "rq": {
-            "hashes": [
-                "sha256:5dd83625ca64b0dbf668ee65a8d38f3f5132aa9b64de4d813ff76f97db194b60",
-                "sha256:7ac5989a27bdff713dd40517498c1b3bf720f8ebc47305055496f653a29da899"
-            ],
-            "index": "pypi",
-            "version": "==0.12.0"
-        },
-        "rq-scheduler": {
-            "hashes": [
-                "sha256:6cad6b6d29eae55d4585e2ac9be3b8a36b3f18c87a494fc508a4fa19b9c845d6",
-                "sha256:fc51da3d4ad1a047cada3b97a96afea21a3102ea5aa5b79ed2ea97d8ffdf8821"
-            ],
-            "index": "pypi",
-            "version": "==0.8.3"
         },
         "six": {
             "hashes": [
