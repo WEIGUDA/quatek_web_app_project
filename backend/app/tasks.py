@@ -2,6 +2,7 @@ import socketserver
 import time
 import logging
 import datetime
+import dateutil
 import os
 import sys
 import threading
@@ -265,20 +266,25 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                 break
 
         # process data and save to database
-        all_data = all_data.join()
-        all_data = all_data[all_data.find('LOG'):all_data.rfind('\n')].replace('\r', '').split('\n')
-        all_cardtest
-        for data in all_data:
-            for t, v in zip(['log_id', 'card_counter', 'card_number', 'card_category', 'in_out_symbol', 'mc_id', 'test_datetime', 'test_result', 'is_tested', 'hand', 'left_foot', 'right_foot', 'after_erg'], [data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[11], data[12].replace('\n', '')]):
-                all_data_dict.update({t: v})
+        try:
+            all_data = all_data.join()
+            all_data = all_data[all_data.find('LOG'):all_data.rfind(
+                '\n')].replace('\r', '').replace('LOG ', '').split('\n')
+            all_cardtests = []
 
-        cardtests = []
+            for data in all_data:
+                temp_dict = {}
+                for t, v in zip(['log_id', 'card_counter', 'card_number', 'card_category', 'in_out_symbol', 'mc_id', 'test_datetime', 'test_result', 'is_tested', 'hand', 'left_foot', 'right_foot', 'after_erg'], data.split(';')):
+                    temp_dict.update({t: v})
+
+                all_cardtests.append(temp_dict)
+            cardtests.insert_many(all_cardtests)
+        except:
+            logger.exception('error from: {} {}'.format(mc_client, self.client_address))
 
         # send clr log command to mc
-
-        for cardtest in cardtests:
+        for cardtest in all_cardtests:
             self.request.sendall('\rCLR LOG {}\n'.format(cardtest['log_id']).encode())
-            data = self.request.recv(1024).decode
 
         logger.info('stop the GetCardTestLogHandler for {} {}'.format(mc_client, self.client_address))
 
@@ -334,7 +340,6 @@ def delete_a_card(card_dict):
 def get_logs_from_mc():
     server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), GetCardTestLogHandler)
     server_thread = threading.Thread(target=server.serve_forever)
-    # Exit the server thread when the main thread terminates
     server_thread.daemon = True
     server_thread.start()
     logger.info("start a get_logs_from_mc task...")

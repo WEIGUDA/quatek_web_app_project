@@ -45,7 +45,7 @@ class CardTest(db.DynamicDocument):
     card_category = db.StringField(default='')  # 卡片类型(vip, 手脚都测...)
     in_out_symbol = db.StringField(default='')  # 进出标志: 闸机上是进还是出
     mc_id = db.StringField(default='')  # 闸机 mc id
-    test_datetime = db.DateTimeField()  # 测试时间
+    test_datetime = db.StringField()  # 测试时间
     test_result = db.StringField(default='')  # 是否通过 1:通过 0:不通过
     is_tested = db.StringField(default='')  # 是否测试 1:测试 0:不测试
     hand = db.StringField(default='')  # 手腕检测值
