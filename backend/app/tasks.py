@@ -44,7 +44,7 @@ users = db.user
 
 
 # celery
-app = Celery('quatek-task', broker='redis://127.0.0.1/', result_backend='redis://127.0.0.1/')
+app = Celery('quatek-task', broker=REDIS_URL, result_backend=REDIS_URL)
 
 
 class UploadAllCardsHandler(socketserver.BaseRequestHandler):
@@ -297,6 +297,7 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     allow_reuse_address = True
 
 
+@app.task()
 def update_all_cards():
     server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), UploadAllCardsHandler)
     server_thread = threading.Thread(target=server.serve_forever)
@@ -310,6 +311,7 @@ def update_all_cards():
     logger.info("start the update_all_cards task...")
 
 
+@app.task()
 def update_a_card(card_dict):
     server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), UpdateACardHandler, p_data={'card': card_dict})
     server_thread = threading.Thread(target=server.serve_forever)
@@ -323,6 +325,7 @@ def update_a_card(card_dict):
     logger.info("start the update_a_card task...")
 
 
+@app.task()
 def delete_a_card(card_dict):
     server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), DeleteACardHandler, p_data={'card': card_dict})
     server_thread = threading.Thread(target=server.serve_forever)
@@ -336,6 +339,7 @@ def delete_a_card(card_dict):
     logger.info("start the delete_a_card task...")
 
 
+@app.task()
 def get_logs_from_mc():
     server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), GetCardTestLogHandler)
     server_thread = threading.Thread(target=server.serve_forever)
@@ -357,4 +361,4 @@ def test_task(seconds):
 
 @app.on_after_configure.connect()
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(10, test_task.s(5), name='add every 10')
+    sender.add_periodic_task(60 * 5, get_logs_from_mc.s(), name='get log every 5 mins')
