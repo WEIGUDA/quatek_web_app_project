@@ -59,7 +59,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
         # get mc from database
         try:
             self.request.sendall(b'\rGET DI\n')
-            data = self.recv(1024).decode()
+            data = self.request.recv(1024).decode()
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
 
@@ -72,7 +72,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
         try:
             self.request.sendall('\rSET DATETIME {}\n'.format(
                 datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S').encode()))
-            data = self.recv(1024).decode()
+            data = self.request.recv(1024).decode()
             if 'DATETIME' not in data:
                 raise Exception('set datetime error for mc: {} {}'.format(mc_client, self.client_address))
         except:
@@ -82,7 +82,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
         try:
             for i in range(6000):
                 self.request.sendall(b'\rCLR CARD ' + str(i).encode() + b'\n')
-                data = self.recv(1024).decode()
+                data = self.request.recv(1024).decode()
 
                 # if 'CARD' not in data:
                 #     raise Exception('clear card error, card number: {}, mc: {}'.format(
@@ -98,7 +98,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
                 if belong_to_mc == 'all' or not belong_to_mc:
                     self.request.sendall(
                         '\rSET CARD;{card_counter};{card_number};{job_number};{name};{department};{gender};{cart_category};0;{note}\n'.format(**card).encode())
-                    data = self.recv(1024).decode()
+                    data = self.request.recv(1024).decode()
                     if 'CARD' not in data:
                         raise Exception('upload card error, card: {}, mc: {} {}'.format(
                             card, mc_client, self.client_address))
@@ -115,7 +115,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
                     if mc_client['name'] in belong_to_mc_dict:
                         self.request.sendall(
                             '\rSET CARD;{1[card_counter]};{1[card_number]};{1[job_number]};{1[name]};{1[department]};{1[gender]};{1[cart_category]};{0};{1[note]}\n'.format(belong_to_mc_dict[mc_client['name']], **card).encode())
-                        data = self.recv(1024).decode()
+                        data = self.request.recv(1024).decode()
                         if 'CARD' not in data:
                             raise Exception('clear card error, card: {}, mc: {} {}'.format(
                                 card, mc_client, self.client_address))
@@ -140,7 +140,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
         # get mc from database
         try:
             self.request.sendall(b'\rGET DI\n')
-            data = self.recv(1024).decode()
+            data = self.request.recv(1024).decode()
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
 
@@ -155,7 +155,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
             if belong_to_mc == 'all' or not belong_to_mc:
                 self.request.sendall(
                     '\rSET CARD;{card_counter};{card_number};{job_number};{name};{department};{gender};{cart_category};0;{note}\n'.format(**card).encode())
-                data = self.recv(1024).decode()
+                data = self.request.recv(1024).decode()
                 if 'CARD' not in data:
                     raise Exception('upload the card to all mc error, card: {}, mc: {} {}'.format(
                         card, mc_client, self.client_address))
@@ -172,13 +172,13 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
                 if mc_client['name'] in belong_to_mc_dict:
                     self.request.sendall(
                         '\rSET CARD;{1[card_counter]};{1[card_number]};{1[job_number]};{1[name]};{1[department]};{1[gender]};{1[cart_category]};{0};{1[note]}\n'.format(belong_to_mc_dict[mc_client['name']], **card).encode())
-                    data = self.recv(1024).decode()
+                    data = self.request.recv(1024).decode()
                     if 'CARD' not in data:
                         raise Exception('upload the card to 1 mc error, card: {}, mc: {} {}'.format(
                             card, mc_client, self.client_address))
                 else:
                     self.request.sendall('\rCLR CARD;{}\n'.format(card['card_counter']).encode())
-                    data = self.recv(1024).decode()
+                    data = self.request.recv(1024).decode()
                     if 'CARD' not in data:
                         raise Exception('update with delete a card to mc error, card: {}, mc: {} {}'.format(
                             card, mc_client, self.client_address))
@@ -202,7 +202,7 @@ class DeleteACardHandler(socketserver.BaseRequestHandler):
         # get mc from database
         try:
             self.request.sendall(b'\rGET DI\n')
-            data = self.recv(1024).decode()
+            data = self.request.recv(1024).decode()
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
 
@@ -214,7 +214,7 @@ class DeleteACardHandler(socketserver.BaseRequestHandler):
         # delete card from mc
         try:
             self.request.sendall('\rCLR CARD;{}\n'.format(card['card_counter']).encode())
-            data = self.recv(1024).decode()
+            data = self.request.recv(1024).decode()
             if 'CARD' not in data:
                 raise Exception('delete a card from mc error, card: {}, mc: {} {}'.format(
                     card, mc_client, self.client_address))
@@ -236,7 +236,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         # get mc from database
         try:
             self.request.sendall(b'\rGET DI\n')
-            data = self.recv(1024).decode()
+            data = self.request.recv(1024).decode()
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
 
@@ -267,9 +267,9 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         # process data and save to database
         all_data = all_data.join()
         all_data = all_data[all_data.find('LOG'):all_data.rfind('\n')].replace('\r', '').split('\n')
-        all_data_dict = {}
+        all_cardtest
         for data in all_data:
-            for t, v in zip(['log_id', 'a', 'b', 'c', 'a', 'b', 'c', 'a', 'b', 'c'], [data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], ]):
+            for t, v in zip(['log_id', 'card_counter', 'card_number', 'card_category', 'in_out_symbol', 'mc_id', 'test_datetime', 'test_result', 'is_tested', 'hand', 'left_foot', 'right_foot', 'after_erg'], [data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[11], data[12].replace('\n', '')]):
                 all_data_dict.update({t: v})
 
         cardtests = []
