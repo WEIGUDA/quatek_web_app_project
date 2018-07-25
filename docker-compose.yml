@@ -71,7 +71,7 @@ services:
   
 
   mongo:
-    image: mongo
+    image: mongo:4.0.0
     deploy:
       replicas: 1
       update_config:
@@ -85,7 +85,7 @@ services:
       - mongodb:/data/db
 
   redis:
-    image: redis:4
+    image: redis:4.0.10-alpine
     deploy:
       replicas: 1
       update_config:
