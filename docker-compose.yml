@@ -5,7 +5,7 @@ services:
     image: quatek_web_app_backend
     build: ./backend
     ports:
-      - '5000:5000'
+      - '5001:5001'
     depends_on:
       - mongo
     deploy:
