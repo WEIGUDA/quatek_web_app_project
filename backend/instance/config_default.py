@@ -1,7 +1,7 @@
 import os
 
 ENV = os.environ.get('ENV', 'production')
-DEBUG = os.environ.get('DEBUG', False)
+DEBUG = os.environ.get('DEBUG') == 'True'
 SECRET_KEY = os.environ.get('SECRET_KEY', os.urandom(24))
 
 MONGODB_DB = os.environ.get('MONGODB_DB', 'quatek_web_app')

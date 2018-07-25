@@ -745,3 +745,4 @@ paket-files/
 !backend/instance/config_default.py
 !backend/instance/config_test.py 
 backend/celerybeat-schedule
+docker-compose.debug.yml
