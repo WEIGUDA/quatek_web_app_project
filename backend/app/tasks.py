@@ -12,9 +12,9 @@ from celery.schedules import crontab
 from pymongo import MongoClient
 
 # load configs
-from instance.config_default import MONGODB_SETTINGS, REDIS_URL, SOCKET_HOST, SOCKET_PORT
+from instance.config_default import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, REDIS_URL, SOCKET_HOST, SOCKET_PORT
 try:
-    from instance.config_pro import MONGODB_SETTINGS, REDIS_URL, SOCKET_HOST, SOCKET_PORT
+    from instance.config_pro import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, REDIS_URL, SOCKET_HOST, SOCKET_PORT
 except:
     pass
 
@@ -35,7 +35,7 @@ logger.addHandler(fileHandler)
 logger.addHandler(consoleHandler)
 
 # pymongo
-client = MongoClient(MONGODB_SETTINGS['host'], MONGODB_SETTINGS['port'])
+client = MongoClient(MONGODB_HOST, MONGODB_PORT)
 db = client.quatek_web_app
 cards = db.card
 gates = db.gate
@@ -58,12 +58,12 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
         mc_client = {}
         # get mc from database
         try:
-            self.request.sendall(b'\rGET DI\n')
+            self.request.sendall(b'\rGET ID\n')
             data = self.request.recv(1024).decode()
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
 
-            if 'DI' not in data:
+            if 'ID' not in data:
                 raise Exception('get mc error, mc: {} {}'.format(mc_client, self.client_address))
         except:
             logger.exception('error')
@@ -298,14 +298,14 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 
 @app.task()
-def update_all_cards():
-    server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), UploadAllCardsHandler)
+def update_all_cards(host=SOCKET_HOST, port=SOCKET_PORT, server_last_time=60):
+    server = ThreadedTCPServer((host, port), UploadAllCardsHandler)
     server_thread = threading.Thread(target=server.serve_forever)
     # Exit the server thread when the main thread terminates
     server_thread.daemon = True
     server_thread.start()
     logger.info("start an update_all_cards task...")
-    time.sleep(60)
+    time.sleep(server_last_time)
     server.shutdown()
     server.server_close()
     logger.info("start the update_all_cards task...")

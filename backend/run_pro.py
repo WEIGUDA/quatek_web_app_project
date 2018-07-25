@@ -29,6 +29,6 @@ def get_logger(file):
 logger = get_logger(__file__)
 
 if __name__ == "__main__":
-    app = create_app({'DEBUG': False, 'ENV': 'production'})
+    app = create_app()
     logger.info('start a flask server')
-    socketio.run(app)
+    socketio.run(app, host='0.0.0.0', port=5000)

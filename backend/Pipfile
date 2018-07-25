@@ -1,5 +1,5 @@
 [[source]]
-url = "https://mirrors.aliyun.com/pypi/simple/"
+url = "https://pypi.org/simple/"
 verify_ssl = true
 name = "pypi"
 
@@ -13,7 +13,7 @@ eventlet = "*"
 redis = "*"
 pytest = "*"
 python-dateutil = "*"
-celery = {version = "*", extras = ["eventlet"]}
+celery = "*"
 
 [dev-packages]
 pylint = "*"
@@ -25,7 +25,7 @@ ptvsd = "*"
 ipython = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3"
 
 [pipenv]
 allow_prereleases = true
