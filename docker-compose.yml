@@ -1,0 +1,124 @@
+version: '3'
+
+services:
+  flask:
+    image: quatek_web_app_backend
+    build: ./backend
+    ports:
+      - '5000:5000'
+    depends_on:
+      - mongo
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks: 
+      - quatek_net
+
+  celery_worker:
+    image: celery_worker
+    build: ./backend
+    ports:
+      - '5858:5858'
+    command: pipenv run celery -A app.tasks worker --loglevel=DEBUG
+    depends_on:
+      - mongo
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks: 
+      - quatek_net
+  
+  celery_beat:
+    image: celery_beat
+    build: ./backend
+    command: pipenv run celery -A app.tasks beat 
+    depends_on:
+      - mongo
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks: 
+      - quatek_net
+
+  vue:
+    image: quatek_web_app_frontend
+    build: ./frontend
+    ports:
+      - '80:80'
+    depends_on:
+      - flask
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks: 
+      - quatek_net
+  
+
+  mongo:
+    image: mongo
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks: 
+      - quatek_net
+    volumes: 
+      - mongodb:/data/db
+
+  redis:
+    image: redis:4
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+      - quatek_net
+    volumes: 
+      - redis:/data
+  
+  mongo-express:
+    image: mongo-express
+    environment:
+      - ME_CONFIG_BASICAUTH_USERNAME=quatek
+      - ME_CONFIG_BASICAUTH_PASSWORD=quatek
+    ports:
+      - '8081:8081'
+    depends_on:
+      - mongo
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+      - quatek_net
+
+volumes:
+  redis:
+  mongodb:
+networks: 
+  quatek_net:
