@@ -20,9 +20,9 @@ def client():
 
     yield client
 
-    mongo_client = MongoClient(app.config['MONGODB_HOST'],
-                               app.config['MONGODB_PORT'])
-    mongo_client.drop_database(app.config['MONGODB_DB'])
+    mongo_client = MongoClient(app.config['MONGODB_SETTINGS']['host'],
+                               app.config['MONGODB_SETTINGS']['port'])
+    mongo_client.drop_database(app.config['MONGODB_SETTINGS']['db'])
 
 
 def test_gates_filter(client):

@@ -1,32 +1,57 @@
-import pytest
-import socket
-import threading
+import random
 
-from app.tasks import update_all_cards, update_a_card, delete_a_card, get_logs_from_mc
+from app.tasks import update_all_cards
+from tests.CRUD_DB import insert_cards_to_db
+
+from app.tasks import update_a_card
+from tests.CRUD_DB import insert_a_card
+
+from tests.CRUD_DB import get_card_from_db
+from tests.CRUD_DB import remove_card_for_db
+from app.tasks import delete_a_card
+
+from app.tasks import get_logs_from_mc
 
 
-@pytest.fixture()
-def generate_host_and_port():
-    s_client = socket.socket()
-    s_client.bind(('127.0.0.1', 0))
-    host, port = s_client.getsockname()
-    s_client.close()
-    return (host, port)
+def test_update_all_cards():
+    update_all_cards()
 
 
-def test_update_all_cards(generate_host_and_port):
-    host, port = generate_host_and_port
+def test_update_a_card():
+    name_str = "abcdefghijklmnopqrstuvwxyz"
+    name = ''.join(random.sample(name_str, 5))
+    gender_str = "01"
+    gender = ''.join(random.sample(gender_str, 1))
+    category_str = "0123"
+    card_category = ''.join(random.sample(category_str, 1))
+    belong_to_mc = 'name1:0|name2:0'
 
-    update_all_cards.delay(host=host, port=port, server_last_time=30)
+    job_number = str(0)
+    card_counter = str(0)
 
-    s = socket.socket()
-    s.connect((host, port))
-    s.settimeout(5)
-    while True:
-        data = s.recv(1024).decode()
-        if 'GET ID' in data:
-            s.sendall(b'\rID 0\n')
-            continue
-        print(data)
-    s.close()
-    assert 1 == 1
+    card = {
+        'name': name,
+        'job_number': job_number,
+        'department': 'RD',
+        'gender': gender,
+        'note': 'REMARK',
+        'belong_to_mc': belong_to_mc,
+        'card_number': "002A7DAA",
+        'card_counter': card_counter,
+        'card_category': card_category,
+    }
+    update_a_card(card)
+    insert_a_card(card)
+
+
+def test_delete_a_card():
+    card_dict = get_card_from_db("0")
+    delete_a_card(card_dict)
+    # remove_card_for_db("0")
+
+
+if __name__ == "__main__":
+    test_update_all_cards()
+    # test_update_a_card()
+    # test_delete_a_card()
+
