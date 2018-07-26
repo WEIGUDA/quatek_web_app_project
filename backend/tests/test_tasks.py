@@ -1,38 +1,56 @@
-import socketserver
-import threading
-import time
-from datetime import datetime
+import random
+
+from app.tasks import update_all_cards
+from tests.CRUD_DB import insert_cards_to_db
+
+from app.tasks import update_a_card
+from tests.CRUD_DB import insert_a_card
+
+from tests.CRUD_DB import get_card_from_db
+from tests.CRUD_DB import remove_card_for_db
+from app.tasks import delete_a_card
+
+from app.tasks import get_logs_from_mc
 
 
-class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
-    def __init__(self, server_address, RequestHandlerClass, bind_and_activate=True, p_data=None):
-        super().__init__(server_address, RequestHandlerClass, bind_and_activate=True)
-        self.p_data = p_data
-
-    timeout = 5
-    allow_reuse_address = True
+def test_update_all_cards():
+    update_all_cards()
 
 
-class TestHandler(socketserver.BaseRequestHandler):
-    def handle(self):
-        self.request.settimeout(5)
-        self.request.sendall(b'GET MCID\r\n')
+def test_update_a_card():
+    name_str = "abcdefghijklmnopqrstuvwxyz"
+    name = ''.join(random.sample(name_str, 5))
+    gender_str = "01"
+    gender = ''.join(random.sample(gender_str, 1))
+    category_str = "0123"
+    card_category = ''.join(random.sample(category_str, 1))
+    belong_to_mc = 'name1:0|name2:0'
 
-        data = self.request.recv(1024).decode().replace('\r\n', '')
-        print('{} - {} from {} {}'.format(datetime.now(), data, *self.client_address))
-        time.sleep(10)
+    job_number = str(2)
+    card_counter = str(2)
+
+    card = {
+        'name': name,
+        'job_number': job_number,
+        'department': 'RD',
+        'gender': gender,
+        'note': 'REMARK',
+        'belong_to_mc': belong_to_mc,
+        'card_number': "002A7DAA",
+        'card_counter': card_counter,
+        'card_category': card_category,
+    }
+    update_a_card(card)
+    # insert_a_card(card)
 
 
-def test_task():
-    print('{} - {}'.format(datetime.now(), 'start a server'))
-    server = ThreadedTCPServer(('0.0.0.0', 5858), TestHandler)
-    server_thread = threading.Thread(target=server.serve_forever)
-    server_thread.daemon = True
-    server_thread.start()
-    time.sleep(10)
-    server.shutdown()
-    server.server_close()
+def test_delete_a_card():
+    card_dict = get_card_from_db("2")
+    delete_a_card(card_dict, 10)
+    # remove_card_for_db("0")
 
 
-if __name__ == '__main__':
-    test_task()
+if __name__ == "__main__":
+    # test_update_all_cards()
+    # test_update_a_card()
+    test_delete_a_card()
