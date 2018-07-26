@@ -255,17 +255,17 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
 
         # get mc from database
         try:
-            self.request.sendall(b'\rGET DI\n')
+            self.request.sendall(b'GET MCID\r\n')
             data = self.request.recv(1024).decode()
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
 
-            if 'DI' not in data:
+            if 'MCID' not in data:
                 raise Exception('get mc error, mc: {} {}'.format(mc_client, self.client_address))
         except:
             logger.exception('error')
 
-        self.request.sendall(b'\rGET LOG\n')
+        self.request.sendall(b'GET LOG\r\n')
 
         #  read all logs from mc
         while True:
