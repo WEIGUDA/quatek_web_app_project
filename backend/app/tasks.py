@@ -14,6 +14,10 @@ from pymongo import MongoClient
 # load configs
 from instance.config_default import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, REDIS_URL, SOCKET_HOST, SOCKET_PORT
 try:
+    from instance.config_dev import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, REDIS_URL, SOCKET_HOST, SOCKET_PORT
+except:
+    pass
+try:
     from instance.config_pro import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, REDIS_URL, SOCKET_HOST, SOCKET_PORT
 except:
     pass
@@ -57,31 +61,42 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
         self.request.settimeout(5)
         mc_client = {}
         # get mc from database
+        logger.info(1)
         try:
-            self.request.sendall(b'\rGET ID\n')
+            self.request.sendall(b'GET MCID\r\n')
             data = self.request.recv(1024).decode()
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
+            logger.info('mc_client', mc_client)
 
-            if 'ID' not in data:
+            if 'MCID' not in data:
                 raise Exception('get mc error, mc: {} {}'.format(mc_client, self.client_address))
         except:
             logger.exception('error')
 
         # set datetime for mc
+        logger.info(1)
         try:
-            self.request.sendall('\rSET DATETIME {}\n'.format(
-                datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S').encode()))
+            dt = datetime.datetime.utcnow()
+            self.request.sendall('SET DATE {}\r\n'.format(
+                dt.strftime('%Y-%m-%d')).encode())
             data = self.request.recv(1024).decode()
-            if 'DATETIME' not in data:
-                raise Exception('set datetime error for mc: {} {}'.format(mc_client, self.client_address))
+            if 'DATE' not in data:
+                raise Exception('set date error for mc: {} {}'.format(mc_client, self.client_address))
+
+            self.request.sendall('SET TIME {}\r\n'.format(
+                dt.strftime('%H:%M:%S')).encode())
+            data = self.request.recv(1024).decode()
+            if 'TIME' not in data:
+                raise Exception('set time error for mc: {} {}'.format(mc_client, self.client_address))
+
         except:
             logger.exception('error')
 
         # delete all cards in mc
         try:
-            for i in range(6000):
-                self.request.sendall(b'\rCLR CARD ' + str(i).encode() + b'\n')
+            for i in range(10):
+                self.request.sendall(b'CLR CARD ' + str(i).encode() + b'\r\n')
                 data = self.request.recv(1024).decode()
 
                 # if 'CARD' not in data:
@@ -92,12 +107,13 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
 
         # add cards to mc
         try:
+            logger.info(2)
             for card in cards.find():
                 belong_to_mc = card['belong_to_mc']
                 # add to all mc
                 if belong_to_mc == 'all' or not belong_to_mc:
                     self.request.sendall(
-                        '\rSET CARD;{card_counter};{card_number};{job_number};{name};{department};{gender};{cart_category};0;{note}\n'.format(**card).encode())
+                        'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{cart_category},0,{note}\r\n'.format(**card).encode())
                     data = self.request.recv(1024).decode()
                     if 'CARD' not in data:
                         raise Exception('upload card error, card: {}, mc: {} {}'.format(
@@ -105,8 +121,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
 
                 # add to configed mc
                 else:
-                    belong_to_mc = [{item.split(':')[0]: item.split(':'[1])}
-                                    for item in belong_to_mc.split('|')]  # [{'mc1': '0'}, {'mc2': 1}]
+                    belong_to_mc = [{item.split(':')[0]: item.split(':')[1]} for item in belong_to_mc.split('|')]  # [{'mc1': '0'}, {'mc2': 1}]
 
                     belong_to_mc_dict = {}  # {'mc1': '0', 'mc2': 1}
                     for item in belong_to_mc:
@@ -114,7 +129,8 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
 
                     if mc_client['name'] in belong_to_mc_dict:
                         self.request.sendall(
-                            '\rSET CARD;{1[card_counter]};{1[card_number]};{1[job_number]};{1[name]};{1[department]};{1[gender]};{1[cart_category]};{0};{1[note]}\n'.format(belong_to_mc_dict[mc_client['name']], **card).encode())
+                            'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},{0},{note}\r\n'.format(
+                            belong_to_mc_dict[mc_client['name']], **card).encode())
                         data = self.request.recv(1024).decode()
                         if 'CARD' not in data:
                             raise Exception('clear card error, card: {}, mc: {} {}'.format(
@@ -123,6 +139,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
             logger.exception('error')
 
         logger.info('stop the UploadAllCardsHandler for {} {}'.format(mc_client, self.client_address))
+        time.sleep(self.server.p_data['server_last_time'])
 
 
 class UpdateACardHandler(socketserver.BaseRequestHandler):
@@ -139,12 +156,12 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
 
         # get mc from database
         try:
-            self.request.sendall(b'\rGET DI\n')
+            self.request.sendall(b'GET MCID\r\n')
             data = self.request.recv(1024).decode()
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
 
-            if 'DI' not in data:
+            if 'MCID' not in data:
                 raise Exception('get mc error, mc: {} {}'.format(mc_client, self.client_address))
         except:
             logger.exception('error')
@@ -154,7 +171,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
             # add to all mc
             if belong_to_mc == 'all' or not belong_to_mc:
                 self.request.sendall(
-                    '\rSET CARD;{card_counter};{card_number};{job_number};{name};{department};{gender};{cart_category};0;{note}\n'.format(**card).encode())
+                    'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{cart_category},0,{note}\r\n'.format(**card).encode())
                 data = self.request.recv(1024).decode()
                 if 'CARD' not in data:
                     raise Exception('upload the card to all mc error, card: {}, mc: {} {}'.format(
@@ -162,8 +179,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
 
             # add to configed mc
             else:
-                belong_to_mc = [{item.split(':')[0]: item.split(':'[1])}
-                                for item in belong_to_mc.split('|')]  # [{'mc1': '0'}, {'mc2': 1}]
+                belong_to_mc = [{item.split(':')[0]: item.split(':')[1]} for item in belong_to_mc.split('|')]  # [{'mc1': '0'}, {'mc2': 1}]
 
                 belong_to_mc_dict = {}  # {'mc1': '0', 'mc2': 1}
                 for item in belong_to_mc:
@@ -171,13 +187,14 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
 
                 if mc_client['name'] in belong_to_mc_dict:
                     self.request.sendall(
-                        '\rSET CARD;{1[card_counter]};{1[card_number]};{1[job_number]};{1[name]};{1[department]};{1[gender]};{1[cart_category]};{0};{1[note]}\n'.format(belong_to_mc_dict[mc_client['name']], **card).encode())
+                        'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},{0},{note}\r\n'.format(
+                            belong_to_mc_dict[mc_client['name']], **card).encode())
                     data = self.request.recv(1024).decode()
                     if 'CARD' not in data:
                         raise Exception('upload the card to 1 mc error, card: {}, mc: {} {}'.format(
                             card, mc_client, self.client_address))
                 else:
-                    self.request.sendall('\rCLR CARD;{}\n'.format(card['card_counter']).encode())
+                    self.request.sendall('CLR CARD {}\r\n'.format(card['card_counter']).encode())
                     data = self.request.recv(1024).decode()
                     if 'CARD' not in data:
                         raise Exception('update with delete a card to mc error, card: {}, mc: {} {}'.format(
@@ -185,7 +202,9 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
         except:
             logger.exception('error')
 
+        time.sleep(self.server.p_data['server_last_time'])
         logger.info('stop the UpdateACardHandler for mc {} {}'.format(mc_client, self.client_address))
+
 
 
 class DeleteACardHandler(socketserver.BaseRequestHandler):
@@ -201,25 +220,26 @@ class DeleteACardHandler(socketserver.BaseRequestHandler):
 
         # get mc from database
         try:
-            self.request.sendall(b'\rGET DI\n')
+            self.request.sendall(b'GET MCID\r\n')
             data = self.request.recv(1024).decode()
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
 
-            if 'DI' not in data:
+            if 'MCID' not in data:
                 raise Exception('get mc error, mc: {} {}'.format(mc_client, self.client_address))
         except:
             logger.exception('error')
 
         # delete card from mc
         try:
-            self.request.sendall('\rCLR CARD;{}\n'.format(card['card_counter']).encode())
+            self.request.sendall('CLR CARD {}\r\n'.format(card['card_counter']).encode())
             data = self.request.recv(1024).decode()
             if 'CARD' not in data:
                 raise Exception('delete a card from mc error, card: {}, mc: {} {}'.format(
                     card, mc_client, self.client_address))
         except:
             logger.exception('error')
+        time.sleep(self.server.p_data['server_last_time'])
 
 
 class GetCardTestLogHandler(socketserver.BaseRequestHandler):
@@ -299,7 +319,7 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 @app.task()
 def update_all_cards(host=SOCKET_HOST, port=SOCKET_PORT, server_last_time=60):
-    server = ThreadedTCPServer((host, port), UploadAllCardsHandler)
+    server = ThreadedTCPServer((host, port), UploadAllCardsHandler, p_data={'server_last_time':server_last_time})
     server_thread = threading.Thread(target=server.serve_forever)
     # Exit the server thread when the main thread terminates
     server_thread.daemon = True
@@ -308,35 +328,35 @@ def update_all_cards(host=SOCKET_HOST, port=SOCKET_PORT, server_last_time=60):
     time.sleep(server_last_time)
     server.shutdown()
     server.server_close()
-    logger.info("start the update_all_cards task...")
+    logger.info("stop the update_all_cards task...")
 
 
 @app.task()
-def update_a_card(card_dict):
-    server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), UpdateACardHandler, p_data={'card': card_dict})
+def update_a_card(card_dict, server_last_time=10):
+    server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), UpdateACardHandler, p_data={'card': card_dict,'server_last_time':server_last_time})
     server_thread = threading.Thread(target=server.serve_forever)
     # Exit the server thread when the main thread terminates
     server_thread.daemon = True
     server_thread.start()
     logger.info("start an update_a_card task...")
-    time.sleep(30)
+    time.sleep(server_last_time)
     server.shutdown()
     server.server_close()
-    logger.info("start the update_a_card task...")
+    logger.info("stop the update_a_card task...")
 
 
 @app.task()
-def delete_a_card(card_dict):
-    server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), DeleteACardHandler, p_data={'card': card_dict})
+def delete_a_card(card_dict, server_last_time):
+    server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), DeleteACardHandler, p_data={'card': card_dict, 'server_last_time': server_last_time})
     server_thread = threading.Thread(target=server.serve_forever)
     # Exit the server thread when the main thread terminates
     server_thread.daemon = True
     server_thread.start()
     logger.info("start a delete_a_card task...")
-    time.sleep(30)
+    time.sleep(server_last_time)
     server.shutdown()
     server.server_close()
-    logger.info("start the delete_a_card task...")
+    logger.info("stop the delete_a_card task...")
 
 
 @app.task()
