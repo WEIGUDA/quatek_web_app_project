@@ -1,32 +1,38 @@
-import pytest
-import socket
+import socketserver
 import threading
-
-from app.tasks import update_all_cards, update_a_card, delete_a_card, get_logs_from_mc
-
-
-@pytest.fixture()
-def generate_host_and_port():
-    s_client = socket.socket()
-    s_client.bind(('127.0.0.1', 0))
-    host, port = s_client.getsockname()
-    s_client.close()
-    return (host, port)
+import time
+from datetime import datetime
 
 
-def test_update_all_cards(generate_host_and_port):
-    host, port = generate_host_and_port
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    def __init__(self, server_address, RequestHandlerClass, bind_and_activate=True, p_data=None):
+        super().__init__(server_address, RequestHandlerClass, bind_and_activate=True)
+        self.p_data = p_data
 
-    update_all_cards.delay(host=host, port=port, server_last_time=30)
+    timeout = 5
+    allow_reuse_address = True
 
-    s = socket.socket()
-    s.connect((host, port))
-    s.settimeout(5)
-    while True:
-        data = s.recv(1024).decode()
-        if 'GET ID' in data:
-            s.sendall(b'\rID 0\n')
-            continue
-        print(data)
-    s.close()
-    assert 1 == 1
+
+class TestHandler(socketserver.BaseRequestHandler):
+    def handle(self):
+        self.request.settimeout(5)
+        self.request.sendall(b'GET MCID\r\n')
+
+        data = self.request.recv(1024).decode().replace('\r\n', '')
+        print('{} - {} from {} {}'.format(datetime.now(), data, *self.client_address))
+        time.sleep(10)
+
+
+def test_task():
+    print('{} - {}'.format(datetime.now(), 'start a server'))
+    server = ThreadedTCPServer(('0.0.0.0', 5858), TestHandler)
+    server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.daemon = True
+    server_thread.start()
+    time.sleep(10)
+    server.shutdown()
+    server.server_close()
+
+
+if __name__ == '__main__':
+    test_task()

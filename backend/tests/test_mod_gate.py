@@ -1,12 +1,13 @@
-import os
-import pytest
 import datetime
 import json
+import os
+
+import pytest
 from pymongo import MongoClient
 
 from app import create_app
-from app.mod_gate.models import Gate, Card, CardTest
 from app.mod_auth.models import User
+from app.mod_gate.models import Card, CardTest, Gate
 
 
 @pytest.fixture
@@ -39,63 +40,47 @@ def test_gates_filter(client):
     assert len(gates) == 10
 
 
-def test_cardtests_search_with_no_query_string(client):
-    """ GIVEN 120 cardtests, 1 cardtest/min
-        WHEN query with datetime_from and datetime_to, without query_string
-        THEN check returned cardtests lengths
-    """
-    dt = datetime.datetime.utcnow()
-    for i in range(120):
-        cardtest = CardTest(gate_number='cardtest' + str(i),
-                            test_datetime=dt + datetime.timedelta(minutes=i),
-                            job_number='jobnumber' + str(i)
-                            )
-        cardtest.save()
-
-    now = datetime.datetime.utcnow()
-    datetime_from = now.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-    datetime_to = (now + datetime.timedelta(minutes=40)).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-    rv = client.get('/cardtests?datetime_from={}&datetime_to={}'.format(datetime_from, datetime_to))
-    cardtests1 = json.loads(rv.data.decode())
-
-    datetime_from = dt.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-    datetime_to = (dt + datetime.timedelta(minutes=40)).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-    rv = client.get('/cardtests?datetime_from={}&datetime_to={}'.format(datetime_from, datetime_to))
-    cardtests2 = json.loads(rv.data.decode())
-
-    assert len(cardtests1) == 40
-    assert len(cardtests2) == 41
-
-
-def test_cardtests_search_with_query_string(client):
-    """ GIVEN 120 cardtests, 1 cardtest/min
+def test_cardtests_search_with_query_string2(client):
+    """ GIVEN 120 cardtests, 
         WHEN query with datetime_from, datetime_to and query_string
         THEN check returned cardtests lengths
     """
+
     dt = datetime.datetime.utcnow()
 
-    for i in range(120):
-        cardtest = CardTest(gate_number='cardtest' + str(i),
+    gate = Gate(mc_id='mc_id_2', name='gate3')
+    gate.save()
+
+    for i in range(60):
+        cardtest = CardTest(
+            card_number='card_number_{}'.format(i),
+            test_datetime=dt + datetime.timedelta(minutes=i),
+            job_number='job_number_{}'.format(i),
+            mc_id='mc_id_1'
+        )
+        cardtest.save()
+
+    for i in range(60, 120):
+        cardtest = CardTest(card_number='card_number_{}'.format(i),
                             test_datetime=dt + datetime.timedelta(minutes=i),
-                            job_number='jobnumber' + str(i)
+                            job_number='job_number_{}'.format(i),
+                            mc_id='mc_id_2'
                             )
         cardtest.save()
 
     now = datetime.datetime.utcnow()
     datetime_from = now.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-    datetime_to = (now + datetime.timedelta(minutes=40)).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    datetime_to = (now + datetime.timedelta(minutes=120)).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 
-    query_string1 = 'cardtest19'
-
+    query_string1 = 'card_number_19'
     rv1 = client.get('/cardtests?datetime_from={}&datetime_to={}&q={}'.format(datetime_from, datetime_to, query_string1))
     cardtests1 = json.loads(rv1.data.decode())
     assert len(cardtests1) == 1
 
-    query_string2 = 'cardtest0'
-
+    query_string2 = 'gate3'
     rv2 = client.get('/cardtests?datetime_from={}&datetime_to={}&q={}'.format(datetime_from, datetime_to, query_string2))
     cardtests2 = json.loads(rv2.data.decode())
-    assert len(cardtests2) == 0
+    assert len(cardtests2) == 60
 
 
 # def test_json(client):

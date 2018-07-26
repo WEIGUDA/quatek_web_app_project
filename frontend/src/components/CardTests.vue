@@ -12,7 +12,7 @@
       </div>
       <div class="w-100"><br></div>
       <div class="input-group">
-        <input type="text" class="form-control" aria-label="Search string" aria-describedby="basic-addon2" v-model.trim="query_string">
+        <input type="text" class="form-control" aria-label="Search string" aria-describedby="basic-addon2" v-model.trim="query_string" placeholder="可搜索闸机名称或卡号">
         <div class="input-group-append">
           <button class="btn btn-outline-success btn-outline-quatek" type="button" @click="search()">
             <font-awesome-icon icon="search" /> Search</button>
@@ -129,47 +129,51 @@ export default {
     },
 
     download_csv() {
-      try {
-        let title = 'cardtests_page_' + this.currentPage;
-        let cardtest_array = [];
-        let csv_header = 'id,gate_number,result,job_number,card_number,test_time\n';
-        let csv = [];
+      if (this.cardtests.length > 0) {
+        try {
+          let title = 'cardtests_page_' + this.currentPage;
+          let cardtest_array = [];
+          let csv_header = 'id,gate_number,result,job_number,card_number,test_time\n';
+          let csv = [];
 
-        for (let cardtest of this.cardtests) {
-          cardtest_array.push(
-            [
-              cardtest._id.$oid,
-              cardtest.gate_number,
-              cardtest.test_result,
-              cardtest.job_number,
-              cardtest.card_number,
-              this.$moment(cardtest.test_datetime.$date).format(),
-            ].join(','),
-          );
+          for (let cardtest of this.cardtests) {
+            cardtest_array.push(
+              [
+                cardtest._id.$oid,
+                cardtest.gate_number,
+                cardtest.test_result,
+                cardtest.job_number,
+                cardtest.card_number,
+                this.$moment(cardtest.test_datetime.$date).format(),
+              ].join(','),
+            );
+          }
+          csv = cardtest_array.join('\n');
+
+          let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
+
+          let link = document.createElement('a');
+
+          link.id = 'csv-download-id';
+          link.href = uri;
+
+          document.body.appendChild(link);
+
+          document.getElementById(link.id).style.visibility = 'hidden';
+          document.getElementById(link.id).download = title + '.csv';
+
+          document.body.appendChild(link);
+          document.getElementById(link.id).click();
+
+          setTimeout(function() {
+            document.body.removeChild(link);
+          });
+          return true;
+        } catch (err) {
+          return false;
         }
-        csv = cardtest_array.join('\n');
-
-        let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
-
-        let link = document.createElement('a');
-
-        link.id = 'csv-download-id';
-        link.href = uri;
-
-        document.body.appendChild(link);
-
-        document.getElementById(link.id).style.visibility = 'hidden';
-        document.getElementById(link.id).download = title + '.csv';
-
-        document.body.appendChild(link);
-        document.getElementById(link.id).click();
-
-        setTimeout(function() {
-          document.body.removeChild(link);
-        });
-        return true;
-      } catch (err) {
-        return false;
+      } else {
+        alert('没有数据可供下载!');
       }
     },
 
