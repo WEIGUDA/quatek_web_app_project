@@ -1,0 +1,31 @@
+[[source]]
+url = "http://mirrors.aliyun.com/pypi/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+flask-cors = "*"
+pytz = "*"
+flask-mongoengine = "*"
+flask-socketio = "*"
+eventlet = "*"
+redis = "*"
+pytest = "*"
+python-dateutil = "*"
+celery = "*"
+
+[dev-packages]
+pylint = "*"
+pylint-flask = "*"
+"autopep8" = "*"
+"flake8" = "*"
+rope = "*"
+ptvsd = "*"
+ipython = "*"
+
+[requires]
+python_version = "3"
+
+[pipenv]
+allow_prereleases = true
