@@ -64,7 +64,6 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
         self.request.settimeout(5)
         mc_client = {}
         # get mc from database
-        logger.info(1)
         try:
             self.request.sendall(b'GET MCID\r\n')
             data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
@@ -285,7 +284,8 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                 all_cardtests.append(temp_dict)
 
             for cardtest in all_cardtests:
-                cardtest['test_datetime'] = datetime.datetime.fromtimestamp(int(cardtest['log_id']), tz=datetime.timezone.utc)
+                cardtest['test_datetime'] = datetime.datetime.fromtimestamp(
+                    int(cardtest['log_id']), tz=datetime.timezone.utc)
 
             cardtests.insert_many(all_cardtests)
         except:

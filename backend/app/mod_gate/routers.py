@@ -34,7 +34,7 @@ def gates():
         return_list = []
         try:
             for index, gate in enumerate(gates_list):
-                if index == 0:
+                if index == 0 or not gate:
                     continue
                 g1 = Gate(name=gate[0],
                           number=gate[1],
@@ -114,7 +114,7 @@ def cards():
         try:
             for card in cards_to_delete:
                 Card.objects.get(pk=card).delete()
-                delete_a_card_from_mc_task.delay(card)
+                delete_a_card_from_mc_task.delay(json.loads(card.to_json()))
         except:
             current_app.logger.exception('delete cards failed')
             abort(500)
@@ -136,8 +136,7 @@ def card_create():
                         gender=data['gender'], note=data['note'],
                         belong_to_mc=data['belong_to_mc'])
             card.save()
-
-            update_a_card_to_all_mc_task.delay(card)
+            update_a_card_to_all_mc_task.delay(json.loads(card.to_json()))
         except:
             current_app.logger.exception('create card failed')
             abort(500)
