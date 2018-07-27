@@ -113,8 +113,10 @@ def cards():
         cards_to_delete = json.loads(request.args['delete_array'])
         try:
             for card in cards_to_delete:
-                Card.objects.get(pk=card).delete()
-                delete_a_card_from_mc_task.delay(json.loads(card.to_json()))
+                card_obj = Card.objects.get(pk=card)
+                card_2 = json.loads(card_obj.to_json())
+                card_obj.delete()
+                delete_a_card_from_mc_task.delay(card_2)
         except:
             current_app.logger.exception('delete cards failed')
             abort(500)
