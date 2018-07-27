@@ -14,7 +14,7 @@
         <label for="card_category" class="col-sm-2 col-form-label">卡类别 *</label>
         <div class="col-sm-10">
           <input type="text" class="form-control" id="card_category" v-model="card.card_category">
-          <small class="form-text text-muted">0: 手脚同测, 1: 只测手, 2: 只测脚, 4: VIP</small>
+          <small class="form-text text-muted">0: VIP, 1: 只测手, 2: 只测脚, 3: 手脚同测</small>
         </div>
       </div>
 
