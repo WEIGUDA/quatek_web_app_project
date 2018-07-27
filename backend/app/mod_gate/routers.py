@@ -158,6 +158,8 @@ def card_create():
             card.note = data['note']
             card.belong_to_mc = data['belong_to_mc']
             card.save()
+
+            update_a_card_to_all_mc_task.delay(json.loads(card.to_json()))
         except:
             current_app.logger.exception('create card failed')
             abort(500)
