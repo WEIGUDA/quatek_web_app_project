@@ -36,22 +36,30 @@
       <table class="table table-striped table-responsive-md">
         <thead>
           <tr>
-            <th scope="col">闸机编号</th>
-            <th scope="col">通行结果</th>
-            <th scope="col">工号</th>
-            <th scope="col">卡号</th>
+            <th scope="col">卡片号码</th>
+            <th scope="col">卡片类型</th>
+            <th scope="col">进出标志</th>
+            <th scope="col">闸机名</th>
             <th scope="col">测试时间</th>
-            <th scope="col"></th>
-            <th scope="col"></th>
+            <th scope="col">是否通过</th>
+            <th scope="col">是否测试</th>
+            <th scope="col">手腕检测值</th>
+            <th scope="col">左脚检测值</th>
+            <th scope="col">右脚检测值</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="cardtest in cardtests" :key="cardtest._id.$oid">
-            <td>{{cardtest.gate_number}}</td>
-            <td>{{cardtest.test_result}}</td>
-            <td>{{cardtest.job_number}}</td>
             <td>{{cardtest.card_number}}</td>
+            <td>{{cardtest.card_category}}</td>
+            <td>{{cardtest.in_out_symbol}}</td>
+            <td>{{cardtest.mc_id}}</td>
             <td>{{cardtest.test_datetime.$date | moment('YYYY-MM-DD HH:mm')}}</td>
+            <td>{{cardtest.test_result}}</td>
+            <td>{{cardtest.is_tested}}</td>
+            <td>{{cardtest.hand}}</td>
+            <td>{{cardtest.left_foot}}</td>
+            <td>{{cardtest.right_foot}}</td>
             <td>
               <!-- <button type="button" class="btn btn-secondary btn-quatek btn-sm">
                 <font-awesome-icon icon="pencil-alt" />

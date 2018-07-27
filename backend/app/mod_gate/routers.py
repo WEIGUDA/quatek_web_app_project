@@ -177,17 +177,16 @@ def cardtests():
             & Q(test_datetime__lte=datetime_to)
 
         if query_string:
-            q_object = q_object & Q(card_number__icontains=query_string)
-
             gates = Gate.objects.filter(name__icontains=query_string)
+            gates_mc_ids = []
             if gates:
-                gates_mc_ids = []
                 for gate in gates:
                     gates_mc_ids.append(gate['mc_id'])
-                print(gates_mc_ids)
 
                 q_object = (q_object & Q(card_number__icontains=query_string)) \
                     | (q_object & Q(mc_id__in=gates_mc_ids))
+            else:
+                q_object = q_object & Q(card_number__icontains=query_string)
 
         offset = request.args.get('offset', 0)
         limit = request.args.get('limit', 50)

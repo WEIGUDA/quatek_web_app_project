@@ -47,8 +47,9 @@ def test_cardtests_search_with_query_string2(client):
     """
 
     dt = datetime.datetime.utcnow()
+    cardtests = []
 
-    gate = Gate(mc_id='mc_id_2', name='gate3')
+    gate = Gate(mc_id='mc_id_3', name='gate3')
     gate.save()
 
     for i in range(60):
@@ -56,31 +57,39 @@ def test_cardtests_search_with_query_string2(client):
             card_number='card_number_{}'.format(i),
             test_datetime=dt + datetime.timedelta(minutes=i),
             job_number='job_number_{}'.format(i),
-            mc_id='mc_id_1'
+            mc_id='mc_id_3'
         )
-        cardtest.save()
+        cardtests.append(cardtest)
 
     for i in range(60, 120):
-        cardtest = CardTest(card_number='card_number_{}'.format(i),
-                            test_datetime=dt + datetime.timedelta(minutes=i),
-                            job_number='job_number_{}'.format(i),
-                            mc_id='mc_id_2'
-                            )
-        cardtest.save()
+        cardtest = CardTest(
+            card_number='card_number_{}'.format(i),
+            test_datetime=dt + datetime.timedelta(minutes=i),
+            job_number='job_number_{}'.format(i),
+            mc_id='mc_id_4'
+        )
+        cardtests.append(cardtest)
+
+    print(len(cardtests))
+    CardTest.objects.insert(cardtests)
 
     now = datetime.datetime.utcnow()
     datetime_from = now.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
     datetime_to = (now + datetime.timedelta(minutes=120)).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 
     query_string1 = 'card_number_19'
-    rv1 = client.get('/cardtests?datetime_from={}&datetime_to={}&q={}'.format(datetime_from, datetime_to, query_string1))
+    rv1 = client.get('/cardtests?datetime_from={}&datetime_to={}&q={}'
+                     .format(datetime_from, datetime_to, query_string1))
     cardtests1 = json.loads(rv1.data.decode())
+    from pprint import pprint
+    # pprint(cardtests1)
     assert len(cardtests1) == 1
 
     query_string2 = 'gate3'
-    rv2 = client.get('/cardtests?datetime_from={}&datetime_to={}&q={}'.format(datetime_from, datetime_to, query_string2))
+    rv2 = client.get('/cardtests?datetime_from={}&datetime_to={}&q={}'
+                     .format(datetime_from, datetime_to, query_string2))
     cardtests2 = json.loads(rv2.data.decode())
-    assert len(cardtests2) == 60
+    assert len(cardtests2) == 50
 
 
 # def test_json(client):
