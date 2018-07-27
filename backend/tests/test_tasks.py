@@ -24,10 +24,10 @@ def test_update_a_card():
     gender = ''.join(random.sample(gender_str, 1))
     category_str = "0123"
     card_category = ''.join(random.sample(category_str, 1))
-    belong_to_mc = 'name1:0|name2:0'
+    belong_to_mc = 'name1:0|name2:1'
 
-    job_number = str(2)
-    card_counter = str(2)
+    job_number = str(1)
+    card_counter = str(1)
 
     card = {
         'name': name,
@@ -36,7 +36,7 @@ def test_update_a_card():
         'gender': gender,
         'note': 'REMARK',
         'belong_to_mc': belong_to_mc,
-        'card_number': "002A7DAA",
+        'card_number': "00BC5C01",
         'card_counter': card_counter,
         'card_category': card_category,
     }
