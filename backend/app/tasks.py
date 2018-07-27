@@ -255,9 +255,12 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                 self.request.sendall(b'GET LOG\r\n')
                 data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
                 all_data.append(data)
-                self.request.sendall('CLR LOG {}'.format(data.split(',')[0].replace('LOG ', '')).encode())
-                self.request.recv(1024)
+                self.request.sendall('CLR LOG {}\r\n'.format(data.split(',')[0].replace('LOG ', '')).encode())
+                temp_data = self.request.recv(1024)
 
+                if '0,0,00000000,0,0,0,0,0,,,,,' in data:
+                    logger.info('break, no logs in mc')
+                    break
                 if not data:
                     logger.info('break, no data from {} {}'.format(mc_client, self.client_address))
                     break

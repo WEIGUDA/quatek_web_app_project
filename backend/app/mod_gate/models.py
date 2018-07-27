@@ -21,11 +21,11 @@ class Gate(db.DynamicDocument):
 class Card(db.DynamicDocument):
     card_number = db.StringField(default='')  # 卡号
     card_category = db.StringField(  # 卡类别
-        default='0',
-        choices=(('0', '手脚都测'),
+        default='3',
+        choices=(('0', 'vip'),
                  ('1', '只测手'),
                  ('2', '只测脚'),
-                 ('3', 'vip'),)
+                ('3', '手脚都测'),)
     )
     name = db.StringField(default='')  # 姓名
     job_number = db.StringField(default='')  # 工号
