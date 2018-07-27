@@ -52,4 +52,5 @@ class CardTest(db.DynamicDocument):
     left_foot = db.StringField(default='')  # 左脚检测值
     right_foot = db.StringField(default='')  # 右脚检测值
     after_erg = db.StringField(default='')  # ERG后的值
+    rsg = db.StringField(default='')  # RSG值
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
