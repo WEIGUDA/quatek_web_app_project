@@ -271,8 +271,8 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         # process data and save to database
         try:
             all_data = ''.join(all_data)
-            all_data = re.sub(r'CSN.*\r\n', '', all_data[all_data.find('LOG'):all_data.rfind(
-                '\n')].replace('\r', '').replace('LOG ', '')).split('\n')
+            all_data = re.sub(r'CSN.*\r\n|\r|LOG ', '', all_data[all_data.find('LOG'):all_data.rfind(
+                '\n')]).split('\n')
 
             for data in all_data:
                 temp_dict = {}
