@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+from pprint import pprint
 
 import pytest
 from pymongo import MongoClient
@@ -40,7 +41,7 @@ def test_gates_filter(client):
     assert len(gates) == 10
 
 
-def test_cardtests_search_with_query_string2(client):
+def test_cardtests_search_with_query_string(client):
     """ GIVEN 120 cardtests, 
         WHEN query with datetime_from, datetime_to and query_string
         THEN check returned cardtests lengths
@@ -70,7 +71,6 @@ def test_cardtests_search_with_query_string2(client):
         )
         cardtests.append(cardtest)
 
-    print(len(cardtests))
     CardTest.objects.insert(cardtests)
 
     now = datetime.datetime.utcnow()
@@ -81,8 +81,6 @@ def test_cardtests_search_with_query_string2(client):
     rv1 = client.get('/cardtests?datetime_from={}&datetime_to={}&q={}'
                      .format(datetime_from, datetime_to, query_string1))
     cardtests1 = json.loads(rv1.data.decode())
-    from pprint import pprint
-    # pprint(cardtests1)
     assert len(cardtests1) == 1
 
     query_string2 = 'gate3'
@@ -91,10 +89,8 @@ def test_cardtests_search_with_query_string2(client):
     cardtests2 = json.loads(rv2.data.decode())
     assert len(cardtests2) == 50
 
-
-# def test_json(client):
-#     rv = client.post('/', json={
-#         'username': 'flask', 'password': 'secret'
-#     })
-#     json_data = rv.get_json()
-#     assert json_data == json_data
+    query_string3 = ''
+    rv3 = client.get('/cardtests?datetime_from={}&datetime_to={}&q={}'
+                     .format(datetime_from, datetime_to, query_string3))
+    cardtests3 = json.loads(rv3.data.decode())
+    assert len(cardtests3) == 50

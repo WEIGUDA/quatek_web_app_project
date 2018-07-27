@@ -4,6 +4,7 @@ from flask import Blueprint, request, make_response, current_app, abort, jsonify
 from mongoengine.queryset.visitor import Q
 
 from app.mod_gate.models import Gate, Card, CardTest
+from app.tasks import update_all_cards_to_mc_task, update_a_card_to_all_mc_task, delete_a_card_from_mc_task
 
 bp = Blueprint('mod_gate', __name__)
 
@@ -43,8 +44,8 @@ def gates():
                           hand_min=gate[5],
                           foot_max=gate[6],
                           foot_min=gate[7],
-                          ip=gate[8],
-                          port=gate[9].replace('\r', ''),
+                          ip=gate[8] if 8 < len(gate) else '',
+                          port=int((gate[9] if 9 < len(gate) else '0').replace('\r', '')),
                           )
                 g1.save()
                 return_list.append(g1)
@@ -101,6 +102,8 @@ def cards():
                 )
                 c1.save()
                 return_list.append(c1)
+                # task
+            update_all_cards_to_mc_task.delay()
         except:
             current_app.logger.exception('post cards failed')
             abort(500)
@@ -113,6 +116,7 @@ def cards():
         try:
             for card in cards_to_delete:
                 Card.objects.get(pk=card).delete()
+                delete_a_card_from_mc_task.delay(card)
         except:
             current_app.logger.exception('delete cards failed')
             abort(500)
@@ -134,6 +138,8 @@ def card_create():
                         gender=data['gender'], note=data['note'],
                         belong_to_mc=data['belong_to_mc'])
             card.save()
+
+            update_a_card_to_all_mc_task.delay(card)
         except:
             current_app.logger.exception('create card failed')
             abort(500)
