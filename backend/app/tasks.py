@@ -100,8 +100,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
                 # add to all mc
                 if belong_to_mc == 'all' or not belong_to_mc:
                     self.request.sendall(
-                        'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},\
-                        {cart_category},0,{note}\r\n'.format(**card).encode())
+                        'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(**card).encode())
                     data = self.request.recv(1024).decode()
                     if 'CARD' not in data:
                         raise Exception('upload card error, card: {}, from {}'.format(
@@ -119,8 +118,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
 
                     if mc_client['name'] in belong_to_mc_dict:
                         self.request.sendall(
-                            'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},\
-                            {card_category},{0},{note}\r\n'.format(
+                            'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},{0},{note}\r\n'.format(
                                 belong_to_mc_dict[mc_client['name']], **card).encode())
 
                         data = self.request.recv(1024).decode()
@@ -164,8 +162,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
             # add to all mc
             if belong_to_mc == 'all' or not belong_to_mc:
                 self.request.sendall(
-                    'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},\
-                    {cart_category},0,{note}\r\n'.format(**card).encode())
+                    'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(**card).encode())
                 data = self.request.recv(1024).decode()
                 if 'CARD' not in data:
                     raise Exception('upload the card to all mc error, card: {} from{}'.format(
@@ -182,8 +179,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
 
                 if mc_client['name'] in belong_to_mc_dict:
                     self.request.sendall(
-                        'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},\
-                        {card_category},{0},{note}\r\n'.format(
+                        'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},{0},{note}\r\n'.format(
                             belong_to_mc_dict[mc_client['name']], **card).encode())
                     data = self.request.recv(1024).decode()
                     if 'CARD' not in data:
@@ -236,6 +232,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         self.request.settimeout(5)
         all_data = []
         mc_client = {}
+        all_cardtests = []
 
         # get mc from database
         try:
@@ -269,20 +266,19 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
 
         # process data and save to database
         try:
-            all_data = all_data.join()
+            all_data = ''.join(all_data)
             all_data = all_data[all_data.find('LOG'):all_data.rfind(
                 '\n')].replace('\r', '').replace('LOG ', '').split('\n')
-            all_cardtests = []
 
             for data in all_data:
                 temp_dict = {}
-                for t, v in zip(['log_id', 'card_counter', 'card_number', 'card_category', 'in_out_symbol', 'mc_id', 'test_datetime', 'test_result', 'is_tested', 'hand', 'left_foot', 'right_foot', 'after_erg'], data.split(';')):
+                for t, v in zip(['log_id', 'card_counter', 'card_number', 'card_category', 'in_out_symbol', 'mc_id', 'test_datetime', 'test_result', 'RSG', 'hand', 'left_foot', 'right_foot', 'after_erg'], data.split(',')):
                     temp_dict.update({t: v})
 
                 all_cardtests.append(temp_dict)
 
-            for cardtest in cardtests:
-                cardtest['test_datetime'] = datetime.datetime.fromtimestamp(cardtest['log_id'])
+            for cardtest in all_cardtests:
+                cardtest['test_datetime'] = datetime.datetime.fromtimestamp(int(cardtest['log_id']))
 
             cardtests.insert_many(all_cardtests)
         except:
@@ -292,7 +288,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         command_list = []
         for cardtest in all_cardtests:
             command_list.append('CLR LOG {}\r\n'.format(cardtest['log_id']))
-            self.request.sendall(command_list.join().encode())
+            self.request.sendall(''.join(command_list).encode())
 
         logger.info('stop the GetCardTestLogHandler for {} {}'.format(mc_client, self.client_address))
         time.sleep(self.server.p_data['server_last_time'])
@@ -335,7 +331,7 @@ def update_all_cards_to_mc_task(host=SOCKET_HOST, port=SOCKET_PORT, server_last_
 
 
 @app.task()
-def update_a_card_to_all_mc_task(card_dict, server_last_time=5):
+def update_a_card_to_all_mc_task(card_dict, server_last_time=1):
     server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), UpdateACardHandler,
                                p_data={'card': card_dict, 'server_last_time': server_last_time})
     server_thread = threading.Thread(target=server.serve_forever)
