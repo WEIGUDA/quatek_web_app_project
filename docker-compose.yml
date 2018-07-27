@@ -23,7 +23,7 @@ services:
     build: ./backend
     ports:
       - '5858:5858'
-    command: pipenv run celery -A app.tasks worker --loglevel=DEBUG
+    command: pipenv run celery -A app.tasks worker
     depends_on:
       - mongo
     deploy:

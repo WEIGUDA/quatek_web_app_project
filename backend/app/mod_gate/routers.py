@@ -44,8 +44,6 @@ def gates():
                           hand_min=gate[5],
                           foot_max=gate[6],
                           foot_min=gate[7],
-                          ip=gate[8] if 8 < len(gate) else '',
-                          port=int((gate[9] if 9 < len(gate) else '0').replace('\r', '')),
                           )
                 g1.save()
                 return_list.append(g1)
