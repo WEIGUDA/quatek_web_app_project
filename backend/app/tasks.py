@@ -100,8 +100,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
                 # add to all mc
                 if belong_to_mc == 'all' or not belong_to_mc:
                     self.request.sendall(
-                        'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},\
-                        {cart_category},0,{note}\r\n'.format(**card).encode())
+                        'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(**card).encode())
                     data = self.request.recv(1024).decode()
                     if 'CARD' not in data:
                         raise Exception('upload card error, card: {}, from {}'.format(
@@ -119,8 +118,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
 
                     if mc_client['name'] in belong_to_mc_dict:
                         self.request.sendall(
-                            'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},\
-                            {card_category},{0},{note}\r\n'.format(
+                            'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},{0},{note}\r\n'.format(
                                 belong_to_mc_dict[mc_client['name']], **card).encode())
 
                         data = self.request.recv(1024).decode()
@@ -164,8 +162,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
             # add to all mc
             if belong_to_mc == 'all' or not belong_to_mc:
                 self.request.sendall(
-                    'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},\
-                    {cart_category},0,{note}\r\n'.format(**card).encode())
+                    'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(**card).encode())
                 data = self.request.recv(1024).decode()
                 if 'CARD' not in data:
                     raise Exception('upload the card to all mc error, card: {} from{}'.format(
@@ -182,8 +179,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
 
                 if mc_client['name'] in belong_to_mc_dict:
                     self.request.sendall(
-                        'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},\
-                        {card_category},{0},{note}\r\n'.format(
+                        'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},{0},{note}\r\n'.format(
                             belong_to_mc_dict[mc_client['name']], **card).encode())
                     data = self.request.recv(1024).decode()
                     if 'CARD' not in data:
@@ -335,7 +331,7 @@ def update_all_cards_to_mc_task(host=SOCKET_HOST, port=SOCKET_PORT, server_last_
 
 
 @app.task()
-def update_a_card_to_all_mc_task(card_dict, server_last_time=5):
+def update_a_card_to_all_mc_task(card_dict, server_last_time=1):
     server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), UpdateACardHandler,
                                p_data={'card': card_dict, 'server_last_time': server_last_time})
     server_thread = threading.Thread(target=server.serve_forever)
