@@ -236,6 +236,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         self.request.settimeout(5)
         all_data = []
         mc_client = {}
+        all_cardtests = []
 
         # get mc from database
         try:
@@ -269,20 +270,19 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
 
         # process data and save to database
         try:
-            all_data = all_data.join()
+            all_data = ''.join(all_data)
             all_data = all_data[all_data.find('LOG'):all_data.rfind(
                 '\n')].replace('\r', '').replace('LOG ', '').split('\n')
-            all_cardtests = []
 
             for data in all_data:
                 temp_dict = {}
-                for t, v in zip(['log_id', 'card_counter', 'card_number', 'card_category', 'in_out_symbol', 'mc_id', 'test_datetime', 'test_result', 'is_tested', 'hand', 'left_foot', 'right_foot', 'after_erg'], data.split(';')):
+                for t, v in zip(['log_id', 'card_counter', 'card_number', 'card_category', 'in_out_symbol', 'mc_id', 'test_datetime', 'test_result', 'RSG', 'hand', 'left_foot', 'right_foot', 'after_erg'], data.split(',')):
                     temp_dict.update({t: v})
 
                 all_cardtests.append(temp_dict)
 
-            for cardtest in cardtests:
-                cardtest['test_datetime'] = datetime.datetime.fromtimestamp(cardtest['log_id'])
+            for cardtest in all_cardtests:
+                cardtest['test_datetime'] = datetime.datetime.fromtimestamp(int(cardtest['log_id']))
 
             cardtests.insert_many(all_cardtests)
         except:
@@ -292,7 +292,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         command_list = []
         for cardtest in all_cardtests:
             command_list.append('CLR LOG {}\r\n'.format(cardtest['log_id']))
-            self.request.sendall(command_list.join().encode())
+            self.request.sendall(''.join(command_list).encode())
 
         logger.info('stop the GetCardTestLogHandler for {} {}'.format(mc_client, self.client_address))
         time.sleep(self.server.p_data['server_last_time'])
