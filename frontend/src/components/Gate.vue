@@ -8,6 +8,7 @@
 
     <img src="@/assets/gate.png" class="img-fluid gate-img" alt="Gate image">
     <div class="w-100"></div>
+    <p class="gate_name w-100">{{ gate.name }}</p>
     <div class="btn-group btn-group-sm text-center" role="group" aria-label="On OFF Buttons">
       <button type="button" class="btn gate-btn-on-off" :class="{ 'btn-dark': isOn }" @click.prevent="toggleIsOn()">ON</button>
       <button type="button" class="btn gate-btn-on-off" :class="{ 'btn-dark': !isOn }" @click.prevent="toggleIsOn()">OFF</button>
@@ -66,6 +67,9 @@ export default {
 /* Extra small devices (portrait phones, less than 576px)
  No media query for `xs` since this is the default in Bootstrap */
 /*  Small devices (landscape phones, 576px and up) */
+.gate_name {
+  color: #343a40;
+}
 .gate-box {
   margin-bottom: 40px;
 }

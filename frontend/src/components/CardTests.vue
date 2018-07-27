@@ -141,18 +141,24 @@ export default {
         try {
           let title = 'cardtests_page_' + this.currentPage;
           let cardtest_array = [];
-          let csv_header = 'id,gate_number,result,job_number,card_number,test_time\n';
+          let csv_header =
+            'id,card_number,card_category,in_out_symbol,gate_name,test_time,test_result,is_tested,hand_value,left_foot_value,right_foot_value\n';
           let csv = [];
 
           for (let cardtest of this.cardtests) {
             cardtest_array.push(
               [
                 cardtest._id.$oid,
-                cardtest.gate_number,
-                cardtest.test_result,
-                cardtest.job_number,
                 cardtest.card_number,
+                cardtest.card_category,
+                cardtest.in_out_symbol,
+                cardtest.mc_id,
                 this.$moment(cardtest.test_datetime.$date).format(),
+                cardtest.test_result,
+                cardtest.is_tested,
+                cardtest.hand,
+                cardtest.left_foot,
+                cardtest.right_foot,
               ].join(','),
             );
           }
