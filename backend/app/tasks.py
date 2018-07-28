@@ -46,7 +46,7 @@ client = MongoClient(MONGODB_HOST, MONGODB_PORT)
 db = client[MONGODB_DB]
 cards = db.card
 gates = db.gate
-cardtests = db.cardtest
+cardtests = db.card_test
 users = db.user
 
 
@@ -398,4 +398,4 @@ def delete_all_cards_task(server_last_time=1):
 
 @app.on_after_configure.connect()
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(20, get_logs_from_mc_task.s(), name='get log every 5 mins')
+    sender.add_periodic_task(60*5, get_logs_from_mc_task.s(), name='get log every 5 mins')
