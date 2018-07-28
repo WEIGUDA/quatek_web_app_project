@@ -283,9 +283,22 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                     all_data.pop()
 
                 for data in all_data:
-                    temp_dict = {}
-                    for t, v in zip(['log_id', 'card_counter', 'card_number', 'card_category', 'in_out_symbol', 'mc_id', 'test_result', 'RSG', 'hand', 'left_foot', 'right_foot', 'after_erg'], data.split(',')):
-                        temp_dict.update({t: v})
+                    data = data.split(',')
+                    temp_dict = {
+                        'log_id': data[0],
+                        'card_counter': data[1],
+                        'card_number': data[2],
+                        'card_category': data[3],
+                        'in_out_symbol': data[4],
+                        'mc_id': data[5],
+                        'test_result': data[6],
+                        'is_tested': data[7],
+                        'RSG': data[8],
+                        'hand': data[9],
+                        'left_foot': data[10],
+                        'right_foot': data[11],
+                        'after_erg': data[12],
+                    }
 
                     all_cardtests.append(temp_dict)
 
