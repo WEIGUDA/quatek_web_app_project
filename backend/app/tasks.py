@@ -43,7 +43,7 @@ logger.addHandler(consoleHandler)
 
 # pymongo
 client = MongoClient(MONGODB_HOST, MONGODB_PORT)
-db = client.quatek_web_app
+db = client[MONGODB_DB]
 cards = db.card
 gates = db.gate
 cardtests = db.cardtest
@@ -275,33 +275,34 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                 break
 
         # process data and save to database
-        try:
-            all_data = ''.join(all_data)
-            all_data = re.sub(r'CSN.*\r\n|\r|LOG ', '', all_data).split('\n')
+        if all_data:
+            try:
+                all_data = ''.join(all_data)
+                all_data = re.sub(r'CSN.*\r\n|\r|LOG ', '', all_data).split('\n')
 
-            if not all_data[-1]:
-                all_data.pop()
+                if not all_data[-1]:
+                    all_data.pop()
 
-            for data in all_data:
-                temp_dict = {}
-                for t, v in zip(['log_id', 'card_counter', 'card_number', 'card_category', 'in_out_symbol', 'mc_id', 'test_result', 'RSG', 'hand', 'left_foot', 'right_foot', 'after_erg'], data.split(',')):
-                    temp_dict.update({t: v})
+                for data in all_data:
+                    temp_dict = {}
+                    for t, v in zip(['log_id', 'card_counter', 'card_number', 'card_category', 'in_out_symbol', 'mc_id', 'test_result', 'RSG', 'hand', 'left_foot', 'right_foot', 'after_erg'], data.split(',')):
+                        temp_dict.update({t: v})
 
-                all_cardtests.append(temp_dict)
+                    all_cardtests.append(temp_dict)
 
-            for cardtest in all_cardtests:
-                cardtest['test_datetime'] = datetime.datetime.fromtimestamp(
-                    int(cardtest['log_id']), tz=datetime.timezone.utc)
 
-            cardtests.insert_many(all_cardtests)
-        except:
-            logger.exception('error from: {} {}'.format(mc_client, self.client_address))
+                for cardtest in all_cardtests:
+                    cardtest['test_datetime'] = datetime.datetime.fromtimestamp(
+                        int(cardtest['log_id']), tz=datetime.timezone.utc)
 
-        # send clr log command to mc
-        command_list = []
-        for cardtest in all_cardtests:
-            command_list.append('CLR LOG {}\r\n'.format(cardtest['log_id']))
-            self.request.sendall(''.join(command_list).encode())
+                client = MongoClient(MONGODB_HOST, MONGODB_PORT)
+                db = client[MONGODB_DB]
+                cardtests = db.cardtest
+                cardtests.insert_many(all_cardtests)
+            except:
+                logger.exception('error from: {} {}'.format(mc_client, self.client_address))
+
+
 
         logger.info('stop the GetCardTestLogHandler for {} {}'.format(mc_client, self.client_address))
         time.sleep(self.server.p_data['server_last_time'])
