@@ -2,7 +2,7 @@ version: '3'
 
 services:
   flask:
-    image: 127.0.0.1:5000/quatek_web_app_backend:1
+    image: quatek_web_app_backend
     build: ./backend
     ports:
       - '5001:5001'
@@ -21,7 +21,7 @@ services:
       - quatek_net
 
   celery_worker:
-    image: 127.0.0.1:5000/celery_worker:1
+    image: celery_worker
     build: ./backend
     ports:
       - '5858:5858'
@@ -41,7 +41,7 @@ services:
       - quatek_net
   
   celery_beat:
-    image: 127.0.0.1:5000/celery_beat:1
+    image: celery_beat
     build: ./backend
     command: pipenv run celery -A app.tasks beat 
     depends_on:
@@ -59,7 +59,7 @@ services:
       - quatek_net
 
   vue:
-    image: 127.0.0.1:5000/quatek_web_app_frontend:1
+    image: quatek_web_app_frontend
     build: ./frontend
     ports:
       - '80:80'
