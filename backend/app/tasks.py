@@ -253,16 +253,20 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
             try:
                 self.request.sendall(b'GET LOG\r\n')
                 data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
-                all_data.append(data)
-                self.request.sendall('CLR LOG {}\r\n'.format(data.split(',')[0].replace('LOG ', '')).encode())
-                temp_data = self.request.recv(1024)
 
                 if '0,0,00000000,0,0,0,0,0,,,,,' in data:
                     logger.info('break, no logs in mc')
                     break
+
                 if not data:
                     logger.info('break, no data from {} {}'.format(mc_client, self.client_address))
                     break
+
+                all_data.append(data)
+                self.request.sendall('CLR LOG {}\r\n'.format(data.split(',')[0].replace('LOG ', '')).encode())
+                temp_data = self.request.recv(1024)
+
+
             except TimeoutError:
                 logger.exception('except break, timeout from {} {}'.format(mc_client, self.client_address))
                 break
@@ -273,12 +277,14 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         # process data and save to database
         try:
             all_data = ''.join(all_data)
-            all_data = re.sub(r'CSN.*\r\n|\r|LOG ', '', all_data[all_data.find('LOG'):all_data.rfind(
-                '\n')]).split('\n')
+            all_data = re.sub(r'CSN.*\r\n|\r|LOG ', '', all_data).split('\n')
+
+            if not all_data[-1]:
+                all_data.pop()
 
             for data in all_data:
                 temp_dict = {}
-                for t, v in zip(['log_id', 'card_counter', 'card_number', 'card_category', 'in_out_symbol', 'mc_id', 'test_datetime', 'test_result', 'RSG', 'hand', 'left_foot', 'right_foot', 'after_erg'], data.split(',')):
+                for t, v in zip(['log_id', 'card_counter', 'card_number', 'card_category', 'in_out_symbol', 'mc_id', 'test_result', 'RSG', 'hand', 'left_foot', 'right_foot', 'after_erg'], data.split(',')):
                     temp_dict.update({t: v})
 
                 all_cardtests.append(temp_dict)
@@ -395,4 +401,4 @@ def delete_all_cards_task(server_last_time=1):
 
 @app.on_after_configure.connect()
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60 * 5, get_logs_from_mc_task.s(), name='get log every 5 mins')
+    sender.add_periodic_task(20, get_logs_from_mc_task.s(), name='get log every 5 mins')
