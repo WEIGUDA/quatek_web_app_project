@@ -175,10 +175,12 @@ def cardtests():
         datetime_to = request.args.get('datetime_to', None)  # '2018-07-20T07:15:00.000Z'
 
         if datetime_from:
-            datetime_from = datetime.datetime.strptime(datetime_from, '%Y-%m-%dT%H:%M:%S.%fZ')
+            datetime_from = datetime.datetime.strptime(
+                datetime_from, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=datetime.timezone.utc)
 
         if datetime_to:
-            datetime_to = datetime.datetime.strptime(datetime_to, '%Y-%m-%dT%H:%M:%S.%fZ')
+            datetime_to = datetime.datetime.strptime(
+                datetime_to, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=datetime.timezone.utc)
 
         q_object = Q(test_datetime__gte=datetime_from) \
             & Q(test_datetime__lte=datetime_to)

@@ -48,4 +48,5 @@ def create_app(config=None):
     def make_shell_context():
         return {'app': app, 'User': User, 'CardTest': CardTest, 'Gate': Gate, 'Card': Card}
 
+    print(app.config)
     return app

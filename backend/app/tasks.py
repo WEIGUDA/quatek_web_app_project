@@ -266,7 +266,6 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                 self.request.sendall('CLR LOG {}\r\n'.format(data.split(',')[0].replace('LOG ', '')).encode())
                 temp_data = self.request.recv(1024)
 
-
             except TimeoutError:
                 logger.exception('except break, timeout from {} {}'.format(mc_client, self.client_address))
                 break
@@ -290,19 +289,16 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
 
                     all_cardtests.append(temp_dict)
 
-
                 for cardtest in all_cardtests:
                     cardtest['test_datetime'] = datetime.datetime.fromtimestamp(
                         int(cardtest['log_id']), tz=datetime.timezone.utc)
 
-                client = MongoClient(MONGODB_HOST, MONGODB_PORT)
-                db = client[MONGODB_DB]
-                cardtests = db.cardtest
+                # client = MongoClient(MONGODB_HOST, MONGODB_PORT)
+                # db = client[MONGODB_DB]
+                # cardtests = db.cardtest
                 cardtests.insert_many(all_cardtests)
             except:
                 logger.exception('error from: {} {}'.format(mc_client, self.client_address))
-
-
 
         logger.info('stop the GetCardTestLogHandler for {} {}'.format(mc_client, self.client_address))
         time.sleep(self.server.p_data['server_last_time'])
