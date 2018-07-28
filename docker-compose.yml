@@ -14,7 +14,9 @@ services:
         parallelism: 2
         delay: 10s
       restart_policy:
-        condition: on-failure
+        condition: any
+        delay: 10s
+        window: 60s
     networks: 
       - quatek_net
 
@@ -25,14 +27,16 @@ services:
       - '5858:5858'
     command: pipenv run celery -A app.tasks worker
     depends_on:
-      - mongo
+      - flask
     deploy:
       replicas: 1
       update_config:
         parallelism: 2
         delay: 10s
       restart_policy:
-        condition: on-failure
+        condition: any
+        delay: 10s
+        window: 60s
     networks: 
       - quatek_net
   
@@ -41,14 +45,16 @@ services:
     build: ./backend
     command: pipenv run celery -A app.tasks beat 
     depends_on:
-      - mongo
+      - flask
     deploy:
       replicas: 1
       update_config:
         parallelism: 2
         delay: 10s
       restart_policy:
-        condition: on-failure
+        condition: any
+        delay: 10s
+        window: 60s
     networks: 
       - quatek_net
 
@@ -65,7 +71,9 @@ services:
         parallelism: 2
         delay: 10s
       restart_policy:
-        condition: on-failure
+        condition: any
+        delay: 10s
+        window: 60s
     networks: 
       - quatek_net
   
@@ -78,7 +86,9 @@ services:
         parallelism: 2
         delay: 10s
       restart_policy:
-        condition: on-failure
+        condition: any
+        delay: 10s
+        window: 60s
     networks: 
       - quatek_net
     volumes: 
@@ -92,7 +102,9 @@ services:
         parallelism: 2
         delay: 10s
       restart_policy:
-        condition: on-failure
+        condition: any
+        delay: 10s
+        window: 60s
     networks:
       - quatek_net
     volumes: 
@@ -113,7 +125,9 @@ services:
         parallelism: 2
         delay: 10s
       restart_policy:
-        condition: on-failure
+        condition: any
+        delay: 10s
+        window: 60s
     networks:
       - quatek_net
 
