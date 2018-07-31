@@ -1,0 +1,52 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug current python file",
+      "type": "pythonExperimental",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "pythonPath": "${config:python.pythonPath}",
+      "cwd": "${workspaceFolder}/backend"
+    },
+    {
+      "name": "Debug Flask",
+      "type": "pythonExperimental",
+      "request": "launch",
+      "stopOnEntry": false,
+      "pythonPath": "${config:python.pythonPath}",
+      "module": "flask",
+      "cwd": "${workspaceFolder}/backend",
+      "env": {
+        "FLASK_APP": "app"
+      },
+      "args": ["run", "--no-debugger", "--no-reload"]
+    },
+
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Debug Vue",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "breakOnLoad": true,
+      "sourceMapPathOverrides": {
+        "webpack:///src/*": "${webRoot}/*"
+      }
+    }
+
+    // {
+    //   "name": "Debug PyTest",
+    //   "type": "pythonExperimental",
+    //   "request": "launch",
+    //   "cwd": "${workspaceFolder}/backend/tests",
+    //   "stopOnEntry": false,
+    //   "module": "pytest",
+    //   "console": "none"
+    // }
+  ]
+}
