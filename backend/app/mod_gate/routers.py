@@ -45,6 +45,14 @@ def gates():
                           foot_max=gate[6],
                           foot_min=gate[7],
                           )
+                if not g1.hand_max:
+                    g1.hand_max = 35000
+                if not g1.hand_min:
+                    g1.hand_min = 750
+                if not g1.foot_max:
+                    g1.foot_max = 200000
+                if not g1.foot_min:
+                    g1.foot_min = 200
                 g1.save()
                 return_list.append(g1)
         except:

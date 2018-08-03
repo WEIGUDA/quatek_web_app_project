@@ -8,7 +8,7 @@
 
     <img src="@/assets/gate.png" class="img-fluid gate-img" alt="Gate image">
     <div class="w-100"></div>
-    <p class="gate_name w-100">{{ gate.name }}</p>
+    <p class="gate_name w-100">{{ gate.category }}: {{ gate.name }}</p>
     <div class="btn-group btn-group-sm text-center" role="group" aria-label="On OFF Buttons">
       <button type="button" class="btn gate-btn-on-off" :class="{ 'btn-dark': isOn }" @click.prevent="toggleIsOn()">ON</button>
       <button type="button" class="btn gate-btn-on-off" :class="{ 'btn-dark': !isOn }" @click.prevent="toggleIsOn()">OFF</button>
