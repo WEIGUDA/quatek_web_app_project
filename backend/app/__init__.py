@@ -1,4 +1,5 @@
 import os
+from pprint import pprint
 from flask import Flask
 from flask_mongoengine import MongoEngine
 from flask_socketio import SocketIO
@@ -25,9 +26,9 @@ def create_app(config=None):
         app.config.from_pyfile('config_pro.py', silent=True)
     else:
         # load the test config if passed in
-        if type(config) is str:
+        if isinstance(config, str):
             app.config.from_pyfile(config)
-        elif type(config) is dict:
+        elif isinstance(config, dict):
             app.config.from_mapping(config)
 
     # init extentions
@@ -48,5 +49,7 @@ def create_app(config=None):
     def make_shell_context():
         return {'app': app, 'User': User, 'CardTest': CardTest, 'Gate': Gate, 'Card': Card}
 
-    print(app.config)
+    if app.config['DEBUG']:
+        pprint(app.config)
+
     return app
