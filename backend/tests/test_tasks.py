@@ -53,7 +53,6 @@ def test_delete_a_card():
 def test_get_log():
     get_logs_from_mc_task()
 
-
 if __name__ == "__main__":
     # test_update_all_cards()
     # test_update_a_card()

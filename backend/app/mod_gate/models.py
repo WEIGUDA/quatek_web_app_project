@@ -25,7 +25,7 @@ class Card(db.DynamicDocument):
         choices=(('0', 'vip'),
                  ('1', '只测手'),
                  ('2', '只测脚'),
-                ('3', '手脚都测'),)
+                 ('3', '手脚都测'),)
     )
     name = db.StringField(default='')  # 姓名
     job_number = db.StringField(default='')  # 工号

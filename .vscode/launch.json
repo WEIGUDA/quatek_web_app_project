@@ -26,7 +26,6 @@
       },
       "args": ["run", "--no-debugger", "--no-reload"]
     },
-
     {
       "type": "chrome",
       "request": "launch",
@@ -37,16 +36,15 @@
       "sourceMapPathOverrides": {
         "webpack:///src/*": "${webRoot}/*"
       }
+    },
+    {
+      "name": "Debug PyTest",
+      "type": "pythonExperimental",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/backend/tests",
+      "stopOnEntry": false,
+      "module": "pytest",
+      "console": "none"
     }
-
-    // {
-    //   "name": "Debug PyTest",
-    //   "type": "pythonExperimental",
-    //   "request": "launch",
-    //   "cwd": "${workspaceFolder}/backend/tests",
-    //   "stopOnEntry": false,
-    //   "module": "pytest",
-    //   "console": "none"
-    // }
   ]
 }
