@@ -10,7 +10,7 @@
         <b-collapse is-nav id="nav_collapse">
 
             <b-navbar-nav>
-                <!-- <b-nav-item :to="{name: 'Index'}" exact>首页</b-nav-item> -->
+                <b-nav-item :to="{name: 'Index'}" exact>首页</b-nav-item>
                 <b-nav-item :to="{name: 'Gates'}">闸机列表</b-nav-item>
                 <b-nav-item :to="{name: 'Cards'}">卡片管理</b-nav-item>
                 <b-nav-item :to="{name: 'CardTests'}">静电测试</b-nav-item>
