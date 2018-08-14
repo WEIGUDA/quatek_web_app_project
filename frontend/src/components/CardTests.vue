@@ -55,7 +55,7 @@
             <td>{{cardtest.in_out_symbol}}</td>
             <td>{{cardtest.mc_id}}</td>
             <td>{{cardtest.test_datetime.$date | moment('YYYY-MM-DD HH:mm')}}</td>
-            <td>{{cardtest.test_result}}</td>
+            <td>{{ cardtest.test_result==='0'? '通过': '不通过' }}</td>
             <td>{{cardtest.is_tested}}</td>
             <td>{{cardtest.hand}}</td>
             <td>{{cardtest.left_foot}}</td>
