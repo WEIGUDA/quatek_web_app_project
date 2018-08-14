@@ -36,8 +36,8 @@
       <table class="table table-striped table-responsive-md">
         <thead>
           <tr>
-            <th scope="col">卡片号码</th>
             <th scope="col">姓名</th>
+            <th scope="col">工号</th>
             <th scope="col">卡片类型</th>
             <th scope="col">进出标志</th>
             <th scope="col">闸机名</th>
@@ -51,8 +51,8 @@
         </thead>
         <tbody>
           <tr v-for="cardtest in computed_cardtests" :key="cardtest._id.$oid">
-            <td>{{cardtest.card_number}}</td>
             <td>{{cardtest.name}}</td>
+            <td>{{cardtest.job_number}}</td>
             <td>{{cardtest.card_category}}</td>
             <td>{{cardtest.in_out_symbol}}</td>
             <td>{{cardtest.mc_id}}</td>
@@ -122,8 +122,10 @@ export default {
         let card = this.cards.filter((obj) => obj.card_number === cardtest.card_number);
         if (card.length > 0) {
           cardtest.name = card[0].name;
+          cardtest.job_number = card[0].job_number;
         } else {
           cardtest.name = '未找到姓名';
+          cardtest.job_number = '未找到工号';
         }
         if (cardtest.test_result === '0') {
           cardtest.test_result = '否';
@@ -158,7 +160,7 @@ export default {
           let title = 'cardtests_page_' + this.currentPage;
           let cardtest_array = [];
           let csv_header =
-            'id,card_number,name,card_category,in_out_symbol,gate_name,test_time,test_result,is_tested,hand_value,left_foot_value,right_foot_value\n';
+            'id,card_number,name,job_number,card_category,in_out_symbol,gate_name,test_time,test_result,is_tested,hand_value,left_foot_value,right_foot_value\n';
           let csv = [];
 
           for (let cardtest of this.computed_cardtests) {
@@ -167,6 +169,7 @@ export default {
                 cardtest._id.$oid,
                 cardtest.card_number,
                 cardtest.name,
+                cardtest.job_number,
                 cardtest.card_category,
                 cardtest.in_out_symbol,
                 cardtest.mc_id,
