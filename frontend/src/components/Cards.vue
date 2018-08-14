@@ -270,7 +270,7 @@ export default {
           'id,card_number,card_category,name,job_number,department,gender,note,belong_to_mc,number_in_mc,created_time\n';
         let csv = [];
 
-        for (let card of this.cards) {
+        for (let card of this.computed_cards) {
           card_array.push(
             [
               card._id.$oid,

@@ -31,5 +31,5 @@ logger = get_logger(__file__)
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(port=5001)
+    app.run(host='0.0.0.0', port=5001)
     # socketio.run(app)
