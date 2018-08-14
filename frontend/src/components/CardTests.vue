@@ -104,6 +104,7 @@ export default {
       cardtests: [],
       query_string: '',
       datetime_from: this.$moment()
+        .subtract(24, 'hours')
         .second(0)
         .millisecond(0)
         .format('YYYY-MM-DDTHH:mm'),
