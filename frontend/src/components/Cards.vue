@@ -40,7 +40,7 @@
         </thead>
         <tbody>
 
-          <tr v-for="card in cards" :key="card._id.$oid">
+          <tr v-for="card in computed_cards" :key="card._id.$oid">
             <td>{{card.name}}</td>
             <td>{{card.job_number}}</td>
             <td>{{card.card_number}}</td>
@@ -101,6 +101,7 @@
 </template>
 
 <script>
+import lodash from 'lodash';
 import axios from 'axios';
 export default {
   name: 'Cards',
@@ -113,7 +114,23 @@ export default {
       cards_file: '',
     };
   },
-  // computed: {},
+  computed: {
+    computed_cards: function() {
+      let computed_cards = lodash.cloneDeep(this.cards);
+      for (let card of computed_cards) {
+        if (card.card_category === '0') {
+          card.card_category = 'vip';
+        } else if (card.card_category === '1') {
+          card.card_category = '只测手';
+        } else if (card.card_category === '2') {
+          card.card_category = '只测脚';
+        } else if (card.card_category === '3') {
+          card.card_category = '手脚都测';
+        }
+      }
+      return computed_cards;
+    },
+  },
   methods: {
     cardAdd() {
       this.$router.push({ name: 'CardCreate' });
