@@ -94,7 +94,7 @@
 </template>
 
 <script>
-var lodash = require('lodash');
+import lodash from 'lodash';
 import axios from 'axios';
 export default {
   name: '',
