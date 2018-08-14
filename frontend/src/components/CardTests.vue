@@ -37,6 +37,7 @@
         <thead>
           <tr>
             <th scope="col">卡片号码</th>
+            <th scope="col">姓名</th>
             <th scope="col">卡片类型</th>
             <th scope="col">进出标志</th>
             <th scope="col">闸机名</th>
@@ -49,27 +50,19 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="cardtest in cardtests" :key="cardtest._id.$oid">
+          <tr v-for="cardtest in computed_cardtests" :key="cardtest._id.$oid">
             <td>{{cardtest.card_number}}</td>
+            <td>{{cardtest.name}}</td>
             <td>{{cardtest.card_category}}</td>
             <td>{{cardtest.in_out_symbol}}</td>
             <td>{{cardtest.mc_id}}</td>
             <td>{{cardtest.test_datetime.$date | moment('YYYY-MM-DD HH:mm')}}</td>
-            <td>{{ cardtest.test_result==='0'? '通过': '不通过' }}</td>
+            <td>{{cardtest.test_result}}</td>
             <td>{{cardtest.is_tested}}</td>
             <td>{{cardtest.hand}}</td>
             <td>{{cardtest.left_foot}}</td>
             <td>{{cardtest.right_foot}}</td>
-            <td>
-              <!-- <button type="button" class="btn btn-secondary btn-quatek btn-sm">
-                <font-awesome-icon icon="pencil-alt" />
-              </button> -->
-            </td>
-            <td>
-              <!-- <button type="button" class="btn btn-secondary btn-quatek btn-sm">
-                <font-awesome-icon icon="trash-alt" />
-              </button> -->
-            </td>
+
           </tr>
         </tbody>
 
@@ -101,6 +94,8 @@
 </template>
 
 <script>
+var lodash = require('lodash');
+import axios from 'axios';
 export default {
   name: '',
   data() {
@@ -116,24 +111,44 @@ export default {
         .second(0)
         .millisecond(0)
         .format('YYYY-MM-DDTHH:mm'),
+      cards: [],
     };
+  },
+  computed: {
+    computed_cardtests: function() {
+      let computed_cardtests = lodash.cloneDeep(this.cardtests);
+      for (let cardtest of computed_cardtests) {
+        let card = this.cards.filter((obj) => obj.card_number === cardtest.card_number);
+        if (card.length > 0) {
+          cardtest.name = card[0].name;
+        } else {
+          cardtest.name = '未找到姓名';
+        }
+        if (cardtest.test_result === '0') {
+          cardtest.test_result = '否';
+        } else {
+          cardtest.test_result = '是';
+        }
+      }
+      console.log(computed_cardtests);
+      return computed_cardtests;
+    },
   },
   methods: {
     search() {
       console.log(this.query_string);
       console.log(this.datetime_from);
       console.log(this.datetime_to);
-      this.$http
+
+      axios
         .get(`cardtests?q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${this.datetime_to}`)
-        .then(
-          (response) => {
-            console.log(response.body);
-            this.cardtests = response.body;
-          },
-          (response) => {
-            console.log(response);
-          },
-        );
+        .then((response) => {
+          console.log(response.data);
+          this.cardtests = response.data;
+        })
+        .catch((response) => {
+          console.log(response);
+        });
     },
 
     download_csv() {
@@ -142,14 +157,15 @@ export default {
           let title = 'cardtests_page_' + this.currentPage;
           let cardtest_array = [];
           let csv_header =
-            'id,card_number,card_category,in_out_symbol,gate_name,test_time,test_result,is_tested,hand_value,left_foot_value,right_foot_value\n';
+            'id,card_number,name,card_category,in_out_symbol,gate_name,test_time,test_result,is_tested,hand_value,left_foot_value,right_foot_value\n';
           let csv = [];
 
-          for (let cardtest of this.cardtests) {
+          for (let cardtest of this.computed_cardtests) {
             cardtest_array.push(
               [
                 cardtest._id.$oid,
                 cardtest.card_number,
+                cardtest.name,
                 cardtest.card_category,
                 cardtest.in_out_symbol,
                 cardtest.mc_id,
@@ -193,50 +209,56 @@ export default {
 
     prevPage() {
       let offset = (this.currentPage - 2) * 50;
-      this.$http
+      axios
         .get(
           `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
             this.datetime_to
           }`,
         )
-        .then(
-          (response) => {
-            console.log(response.body);
-            this.cards = response.body;
-            this.currentPage--;
-          },
-          (response) => {
-            console.log(response);
-          },
-        );
+        .then((response) => {
+          console.log(response.data);
+          this.cards = response.data;
+          this.currentPage--;
+        })
+        .catch((response) => {
+          console.log(response);
+        });
     },
 
     nextPage() {
       let offset = this.currentPage * 50;
-      this.$http
+      axios
         .get(
           `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
             this.datetime_to
           }`,
         )
-        .then(
-          (response) => {
-            if (response.body.length !== 0) {
-              console.log(response.body);
-              this.cards = response.body;
-              this.currentPage++;
-            } else {
-              alert('已经到达最后一页!');
-            }
-          },
-          (response) => {
-            console.log(response);
-          },
-        );
+        .then((response) => {
+          if (response.body.length !== 0) {
+            console.log(response.data);
+            this.cards = response.data;
+            this.currentPage++;
+          } else {
+            alert('已经到达最后一页!');
+          }
+        })
+        .catch((response) => {
+          console.log(response);
+        });
     },
   },
 
-  created() {},
+  created() {
+    axios
+      .get('cards?offset=0&limit=10000')
+      .then((response) => {
+        console.log(response);
+        this.cards = response.data;
+      })
+      .catch((response) => {
+        console.log(response);
+      });
+  },
 };
 </script>
 
