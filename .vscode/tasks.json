@@ -17,7 +17,8 @@
       },
       "options": {
         "cwd": "${workspaceFolder}/backend"
-      }
+      },
+      "problemMatcher": []
     },
     {
       "label": "Vue",
@@ -33,7 +34,8 @@
       },
       "options": {
         "cwd": "${workspaceFolder}/frontend"
-      }
+      },
+      "problemMatcher": []
     },
     {
       "label": "Celery Worker",
@@ -49,7 +51,8 @@
       },
       "options": {
         "cwd": "${workspaceFolder}/backend"
-      }
+      },
+      "problemMatcher": []
     },
     {
       "label": "Celery Beat",
@@ -65,7 +68,8 @@
       },
       "options": {
         "cwd": "${workspaceFolder}/backend"
-      }
+      },
+      "problemMatcher": []
     }
   ]
 }
