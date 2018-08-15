@@ -64,7 +64,7 @@
       <div class="form-group row">
         <label for="belong_to_mc" class="col-sm-2 col-form-label">对应闸机&权限</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="belong_to_mc" v-model="card.belong_to_mc">
+          <input type="text" class="form-control" id="belong_to_mc" v-model="card.belong_to_mc" @focus="show_modal=true" readonly>
           <small class="form-text text-muted">format: "gate_1:0|gate_2:1|gate_3:3"; 其中gate_1, gate_2, gate_3: 闸机名, 0:可进可出, 1:禁止进入/可出, 2:禁止出去/可进, 3:禁止进出; "all"/留空 代表所有闸机都可进可出</small>
         </div>
       </div>
@@ -75,6 +75,24 @@
         </div>
       </div>
     </form>
+
+    <b-modal v-model="show_modal" title="对应闸机&权限" ok-only ok-title="确定" :lazy="true" @ok="confirm()" ok-variant="success">
+      <b-container fluid class="form-inline">
+        <b-row v-for="(gate,index) in computed_rights" :key="gate.gate_name" class="w-100">
+          <label :for="'gate_'+index" class="col-6">{{index+1}} - 闸机名: {{gate.gate_name}}</label>
+          <select :id=" 'gate_'+index" class="form-control col-6" v-model="gate.rights">
+            <option value="0">可进可出</option>
+            <option value="1">禁止进入/可出</option>
+            <option value="2">禁止出去/可进</option>
+            <option value="3">禁止进出</option>
+          </select>
+          <hr class="w-100">
+        </b-row>
+
+      </b-container>
+
+    </b-modal>
+
   </div>
 </template>
 
@@ -96,7 +114,25 @@ export default {
         belong_to_mc: '',
       },
       submit_is_disabled: false,
+      show_modal: false,
+      gates: [],
     };
+  },
+  computed: {
+    computed_rights: function() {
+      let computed_rights = [];
+      if (this.card.id) {
+        for (let gate_right of this.card.belong_to_mc.split('|')) {
+          computed_rights.push({ gate_name: gate_right.split(':')[0], rights: gate_right.split(':')[1] });
+        }
+      }
+      for (let gate of this.gates) {
+        if (computed_rights.filter((obj) => obj.gate_name === gate.name).length === 0) {
+          computed_rights.push({ gate_name: gate.name, rights: '0' });
+        }
+      }
+      return computed_rights;
+    },
   },
   methods: {
     submit() {
@@ -141,6 +177,15 @@ export default {
         alert('带*的信息不能为空!');
       }
     },
+    confirm() {
+      let rights = [];
+      for (let gate_rights of this.computed_rights) {
+        rights.push(gate_rights.gate_name + ':' + gate_rights.rights);
+      }
+      console.log(rights);
+
+      this.card.belong_to_mc = rights.join('|');
+    },
   },
   created() {
     if (this.$route.params.card_id) {
@@ -164,6 +209,17 @@ export default {
           console.log(response);
         });
     }
+
+    axios
+      .get(`gates?offset=0&limit=10000`)
+      .then((response) => {
+        console.log(response);
+        this.gates = response.data;
+        this.currentPage = 1;
+      })
+      .catch((response) => {
+        console.log(response);
+      });
   },
 };
 </script>
