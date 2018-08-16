@@ -36,6 +36,8 @@ def gates():
             for index, gate in enumerate(gates_list):
                 if index == 0 or not gate:
                     continue
+                if len(gate) == 0:
+                    continue
                 g1 = Gate(name=gate[0],
                           number=gate[1],
                           category=gate[2],
