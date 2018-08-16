@@ -110,6 +110,9 @@ def cards():
                     gender=card[5],
                     note=card[6].replace('\r', ''),
                 )
+                if not c1['note']:
+                    c1['note'] = 'default note'
+
                 c1.save()
                 return_list.append(c1)
         except:
