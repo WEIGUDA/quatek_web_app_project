@@ -164,8 +164,11 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
 
             # add to all mc
             if belong_to_mc == 'all' or not belong_to_mc:
-                self.request.sendall(
-                    'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(**card).encode(encoding='GB18030'))
+                command = 'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(
+                    **card).encode(encoding='GB18030')
+                logger.info(command.decode(encoding='GB18030'))
+                self.request.sendall(command)
+
                 data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
                 if 'CARD' not in data:
                     raise Exception('upload the card to all mc error, card: {} from{}'.format(
