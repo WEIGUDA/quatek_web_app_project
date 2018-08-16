@@ -102,7 +102,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
                 if belong_to_mc == 'all' or not belong_to_mc:
                     command = 'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(
                         **card).encode()
-                    logger.info(command)
+                    logger.info()
                     self.request.sendall(command)
                     data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
                     if 'CARD' not in data:
