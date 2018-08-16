@@ -66,7 +66,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
         # get mc from database
         try:
             self.request.sendall(b'GET MCID\r\n')
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
             gates.update_one({'mc_id': 'mc_client.mc_id'},
@@ -82,12 +82,12 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
             dt = datetime.datetime.utcnow()
             self.request.sendall('SET DATE {}\r\n'.format(
                 dt.strftime('%Y-%m-%d')).encode(encoding='GB18030'))
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
             if 'DATE' not in data:
                 raise Exception('set date error for  {}'.format(self.client_address))
 
             self.request.sendall('SET TIME {}\r\n'.format(dt.strftime('%H:%M:%S')).encode(encoding='GB18030'))
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
             if 'TIME' not in data:
                 raise Exception('set time error for {}'.format(self.client_address))
 
@@ -104,7 +104,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
                         **card).encode(encoding='GB18030')
                     logger.info()
                     self.request.sendall(command)
-                    data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+                    data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
                     if 'CARD' not in data:
                         raise Exception('upload card error, card: {}, from {}'.format(
                             card, self.client_address))
@@ -124,7 +124,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
                             'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},{0},{note}\r\n'.format(
                                 belong_to_mc_dict[mc_client['name']], **card).encode(encoding='GB18030'))
 
-                        data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+                        data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
                         if 'CARD' not in data:
                             raise Exception('upload card error, card: {}, from {}'.format(
                                 card, self.client_address))
@@ -150,7 +150,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
         # get mc from database
         try:
             self.request.sendall(b'GET MCID\r\n')
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
 
@@ -166,7 +166,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
             if belong_to_mc == 'all' or not belong_to_mc:
                 self.request.sendall(
                     'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(**card).encode(encoding='GB18030'))
-                data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+                data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
                 if 'CARD' not in data:
                     raise Exception('upload the card to all mc error, card: {} from{}'.format(
                         card, self.client_address))
@@ -184,13 +184,13 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
                     self.request.sendall(
                         'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},{0},{note}\r\n'.format(
                             belong_to_mc_dict[mc_client['name']], **card).encode(encoding='GB18030'))
-                    data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+                    data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
                     if 'CARD' not in data:
                         raise Exception('upload the card to 1 mc error, card: {}, from {}'.format(
                             card, self.client_address))
                 else:
                     self.request.sendall('CLR CARD {}\r\n'.format(card['card_counter']).encode(encoding='GB18030'))
-                    data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+                    data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
                     if 'CARD' not in data:
                         raise Exception('update with delete a card to mc error, card: {}, from {}'.format(
                             card, self.client_address))
@@ -214,7 +214,7 @@ class DeleteACardHandler(socketserver.BaseRequestHandler):
         # delete card from mc
         try:
             self.request.sendall('CLR CARD {}\r\n'.format(card['card_counter']).encode(encoding='GB18030'))
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
             if 'CARD' not in data:
                 raise Exception('delete a card from mc error, card: {}, from {}'.format(
                     card, self.client_address))
@@ -240,7 +240,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         # get mc from database
         try:
             self.request.sendall(b'GET MCID\r\n')
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
 
@@ -254,12 +254,12 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
             dt = datetime.datetime.utcnow()
             self.request.sendall('SET DATE {}\r\n'.format(
                 dt.strftime('%Y-%m-%d')).encode(encoding='GB18030'))
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
             if 'DATE' not in data:
                 raise Exception('set date error for  {}'.format(self.client_address))
 
             self.request.sendall('SET TIME {}\r\n'.format(dt.strftime('%H:%M:%S')).encode(encoding='GB18030'))
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
             if 'TIME' not in data:
                 raise Exception('set time error for {}'.format(self.client_address))
 
@@ -271,7 +271,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         while True:
             try:
                 self.request.sendall(b'GET LOG\r\n')
-                data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
+                data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')
 
                 if '0,0,00000000,0,0,0,0,0,,,,,' in data:
                     logger.info('break, no logs in mc')
@@ -284,7 +284,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                 all_data.append(data)
                 self.request.sendall('CLR LOG {}\r\n'.format(data.split(
                     ',')[0].replace('LOG ', '')).encode(encoding='GB18030'))
-                temp_data = self.request.recv(1024)
+                temp_data=self.request.recv(1024)
 
             except TimeoutError:
                 logger.exception('except break, timeout from {} {}'.format(mc_client, self.client_address))
@@ -296,15 +296,15 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         # process data and save to database
         if all_data:
             try:
-                all_data = ''.join(all_data)
-                all_data = re.sub(r'CSN.*\r\n|\r|LOG ', '', all_data).split('\n')
+                all_data=''.join(all_data)
+                all_data=re.sub(r'CSN.*\r\n|\r|LOG ', '', all_data).split('\n')
 
                 if not all_data[-1]:
                     all_data.pop()
 
                 for data in all_data:
-                    data = data.split(',')
-                    temp_dict = {
+                    data=data.split(',')
+                    temp_dict={
                         'log_id': data[0],
                         'card_counter': data[1],
                         'card_number': data[2],
@@ -323,7 +323,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                     all_cardtests.append(temp_dict)
 
                 for cardtest in all_cardtests:
-                    cardtest['test_datetime'] = datetime.datetime.fromtimestamp(
+                    cardtest['test_datetime']=datetime.datetime.fromtimestamp(
                         int(cardtest['log_id']), tz=datetime.timezone.utc)
 
                 # client = MongoClient(MONGODB_HOST, MONGODB_PORT)
@@ -340,7 +340,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
 class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
     def handle(self):
         # delete all cards from mc
-        command_list = []
+        command_list=[]
         try:
             for i in range(6000):
                 command_list.append('CLR CARD {}\r\n'.format(i))
@@ -354,17 +354,17 @@ class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     def __init__(self, server_address, RequestHandlerClass, bind_and_activate=True, p_data=None):
         super().__init__(server_address, RequestHandlerClass, bind_and_activate=True)
-        self.p_data = p_data
+        self.p_data=p_data
 
-    timeout = 5
-    allow_reuse_address = True
+    timeout=5
+    allow_reuse_address=True
 
 
 @app.task()
 def update_all_cards_to_mc_task(host=SOCKET_HOST, port=SOCKET_PORT, server_last_time=1):
-    server = ThreadedTCPServer((host, port), UploadAllCardsHandler, p_data={'server_last_time': server_last_time})
-    server_thread = threading.Thread(target=server.serve_forever)
-    server_thread.daemon = True
+    server=ThreadedTCPServer((host, port), UploadAllCardsHandler, p_data={'server_last_time': server_last_time})
+    server_thread=threading.Thread(target=server.serve_forever)
+    server_thread.daemon=True
     server_thread.start()
     logger.info("start an update_all_cards task")
     time.sleep(server_last_time)
@@ -375,10 +375,10 @@ def update_all_cards_to_mc_task(host=SOCKET_HOST, port=SOCKET_PORT, server_last_
 
 @app.task()
 def update_a_card_to_all_mc_task(card_dict, server_last_time=1):
-    server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), UpdateACardHandler,
+    server=ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), UpdateACardHandler,
                                p_data={'card': card_dict, 'server_last_time': server_last_time})
-    server_thread = threading.Thread(target=server.serve_forever)
-    server_thread.daemon = True
+    server_thread=threading.Thread(target=server.serve_forever)
+    server_thread.daemon=True
     server_thread.start()
     logger.info("start an update_a_card task")
     time.sleep(server_last_time)
@@ -389,10 +389,10 @@ def update_a_card_to_all_mc_task(card_dict, server_last_time=1):
 
 @app.task()
 def delete_a_card_from_mc_task(card_dict, server_last_time=1):
-    server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), DeleteACardHandler,
+    server=ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), DeleteACardHandler,
                                p_data={'card': card_dict, 'server_last_time': server_last_time})
-    server_thread = threading.Thread(target=server.serve_forever)
-    server_thread.daemon = True
+    server_thread=threading.Thread(target=server.serve_forever)
+    server_thread.daemon=True
     server_thread.start()
     logger.info("start a delete_a_card task")
     time.sleep(server_last_time)
@@ -403,10 +403,10 @@ def delete_a_card_from_mc_task(card_dict, server_last_time=1):
 
 @app.task()
 def get_logs_from_mc_task(server_last_time=1):
-    server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), GetCardTestLogHandler,
+    server=ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), GetCardTestLogHandler,
                                p_data={'server_last_time': server_last_time})
-    server_thread = threading.Thread(target=server.serve_forever)
-    server_thread.daemon = True
+    server_thread=threading.Thread(target=server.serve_forever)
+    server_thread.daemon=True
     server_thread.start()
     logger.info("start a get_logs_from_mc task")
     time.sleep(server_last_time)
@@ -417,10 +417,10 @@ def get_logs_from_mc_task(server_last_time=1):
 
 @app.task()
 def delete_all_cards_task(server_last_time=1):
-    server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), DeleteAllCardsFromMcHandler,
+    server=ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), DeleteAllCardsFromMcHandler,
                                p_data={'server_last_time': server_last_time})
-    server_thread = threading.Thread(target=server.serve_forever)
-    server_thread.daemon = True
+    server_thread=threading.Thread(target=server.serve_forever)
+    server_thread.daemon=True
     server_thread.start()
     logger.info("start a get_logs_from_mc task")
     time.sleep(server_last_time)

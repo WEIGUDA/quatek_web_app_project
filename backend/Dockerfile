@@ -13,7 +13,7 @@ WORKDIR /app
 COPY . /app
 
 RUN pip3 install -i https://pypi.douban.com/simple/ pipenv --trusted-host pypi.douban.com && \
-    pipenv install --ignore-pipfile
+    pipenv install --ignore-pipfile --verbose
 
 CMD ["pipenv", "run", "python3", "run_pro.py"]
 
