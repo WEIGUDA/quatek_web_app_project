@@ -39,7 +39,7 @@ fileHandler.setFormatter(logFormatter)
 consoleHandler = logging.StreamHandler(sys.stdout)
 consoleHandler.setFormatter(logFormatter)
 logger.addHandler(fileHandler)
-logger.addHandler(consoleHandler)
+# logger.addHandler(consoleHandler)
 
 # pymongo
 client = MongoClient(MONGODB_HOST, MONGODB_PORT)
@@ -102,7 +102,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
                 if belong_to_mc == 'all' or not belong_to_mc:
                     command = 'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(
                         **card).encode(encoding='GB18030')
-                    logger.info()
+                    logger.info(command.decode(encoding='GB18030'))
                     self.request.sendall(command)
                     data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
                     if 'CARD' not in data:
@@ -434,4 +434,4 @@ def delete_all_cards_task(server_last_time=1):
 
 @app.on_after_configure.connect()
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60 * 1, get_logs_from_mc_task.s(), name='get log every 1 min')
+    sender.add_periodic_task(60 * 5, get_logs_from_mc_task.s(), name='get log every 1 min')
