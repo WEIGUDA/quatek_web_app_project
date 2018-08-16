@@ -12,7 +12,7 @@ ENV SOCKET_HOST=0.0.0.0
 WORKDIR /app
 COPY . /app
 
-RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pipenv --trusted-host pypi.tuna.tsinghua.edu.cn && \
+RUN pip3 install -i https://pypi.douban.com/simple/ pipenv --trusted-host pypi.douban.com && \
     pipenv install --ignore-pipfile
 
 CMD ["pipenv", "run", "python3", "run_pro.py"]
