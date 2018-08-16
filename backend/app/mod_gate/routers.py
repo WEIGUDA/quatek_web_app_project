@@ -112,28 +112,31 @@ def cards():
                 )
                 c1.save()
                 return_list.append(c1)
-                # task
-            update_all_cards_to_mc_task.delay()
         except:
             current_app.logger.exception('post cards failed')
             abort(500)
 
         else:
+            update_all_cards_to_mc_task.delay()
             return make_response(jsonify({'result': len(return_list)}))
 
     elif request.method == 'DELETE':
         cards_to_delete = json.loads(request.args['delete_array'])
+        cards_to_delete2 = []
         try:
             for card in cards_to_delete:
                 card_obj = Card.objects.get(pk=card)
                 card_2 = json.loads(card_obj.to_json())
+                cards_to_delete2.append(card_2)
                 card_obj.delete()
-                delete_a_card_from_mc_task.delay(card_2)
+
         except:
             current_app.logger.exception('delete cards failed')
             abort(500)
 
         else:
+            for card_2 in cards_to_delete2:
+                delete_a_card_from_mc_task.delay(card_2)
             return make_response(jsonify({'result': len(cards_to_delete)}))
 
 
@@ -150,11 +153,12 @@ def card_create():
                         gender=data['gender'], note=data['note'],
                         belong_to_mc=data['belong_to_mc'])
             card.save()
-            update_a_card_to_all_mc_task.delay(json.loads(card.to_json()))
+
         except:
             current_app.logger.exception('create card failed')
             abort(500)
         else:
+            update_a_card_to_all_mc_task.delay(json.loads(card.to_json()))
             return make_response(card.to_json())
 
     elif request.method == 'PATCH':
@@ -171,11 +175,11 @@ def card_create():
             card.belong_to_mc = data['belong_to_mc']
             card.save()
 
-            update_a_card_to_all_mc_task.delay(json.loads(card.to_json()))
         except:
             current_app.logger.exception('create card failed')
             abort(500)
         else:
+            update_a_card_to_all_mc_task.delay(json.loads(card.to_json()))
             return make_response(card.to_json())
 
 

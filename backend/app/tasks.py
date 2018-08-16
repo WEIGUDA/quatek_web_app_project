@@ -247,6 +247,23 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         except:
             logger.exception('error in GetCardTestLogHandler')
 
+        # set datetime for mc
+        try:
+            dt = datetime.datetime.utcnow()
+            self.request.sendall('SET DATE {}\r\n'.format(
+                dt.strftime('%Y-%m-%d')).encode())
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+            if 'DATE' not in data:
+                raise Exception('set date error for  {}'.format(self.client_address))
+
+            self.request.sendall('SET TIME {}\r\n'.format(dt.strftime('%H:%M:%S')).encode())
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+            if 'TIME' not in data:
+                raise Exception('set time error for {}'.format(self.client_address))
+
+        except:
+            logger.exception('error in UploadAllCardsHandler')
+
         #  read all logs from mc
 
         while True:
@@ -411,4 +428,4 @@ def delete_all_cards_task(server_last_time=1):
 
 @app.on_after_configure.connect()
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60*5, get_logs_from_mc_task.s(), name='get log every 5 mins')
+    sender.add_periodic_task(60*1, get_logs_from_mc_task.s(), name='get log every 1 min')
