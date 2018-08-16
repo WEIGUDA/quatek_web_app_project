@@ -66,7 +66,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
         # get mc from database
         try:
             self.request.sendall(b'GET MCID\r\n')
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
             gates.update_one({'mc_id': 'mc_client.mc_id'},
@@ -81,13 +81,13 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
         try:
             dt = datetime.datetime.utcnow()
             self.request.sendall('SET DATE {}\r\n'.format(
-                dt.strftime('%Y-%m-%d')).encode())
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+                dt.strftime('%Y-%m-%d')).encode(encoding='GB18030'))
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
             if 'DATE' not in data:
                 raise Exception('set date error for  {}'.format(self.client_address))
 
-            self.request.sendall('SET TIME {}\r\n'.format(dt.strftime('%H:%M:%S')).encode())
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+            self.request.sendall('SET TIME {}\r\n'.format(dt.strftime('%H:%M:%S')).encode(encoding='GB18030'))
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
             if 'TIME' not in data:
                 raise Exception('set time error for {}'.format(self.client_address))
 
@@ -101,10 +101,10 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
                 # add to all mc
                 if belong_to_mc == 'all' or not belong_to_mc:
                     command = 'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(
-                        **card).encode()
+                        **card).encode(encoding='GB18030')
                     logger.info()
                     self.request.sendall(command)
-                    data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+                    data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
                     if 'CARD' not in data:
                         raise Exception('upload card error, card: {}, from {}'.format(
                             card, self.client_address))
@@ -122,9 +122,9 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
                     if mc_client['name'] in belong_to_mc_dict:
                         self.request.sendall(
                             'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},{0},{note}\r\n'.format(
-                                belong_to_mc_dict[mc_client['name']], **card).encode())
+                                belong_to_mc_dict[mc_client['name']], **card).encode(encoding='GB18030'))
 
-                        data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+                        data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
                         if 'CARD' not in data:
                             raise Exception('upload card error, card: {}, from {}'.format(
                                 card, self.client_address))
@@ -150,7 +150,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
         # get mc from database
         try:
             self.request.sendall(b'GET MCID\r\n')
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
 
@@ -166,7 +166,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
             if belong_to_mc == 'all' or not belong_to_mc:
                 self.request.sendall(
                     'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(**card).encode(encoding='GB18030'))
-                data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+                data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
                 if 'CARD' not in data:
                     raise Exception('upload the card to all mc error, card: {} from{}'.format(
                         card, self.client_address))
@@ -183,14 +183,14 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
                 if mc_client['name'] in belong_to_mc_dict:
                     self.request.sendall(
                         'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},{0},{note}\r\n'.format(
-                            belong_to_mc_dict[mc_client['name']], **card).encode())
-                    data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+                            belong_to_mc_dict[mc_client['name']], **card).encode(encoding='GB18030'))
+                    data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
                     if 'CARD' not in data:
                         raise Exception('upload the card to 1 mc error, card: {}, from {}'.format(
                             card, self.client_address))
                 else:
-                    self.request.sendall('CLR CARD {}\r\n'.format(card['card_counter']).encode())
-                    data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+                    self.request.sendall('CLR CARD {}\r\n'.format(card['card_counter']).encode(encoding='GB18030'))
+                    data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
                     if 'CARD' not in data:
                         raise Exception('update with delete a card to mc error, card: {}, from {}'.format(
                             card, self.client_address))
@@ -213,8 +213,8 @@ class DeleteACardHandler(socketserver.BaseRequestHandler):
 
         # delete card from mc
         try:
-            self.request.sendall('CLR CARD {}\r\n'.format(card['card_counter']).encode())
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+            self.request.sendall('CLR CARD {}\r\n'.format(card['card_counter']).encode(encoding='GB18030'))
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
             if 'CARD' not in data:
                 raise Exception('delete a card from mc error, card: {}, from {}'.format(
                     card, self.client_address))
@@ -240,7 +240,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         # get mc from database
         try:
             self.request.sendall(b'GET MCID\r\n')
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
             mc_client = gates.find({'mc_id': mc_client_id})[0]
 
@@ -253,13 +253,13 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         try:
             dt = datetime.datetime.utcnow()
             self.request.sendall('SET DATE {}\r\n'.format(
-                dt.strftime('%Y-%m-%d')).encode())
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+                dt.strftime('%Y-%m-%d')).encode(encoding='GB18030'))
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
             if 'DATE' not in data:
                 raise Exception('set date error for  {}'.format(self.client_address))
 
-            self.request.sendall('SET TIME {}\r\n'.format(dt.strftime('%H:%M:%S')).encode())
-            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+            self.request.sendall('SET TIME {}\r\n'.format(dt.strftime('%H:%M:%S')).encode(encoding='GB18030'))
+            data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
             if 'TIME' not in data:
                 raise Exception('set time error for {}'.format(self.client_address))
 
@@ -271,7 +271,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         while True:
             try:
                 self.request.sendall(b'GET LOG\r\n')
-                data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
+                data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')())
 
                 if '0,0,00000000,0,0,0,0,0,,,,,' in data:
                     logger.info('break, no logs in mc')
@@ -282,7 +282,8 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                     break
 
                 all_data.append(data)
-                self.request.sendall('CLR LOG {}\r\n'.format(data.split(',')[0].replace('LOG ', '')).encode())
+                self.request.sendall('CLR LOG {}\r\n'.format(data.split(
+                    ',')[0].replace('LOG ', '')).encode(encoding='GB18030'))
                 temp_data = self.request.recv(1024)
 
             except TimeoutError:
@@ -344,7 +345,7 @@ class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
             for i in range(6000):
                 command_list.append('CLR CARD {}\r\n'.format(i))
 
-                self.request.sendall(''.join(command_list).encode())
+                self.request.sendall(''.join(command_list).encode(encoding='GB18030'))
 
         except:
             logger.exception('delete all cards error from {}'.format(self.client_address))
