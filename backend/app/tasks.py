@@ -274,7 +274,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         while True:
             try:
                 self.request.sendall(b'GET LOG\r\n')
-                data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030')
+                data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode(encoding='GB18030'))
 
                 if '0,0,00000000,0,0,0,0,0,,,,,' in data:
                     logger.info('break, no logs in mc')
@@ -287,7 +287,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                 all_data.append(data)
                 self.request.sendall('CLR LOG {}\r\n'.format(data.split(
                     ',')[0].replace('LOG ', '')).encode(encoding='GB18030'))
-                temp_data=self.request.recv(1024)
+                self.request.recv(1024)
 
             except TimeoutError:
                 logger.exception('except break, timeout from {} {}'.format(mc_client, self.client_address))
@@ -299,15 +299,15 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         # process data and save to database
         if all_data:
             try:
-                all_data=''.join(all_data)
-                all_data=re.sub(r'CSN.*\r\n|\r|LOG ', '', all_data).split('\n')
+                all_data = ''.join(all_data)
+                all_data = re.sub(r'CSN.*\r\n|\r|LOG ', '', all_data).split('\n')
 
                 if not all_data[-1]:
                     all_data.pop()
 
                 for data in all_data:
-                    data=data.split(',')
-                    temp_dict={
+                    data = data.split(',')
+                    temp_dict = {
                         'log_id': data[0],
                         'card_counter': data[1],
                         'card_number': data[2],
@@ -326,7 +326,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                     all_cardtests.append(temp_dict)
 
                 for cardtest in all_cardtests:
-                    cardtest['test_datetime']=datetime.datetime.fromtimestamp(
+                    cardtest['test_datetime'] = datetime.datetime.fromtimestamp(
                         int(cardtest['log_id']), tz=datetime.timezone.utc)
 
                 # client = MongoClient(MONGODB_HOST, MONGODB_PORT)
@@ -343,7 +343,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
 class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
     def handle(self):
         # delete all cards from mc
-        command_list=[]
+        command_list = []
         try:
             for i in range(6000):
                 command_list.append('CLR CARD {}\r\n'.format(i))
@@ -357,17 +357,17 @@ class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     def __init__(self, server_address, RequestHandlerClass, bind_and_activate=True, p_data=None):
         super().__init__(server_address, RequestHandlerClass, bind_and_activate=True)
-        self.p_data=p_data
+        self.p_data = p_data
 
-    timeout=5
-    allow_reuse_address=True
+    timeout = 5
+    allow_reuse_address = True
 
 
 @app.task()
 def update_all_cards_to_mc_task(host=SOCKET_HOST, port=SOCKET_PORT, server_last_time=1):
-    server=ThreadedTCPServer((host, port), UploadAllCardsHandler, p_data={'server_last_time': server_last_time})
-    server_thread=threading.Thread(target=server.serve_forever)
-    server_thread.daemon=True
+    server = ThreadedTCPServer((host, port), UploadAllCardsHandler, p_data={'server_last_time': server_last_time})
+    server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.daemon = True
     server_thread.start()
     logger.info("start an update_all_cards task")
     time.sleep(server_last_time)
@@ -378,10 +378,10 @@ def update_all_cards_to_mc_task(host=SOCKET_HOST, port=SOCKET_PORT, server_last_
 
 @app.task()
 def update_a_card_to_all_mc_task(card_dict, server_last_time=1):
-    server=ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), UpdateACardHandler,
+    server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), UpdateACardHandler,
                                p_data={'card': card_dict, 'server_last_time': server_last_time})
-    server_thread=threading.Thread(target=server.serve_forever)
-    server_thread.daemon=True
+    server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.daemon = True
     server_thread.start()
     logger.info("start an update_a_card task")
     time.sleep(server_last_time)
@@ -392,10 +392,10 @@ def update_a_card_to_all_mc_task(card_dict, server_last_time=1):
 
 @app.task()
 def delete_a_card_from_mc_task(card_dict, server_last_time=1):
-    server=ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), DeleteACardHandler,
+    server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), DeleteACardHandler,
                                p_data={'card': card_dict, 'server_last_time': server_last_time})
-    server_thread=threading.Thread(target=server.serve_forever)
-    server_thread.daemon=True
+    server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.daemon = True
     server_thread.start()
     logger.info("start a delete_a_card task")
     time.sleep(server_last_time)
@@ -406,10 +406,10 @@ def delete_a_card_from_mc_task(card_dict, server_last_time=1):
 
 @app.task()
 def get_logs_from_mc_task(server_last_time=1):
-    server=ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), GetCardTestLogHandler,
+    server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), GetCardTestLogHandler,
                                p_data={'server_last_time': server_last_time})
-    server_thread=threading.Thread(target=server.serve_forever)
-    server_thread.daemon=True
+    server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.daemon = True
     server_thread.start()
     logger.info("start a get_logs_from_mc task")
     time.sleep(server_last_time)
@@ -420,10 +420,10 @@ def get_logs_from_mc_task(server_last_time=1):
 
 @app.task()
 def delete_all_cards_task(server_last_time=1):
-    server=ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), DeleteAllCardsFromMcHandler,
+    server = ThreadedTCPServer((SOCKET_HOST, SOCKET_PORT), DeleteAllCardsFromMcHandler,
                                p_data={'server_last_time': server_last_time})
-    server_thread=threading.Thread(target=server.serve_forever)
-    server_thread.daemon=True
+    server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.daemon = True
     server_thread.start()
     logger.info("start a get_logs_from_mc task")
     time.sleep(server_last_time)
@@ -434,4 +434,4 @@ def delete_all_cards_task(server_last_time=1):
 
 @app.on_after_configure.connect()
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60*1, get_logs_from_mc_task.s(), name='get log every 1 min')
+    sender.add_periodic_task(60 * 1, get_logs_from_mc_task.s(), name='get log every 1 min')
