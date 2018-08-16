@@ -185,7 +185,7 @@ export default {
       try {
         let title = 'cards_upload_template';
         let csv_header =
-          '*card_number,*card_category(1:vip|2:hands_only|3:feet_only|4:test_both),*name,*job_number,*department,*gender(0:female|1:male),note,\n';
+          '*card_number,*card_category(0:vip|1:hands_only|2:feet_only|3:test_both),*name,*job_number,*department,*gender(0:female|1:male),note,\n';
         let csv = [];
         let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
         let link = document.createElement('a');

@@ -97,6 +97,8 @@ def cards():
             for index, card in enumerate(cards_list):
                 if index == 0:
                     continue
+                if len(card) == 1:
+                    continue
                 c1 = Card(
                     card_number=card[0],
                     card_category=card[1],
