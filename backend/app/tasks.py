@@ -100,8 +100,10 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
                 belong_to_mc = card['belong_to_mc']
                 # add to all mc
                 if belong_to_mc == 'all' or not belong_to_mc:
-                    self.request.sendall(
-                        'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(**card).encode())
+                    command = 'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(
+                        **card).encode()
+                    logger.info(command)
+                    self.request.sendall(command)
                     data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
                     if 'CARD' not in data:
                         raise Exception('upload card error, card: {}, from {}'.format(
@@ -163,7 +165,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
             # add to all mc
             if belong_to_mc == 'all' or not belong_to_mc:
                 self.request.sendall(
-                    'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(**card).encode())
+                    'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(**card).encode(encoding='GB18030'))
                 data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
                 if 'CARD' not in data:
                     raise Exception('upload the card to all mc error, card: {} from{}'.format(
