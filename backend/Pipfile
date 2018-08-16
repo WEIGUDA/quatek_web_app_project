@@ -11,8 +11,6 @@ flask-mongoengine = "*"
 flask-socketio = "*"
 eventlet = "*"
 redis = "*"
-pytest = "*"
-python-dateutil = "*"
 celery = "*"
 
 [dev-packages]
@@ -23,6 +21,7 @@ pylint-flask = "*"
 rope = "*"
 ptvsd = "*"
 ipython = "*"
+pytest = "*"
 
 [requires]
 python_version = "3"
