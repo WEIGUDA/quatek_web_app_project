@@ -13,15 +13,15 @@ from pymongo import MongoClient
 
 # load configs
 from instance.config_default import (MONGODB_DB, MONGODB_HOST, MONGODB_PORT,
-                                     REDIS_URL, SOCKET_HOST, SOCKET_PORT)
+                                     REDIS_URL, SOCKET_HOST, SOCKET_PORT, CELERY_BEAT_INTERNAL)
 
 try:
-    from instance.config_dev import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, REDIS_URL, SOCKET_HOST, SOCKET_PORT
+    from instance.config_dev import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, REDIS_URL, SOCKET_HOST, SOCKET_PORT, CELERY_BEAT_INTERNAL
 except:
     pass
 
 try:
-    from instance.config_pro import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, REDIS_URL, SOCKET_HOST, SOCKET_PORT
+    from instance.config_pro import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, REDIS_URL, SOCKET_HOST, SOCKET_PORT, CELERY_BEAT_INTERNAL
 except:
     pass
 
@@ -468,4 +468,5 @@ def delete_all_cards_task(server_last_time=1):
 
 @app.on_after_configure.connect()
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60 * 1, get_logs_from_mc_task.s(), name='get log every 1 min')
+    sender.add_periodic_task(60 * CELERY_BEAT_INTERNAL, get_logs_from_mc_task.s(),
+                             name='get log every CELERY_BEAT_INTERNAL min')

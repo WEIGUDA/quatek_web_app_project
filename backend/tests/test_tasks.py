@@ -1,16 +1,7 @@
 import random
 
-from app.tasks import update_all_cards_to_mc_task
-from tests.CRUD_DB import insert_cards_to_db
-
-from app.tasks import update_a_card_to_all_mc_task
-from tests.CRUD_DB import insert_a_card
-
-from tests.CRUD_DB import get_card_from_db
-from tests.CRUD_DB import remove_card_for_db
-from app.tasks import delete_a_card_from_mc_task
-
-from app.tasks import get_logs_from_mc_task
+from app.tasks import update_all_cards_to_mc_task, delete_a_card_from_mc_task, get_logs_from_mc_task, update_a_card_to_all_mc_task
+from tests.CRUD_DB import insert_cards_to_db, insert_a_card, get_card_from_db, remove_card_for_db
 
 
 def test_update_all_cards():
@@ -52,6 +43,7 @@ def test_delete_a_card():
 
 def test_get_log():
     get_logs_from_mc_task()
+
 
 if __name__ == "__main__":
     # test_update_all_cards()
