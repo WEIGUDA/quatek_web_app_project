@@ -12,6 +12,7 @@ flask-socketio = "*"
 eventlet = "*"
 redis = "*"
 celery = "*"
+celerybeat-mongo = "*"
 
 [dev-packages]
 pylint = "*"

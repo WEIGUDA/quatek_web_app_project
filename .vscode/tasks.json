@@ -57,7 +57,7 @@
     {
       "label": "Celery Beat",
       "type": "shell",
-      "command": "pipenv run celery -A app.tasks beat",
+      "command": "pipenv run celery -A app.tasks beat -S celerybeatmongo.schedulers.MongoScheduler",
       "presentation": {
         "reveal": "always",
         "panel": "new"

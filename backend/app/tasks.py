@@ -12,16 +12,15 @@ from celery import Celery
 from pymongo import MongoClient
 
 # load configs
-from instance.config_default import (MONGODB_DB, MONGODB_HOST, MONGODB_PORT,
-                                     REDIS_URL, SOCKET_HOST, SOCKET_PORT, CELERY_BEAT_INTERNAL)
+from instance.config_default import *
 
 try:
-    from instance.config_dev import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, REDIS_URL, SOCKET_HOST, SOCKET_PORT, CELERY_BEAT_INTERNAL
+    from instance.config_dev import *
 except:
     pass
 
 try:
-    from instance.config_pro import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, REDIS_URL, SOCKET_HOST, SOCKET_PORT, CELERY_BEAT_INTERNAL
+    from instance.config_pro import *
 except:
     pass
 
@@ -52,6 +51,12 @@ users = db.user
 
 # celery
 app = Celery('quatek-task', broker=REDIS_URL, result_backend=REDIS_URL)
+app.conf.update({
+    'CELERY_MONGODB_SCHEDULER_DB': MONGODB_DB,
+    'CELERY_MONGODB_SCHEDULER_COLLECTION': "schedules",
+    'CELERY_MONGODB_SCHEDULER_URL': f"mongodb://{MONGODB_HOST}:{MONGODB_PORT}"
+
+})
 
 
 class UploadAllCardsHandler(socketserver.BaseRequestHandler):
@@ -466,7 +471,7 @@ def delete_all_cards_task(server_last_time=1):
     logger.info("stop the get_logs_from_mc task")
 
 
-@app.on_after_configure.connect()
-def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60 * CELERY_BEAT_INTERNAL, get_logs_from_mc_task.s(),
-                             name='get log every CELERY_BEAT_INTERNAL min')
+# @app.on_after_configure.connect()
+# def setup_periodic_tasks(sender, **kwargs):
+#     sender.add_periodic_task(60 * CELERY_BEAT_INTERNAL, get_logs_from_mc_task.s(),
+#                              name='get log every CELERY_BEAT_INTERNAL min')
