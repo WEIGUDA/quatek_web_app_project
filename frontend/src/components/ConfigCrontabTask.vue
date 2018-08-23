@@ -35,7 +35,7 @@
 
             <label class="sr-only" for="month_of_year">周</label>
             <select name="task" id="month_of_year" class="custom-select  mb-2 mr-sm-2" v-model="crontab_task.month_of_year">
-                <option value="*">所有</option>
+                <option value="*">所有月</option>
                 <option value="1">一月</option>
                 <option value="2">二月</option>
                 <option value="3">三月</option>
@@ -52,7 +52,7 @@
 
             <label class="sr-only" for="day_of_week">月</label>
             <select name="task" id="day_of_week" class="custom-select  mb-2 mr-sm-2" v-model="crontab_task.day_of_week">
-                <option value="*">所有</option>
+                <option value="*">周日到周一</option>
                 <option value="0">周日</option>
                 <option value="1">周一</option>
                 <option value="2">周二</option>
