@@ -27,7 +27,7 @@ def gates():
             current_app.logger.exception('get gates failed')
             abort(500)
         else:
-            return make_response(gates.to_json())
+            return (gates.to_json(), {'Content-Type': 'application/json'})
 
     elif request.method == 'POST':
         gates_list = request.json

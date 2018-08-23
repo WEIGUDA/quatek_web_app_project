@@ -4,11 +4,13 @@ from flask import Flask
 from flask_mongoengine import MongoEngine
 from flask_socketio import SocketIO
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 
 
 db = MongoEngine()
 socketio = SocketIO()
 cors = CORS()
+jwt = JWTManager()
 
 
 def create_app(config=None):
@@ -35,6 +37,7 @@ def create_app(config=None):
     db.init_app(app)
     socketio.init_app(app)
     cors.init_app(app)
+    jwt.init_app(app)
 
     # register blueprints
     from app.mod_gate.routers import bp as mod_gate_bp
