@@ -172,6 +172,7 @@ export default {
           .then((response) => {
             console.log(response);
             alert(`${response.data.result}张卡片信息上传成功!`);
+            this.get_cards();
           })
           .catch((response) => {
             console.log(response);
@@ -220,6 +221,7 @@ export default {
           .then((response) => {
             console.log(response);
             alert('删除成功!');
+            this.get_cards();
           })
           .catch((response) => {
             console.log(response);
@@ -312,18 +314,21 @@ export default {
         return false;
       }
     },
+    get_cards() {
+      axios
+        .get('cards')
+        .then((response) => {
+          console.log(response);
+          this.cards = response.data;
+        })
+        .catch((response) => {
+          console.log(response);
+        });
+    },
   },
 
   created() {
-    axios
-      .get('cards')
-      .then((response) => {
-        console.log(response);
-        this.cards = response.data;
-      })
-      .catch((response) => {
-        console.log(response);
-      });
+    this.get_cards();
   },
 };
 </script>

@@ -118,6 +118,7 @@ export default {
           .then((response) => {
             console.log(response);
             alert(`${response.data.result}台闸机信息上传成功!`);
+            this.get_gates();
           })
           .catch((response) => {
             console.log(response);
@@ -237,21 +238,24 @@ export default {
         return false;
       }
     },
+    get_gates() {
+      axios
+        .get('gates')
+        .then((response) => {
+          console.log(response);
+          this.gates = response.data;
+        })
+        .catch((response) => {
+          console.log(response);
+        });
+    },
   },
   components: {
     AppGate: Gate,
   },
 
   created() {
-    axios
-      .get('gates')
-      .then((response) => {
-        console.log(response);
-        this.gates = response.data;
-      })
-      .catch((response) => {
-        console.log(response);
-      });
+    this.get_gates();
   },
 };
 </script>
