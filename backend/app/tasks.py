@@ -55,7 +55,6 @@ app.conf.update({
     'CELERY_MONGODB_SCHEDULER_DB': MONGODB_DB,
     'CELERY_MONGODB_SCHEDULER_COLLECTION': "schedules",
     'CELERY_MONGODB_SCHEDULER_URL': f"mongodb://{MONGODB_HOST}:{MONGODB_PORT}"
-
 })
 
 
@@ -471,7 +470,6 @@ def delete_all_cards_task(server_last_time=1):
     logger.info("stop the get_logs_from_mc task")
 
 
-# @app.on_after_configure.connect()
-# def setup_periodic_tasks(sender, **kwargs):
-#     sender.add_periodic_task(60 * CELERY_BEAT_INTERNAL, get_logs_from_mc_task.s(),
-#                              name='get log every CELERY_BEAT_INTERNAL min')
+@app.task()
+def send_email_of_logs():
+    pass
