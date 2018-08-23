@@ -2,12 +2,12 @@
   <div class="container-fluid">
     <div class="row">
 
-      <b-nav vertical class="col-3 offset-1">
+      <b-nav vertical class="col-2 offset-1">
         <b-nav-item :to="{name: 'interval-task'}">任务设置(按间隔)</b-nav-item>
-        <b-nav-item :to="{name: 'crontab-task'}">任务设置(按时间)</b-nav-item>
+        <b-nav-item :to="{name: 'crontab-task'}">任务设置(按日期)</b-nav-item>
       </b-nav>
 
-      <div class="col-8">
+      <div class="col-9">
         <router-view></router-view>
       </div>
 
