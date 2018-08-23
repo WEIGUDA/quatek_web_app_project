@@ -1,59 +1,64 @@
 <template>
-    <div>
-        <form class="form-inline">
+  <div>
+    <form class="form-inline">
 
-            <label class="sr-only" for="task">任务</label>
-            <select name="task" id="task" class="custom-select  mb-2 mr-sm-2" v-model="interval_task.task">
-                <option value="">------请选择任务------</option>
-                <option value="send_email_of_logs">任务: 发送报告</option>
-                <option value="get_logs_from_mc_task">任务: 从闸机获取Logs</option>
-            </select>
+      <label class="sr-only" for="task">任务</label>
+      <select name="task" id="task" class="custom-select  mb-2 mr-sm-2" v-model="interval_task.task">
+        <option value="">------请选择任务------</option>
+        <option value="send_email_of_logs">任务: 发送报告</option>
+        <option value="get_logs_from_mc_task">任务: 从闸机获取Logs</option>
+      </select>
 
-            <label class="sr-only" for="every">每{{interval_task.every}}秒运行一次</label>
-            <div class="input-group mb-2 mr-sm-2">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">每</div>
-                </div>
-                <input type="text" class="form-control" id="every" v-model="interval_task.every" placeholder="每?秒运行一次">
-                <div class="input-group-append">
-                    <div class="input-group-text">秒运行一次</div>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-success mb-2 btn_quatek" @click.prevent.stop="submit()">添加</button>
-        </form>
-        <div>
-            <div class="row" v-if="!tasks.length">
-                <p class="w-100 text-center no-result">没有任务</p>
-            </div>
-
-            <div class="row" v-if="tasks.length">
-                <table class="table table-striped table-responsive-md">
-                    <thead>
-                        <tr>
-                            <th scope="col">任务</th>
-                            <th scope="col">运行间隔</th>
-                            <th scope="col">删除</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="task in computed_tasks" :key="task._id.$oid">
-                            <td>{{task.task}}</td>
-                            <td>{{task.interval.every}}</td>
-                            <td>
-                                <button type="button" class="btn btn-secondary btn-quatek btn-sm" @click="delete_task(task._id.$oid)">
-                                    <font-awesome-icon icon="trash-alt" />
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-
-                </table>
-            </div>
+      <label class="sr-only" for="every">每{{interval_task.every}}秒运行一次</label>
+      <div class="input-group mb-2 mr-sm-2">
+        <div class="input-group-prepend">
+          <div class="input-group-text">每</div>
         </div>
+        <input type="text" class="form-control" id="every" v-model="interval_task.every" placeholder="每?秒运行一次">
+        <div class="input-group-append">
+          <div class="input-group-text">秒运行一次</div>
+        </div>
+      </div>
 
+      <button type="submit" class="btn btn-success mb-2 btn_quatek" @click.prevent.stop="submit()">添加</button>
+    </form>
+    <br>
+    <div>
+      <div class="row">
+        <table class="table table-striped table-responsive-md">
+          <thead>
+            <tr>
+              <th scope="col">任务</th>
+              <th scope="col">运行间隔</th>
+              <th scope="col">删除</th>
+
+            </tr>
+          </thead>
+
+          <tbody v-if="!tasks.length">
+            <tr>
+              <td colspan="3" class="text-center">没有找到任务</td>
+            </tr>
+
+          </tbody>
+
+          <tbody v-if="tasks.length">
+            <tr v-for="task in computed_tasks" :key="task._id.$oid">
+              <td>{{task.task}}</td>
+              <td>{{task.interval.every}}</td>
+              <td>
+                <button type="button" class="btn btn-secondary btn-quatek btn-sm" @click="delete_task(task._id.$oid)">
+                  <font-awesome-icon icon="trash-alt" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
     </div>
+
+  </div>
 
 </template>
 
