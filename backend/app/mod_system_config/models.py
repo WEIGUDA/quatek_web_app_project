@@ -7,6 +7,8 @@ class SystemConfig(db.DynamicDocument):
     """
     smtp_host = db.StringField(default='')
     smtp_port = db.IntField(default=None)
+    smtp_username = db.StringField(default='')
+    smtp_password = db.StringField(default='')
     smtp_use_ssl = db.BooleanField(default=True)
     emails = db.StringField(default='')
     work_hours = db.StringField(default='8:00-18:00')

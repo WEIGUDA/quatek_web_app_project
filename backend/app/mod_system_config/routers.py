@@ -27,6 +27,8 @@ def update_system_config():
     system_config = SystemConfig.objects.get()
     system_config.smtp_host = request.json['smtp_host']
     system_config.smtp_port = int(request.json['smtp_port'])
+    system_config.smtp_username = request.json['smtp_username']
+    system_config.smtp_password = request.json['smtp_password']
     system_config.smtp_use_ssl = request.json['smtp_use_ssl']
     system_config.emails = request.json['emails']
     system_config.work_hours = request.json['work_hours']

@@ -10,6 +10,16 @@
       <input type="text" class="form-control" id="smtp_port" v-model="config.smtp_port">
     </div>
 
+    <div class="form-group">
+      <label for="smtp_username">SMTP 用户名</label>
+      <input type="text" class="form-control" id="smtp_username" v-model="config.smtp_username">
+    </div>
+
+    <div class="form-group">
+      <label for="smtp_password">SMTP 密码</label>
+      <input type="text" class="form-control" id="smtp_password" v-model="config.smtp_password">
+    </div>
+
     <div class="form-group form-check">
       <input type="checkbox" class="form-check-input" id="smtp_use_ssl" v-model="config.smtp_use_ssl">
       <label class="form-check-label" for="smtp_use_ssl">使用SSL</label>
@@ -42,6 +52,8 @@ export default {
         smtp_host: '',
         smtp_port: '465',
         smtp_use_ssl: true,
+        smtp_username: '',
+        smtp_password: '',
         emails: '',
         work_hours: '8:00-18:00',
       },
