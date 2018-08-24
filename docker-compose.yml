@@ -2,7 +2,7 @@ version: '3'
 
 services:
   mongo:
-    image: mongo:4.0.0
+    image: mongo:4
     deploy:
       replicas: 1
       update_config:
@@ -18,7 +18,7 @@ services:
       - mongodb:/data/db
 
   redis:
-    image: redis:4.0.10-alpine
+    image: redis:4-alpine
     deploy:
       replicas: 1
       update_config:
@@ -34,7 +34,7 @@ services:
       - redis:/data
 
   flask:
-    image: quatek_web_app_backend
+    image: backend
     build: ./backend
     ports:
       - '5001:5001'
@@ -53,7 +53,7 @@ services:
       - quatek_net
 
   celery_worker:
-    image: celery_worker
+    image: backend
     build: ./backend
     ports:
       - '5858:5858'
@@ -73,7 +73,7 @@ services:
       - quatek_net
 
   celery_beat:
-    image: celery_beat
+    image: backend
     build: ./backend
     command: pipenv run celery -A app.tasks beat -S celerybeatmongo.schedulers.MongoScheduler
     depends_on:
@@ -91,7 +91,7 @@ services:
       - quatek_net
 
   vue:
-    image: quatek_web_app_frontend
+    image: frontend
     build: ./frontend
     ports:
       - '80:80'
