@@ -1,25 +1,22 @@
-import datetime
-import json
 from uuid import uuid1
-from flask import Blueprint, request, make_response, current_app, abort, jsonify
-from mongoengine.queryset.visitor import Q
 
 from celerybeatmongo.models import PeriodicTask
+from flask import (Blueprint, abort, current_app, jsonify, make_response,
+                   request)
+from mongoengine.queryset.visitor import Q
 
-from app.mod_gate.models import Gate, Card, CardTest
-from app.tasks import update_all_cards_to_mc_task, update_a_card_to_all_mc_task, delete_a_card_from_mc_task
 
 bp = Blueprint('mod_task', __name__)
 
 
-@bp.route('/task-interval', methods=['GET', 'POST'])
+@bp.route('/task-interval', methods=['GET', ])
 def task_interval():
     if request.method == 'GET':
         tasks = PeriodicTask.objects.filter(interval__exists=True)
         return tasks.to_json(), {'Content-Type': 'application/json'}
 
 
-@bp.route('/task-crontab', methods=['GET', 'POST'])
+@bp.route('/task-crontab', methods=['GET', ])
 def task_crontab():
     if request.method == 'GET':
         tasks = PeriodicTask.objects.filter(crontab__exists=True)
