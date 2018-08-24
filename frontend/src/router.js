@@ -9,6 +9,7 @@ import Attendances from '@/components/Attendances';
 import Config from '@/components/Config';
 import ConfigIntervalTask from '@/components/ConfigIntervalTask';
 import ConfigCrontabTask from '@/components/ConfigCrontabTask';
+import SystemConfig from '@/components/SystemConfig';
 
 Vue.use(Router);
 
@@ -56,6 +57,12 @@ export default new Router({
       name: 'Config',
       component: Config,
       children: [
+        {
+          path: 'system-config',
+          name: 'system-config',
+          component: SystemConfig,
+        },
+
         {
           path: 'interval-task',
           name: 'interval-task',
