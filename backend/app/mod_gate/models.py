@@ -19,8 +19,8 @@ class Gate(db.DynamicDocument):
 
 
 class Card(db.DynamicDocument):
-    card_number = db.StringField(default='')  # 卡号
-    card_category = db.StringField(  # 卡类别
+    card_number = db.StringField(default='')  # 卡号号码
+    card_category = db.StringField(  # 卡片类别
         default='3',
         choices=(('0', 'vip'),
                  ('1', '只测手'),
@@ -35,7 +35,7 @@ class Card(db.DynamicDocument):
     belong_to_mc = db.StringField(default='all')
     # 进出标志 name1:1|name2:0|name3 0:可进可出, 1:禁止进入/可出, 2:禁止出去/可进, 3:禁止进出  or all:所有闸机都可进可出
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
-    card_counter = db.SequenceField(collection_name='card_counter')  # 闸机卡号编号
+    card_counter = db.SequenceField(collection_name='card_counter')  # 卡号编号
 
 
 class CardTest(db.DynamicDocument):

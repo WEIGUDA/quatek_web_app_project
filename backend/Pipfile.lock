@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "530a94c3c525f3795bfb984813fb84454709de4b8298d3733f42a2f565d55980"
+            "sha256": "181919eb5c0e27f6d175b55763a8a0f5a145539fce9f9eeaaafbdb8c9b020b2d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -57,6 +57,12 @@
                 "sha256:861e6e58faa730f9845aaaa9c6c832851fbf89382ac52915a51f89c71accdd31"
             ],
             "version": "==1.15.0"
+        },
+        "et-xmlfile": {
+            "hashes": [
+                "sha256:614d9722d572f6246302c4491846d2c393c199cfa4edc9af593437691683335b"
+            ],
+            "version": "==1.0.1"
         },
         "eventlet": {
             "hashes": [
@@ -142,6 +148,13 @@
             ],
             "version": "==0.24"
         },
+        "jdcal": {
+            "hashes": [
+                "sha256:948fb8d079e63b4be7a69dd5f0cd618a0a57e80753de8248fd786a8a20658a07",
+                "sha256:ea0a5067c5f0f50ad4c7bdc80abad3d976604f6fb026b0b3a17a9d84bb9046c9"
+            ],
+            "version": "==1.4"
+        },
         "jinja2": {
             "hashes": [
                 "sha256:74c935a1b8bb9a3947c50a54766a969d4846290e1e788ea44c1392163723c3bd",
@@ -175,6 +188,13 @@
                 "sha256:552a91f381532e33cbd07c6a2655a21908088962bb8fa7239ecbcc6ad1140cc7"
             ],
             "version": "==1.5"
+        },
+        "openpyxl": {
+            "hashes": [
+                "sha256:0f391b0035d7c98f25aad539726e8efc77eea250ff1a120ea7d264c03a16f5fe"
+            ],
+            "index": "pypi",
+            "version": "==2.5.5"
         },
         "pyjwt": {
             "hashes": [
@@ -455,12 +475,12 @@
         },
         "ptvsd": {
             "hashes": [
-                "sha256:11f1934db6c47b615073bc08f8be1d75e2c4b21cf29f4c4432f2e513ad946c69",
-                "sha256:a3c9855a6964e986b00794e40458cef5572ddb7e6a0e5883a4c919c89a3bce57",
-                "sha256:d9c20f5074e54a432e73037e3e2f366739e7278229e1ba95a0292464ce8289fc"
+                "sha256:b3e3391e78f0a7d4a03059f3cb3f39f5ff7a5336dda06f9106865202e17e97fa",
+                "sha256:b630a12de34529f971b86aaced1ed6194612305340beac9c0fe266e65cb46eb6",
+                "sha256:fe6b212cfdf82f665059f6bdf2b38ab3324c7ff1f47c75932165a9e7393853bf"
             ],
             "index": "pypi",
-            "version": "==4.1.1a11"
+            "version": "==4.1.1"
         },
         "ptyprocess": {
             "hashes": [
