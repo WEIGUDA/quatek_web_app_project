@@ -94,14 +94,27 @@ export default {
         return;
       }
       axios
-        .post('task-interval-add-one', { every: this.interval_task.every, task: this.interval_task.task })
+        .get(`does-task-exist?q=${this.interval_task.task}`)
         .then((response) => {
           console.log(response.data);
-          this.get_tasks();
+          if (response.data.does_task_exist === false) {
+            axios
+              .post('task-interval-add-one', { every: this.interval_task.every, task: this.interval_task.task })
+              .then((response) => {
+                console.log(response.data);
+                this.get_tasks();
+              })
+              .catch((response) => {
+                console.log(response);
+              });
+          } else {
+            alert('当前任务已经存在, 请勿重复添加!');
+          }
         })
         .catch((response) => {
           console.log(response);
         });
+
       console.log(this.interval_task);
     },
     delete_task(task_id) {

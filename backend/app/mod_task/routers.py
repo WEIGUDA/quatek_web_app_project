@@ -54,9 +54,13 @@ def task_delete():
         result = task.delete()
         return task.to_json(), {'Content-Type': 'application/json'}
 
-# @bp.route('/task', methods=['GET', ])
-# def task():
-#     if request.method == 'GET':
-#         q = request.args.get('q', None)
-#         tasks = PeriodicTask.objects.filter(task__icontains=q)
-#         return tasks.to_json(), {'Content-Type': 'application/json'}
+
+@bp.route('/does-task-exist', methods=['GET', ])
+def does_task_exist():
+    if request.method == 'GET':
+        q = request.args.get('q', None)
+        tasks_count = PeriodicTask.objects.filter(task__icontains=q).count()
+        if tasks_count > 0:
+            return jsonify({'does_task_exist': True}), {'Content-Type': 'application/json'}
+        else:
+            return jsonify({'does_task_exist': False}), {'Content-Type': 'application/json'}

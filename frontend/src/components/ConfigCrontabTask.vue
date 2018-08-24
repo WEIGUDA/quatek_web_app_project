@@ -145,21 +145,34 @@ export default {
         return;
       }
       axios
-        .post('task-crontab-add-one', {
-          task: this.crontab_task.task,
-          minute: this.crontab_task.minute,
-          hour: this.crontab_task.hour,
-          day_of_month: this.crontab_task.day_of_month,
-          month_of_year: this.crontab_task.month_of_year,
-          day_of_week: this.crontab_task.day_of_week,
-        })
+        .get(`does-task-exist?q=${this.crontab_task.task}`)
         .then((response) => {
           console.log(response.data);
-          this.get_tasks();
+          if (response.data.does_task_exist === false) {
+            axios
+              .post('task-crontab-add-one', {
+                task: this.crontab_task.task,
+                minute: this.crontab_task.minute,
+                hour: this.crontab_task.hour,
+                day_of_month: this.crontab_task.day_of_month,
+                month_of_year: this.crontab_task.month_of_year,
+                day_of_week: this.crontab_task.day_of_week,
+              })
+              .then((response) => {
+                console.log(response.data);
+                this.get_tasks();
+              })
+              .catch((response) => {
+                console.log(response);
+              });
+          } else {
+            alert('当前任务已经存在, 请勿重复添加!');
+          }
         })
         .catch((response) => {
           console.log(response);
         });
+
       console.log(this.crontab_task);
     },
     delete_task(task_id) {
