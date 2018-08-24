@@ -42,8 +42,10 @@ def create_app(config=None):
     # register blueprints
     from app.mod_gate.routers import bp as mod_gate_bp
     from app.mod_auth.routers import bp as mod_auth_bp
+    from app.mod_task.routers import bp as mod_task_bp
     app.register_blueprint(mod_gate_bp)
     app.register_blueprint(mod_auth_bp)
+    app.register_blueprint(mod_task_bp)
 
     from app.mod_gate.models import Card, CardTest, Gate
     from app.mod_auth.models import User
