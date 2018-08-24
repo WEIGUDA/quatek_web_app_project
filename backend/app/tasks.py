@@ -45,15 +45,6 @@ consoleHandler.setFormatter(logFormatter)
 logger.addHandler(fileHandler)
 # logger.addHandler(consoleHandler)
 
-# pymongo
-client = MongoClient(MONGODB_HOST, MONGODB_PORT)
-db = client[MONGODB_DB]
-cards = db.card
-gates = db.gate
-cardtests = db.card_test
-users = db.user
-system_config = db.system_config
-
 
 # celery
 app = Celery('quatek-task', broker=REDIS_URL, result_backend=REDIS_URL)
@@ -70,6 +61,15 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
     '''
 
     def handle(self):
+        # pymongo
+        client = MongoClient(MONGODB_HOST, MONGODB_PORT)
+        db = client[MONGODB_DB]
+        cards = db.card
+        gates = db.gate
+        cardtests = db.card_test
+        users = db.user
+        system_config = db.system_config
+
         logger.info('start an UploadAllCardsHandler for {}'.format(self.client_address))
         self.request.settimeout(5)
         mc_client = {}
@@ -152,7 +152,16 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
     '''
 
     def handle(self):
+        # pymongo
+        client = MongoClient(MONGODB_HOST, MONGODB_PORT)
+        db = client[MONGODB_DB]
+        cards = db.card
+        gates = db.gate
+        cardtests = db.card_test
+        users = db.user
+        system_config = db.system_config
         self.request.settimeout(5)
+
         logger.info('start an UpdateACardHandler for {}'.format(self.client_address))
         mc_client = {}
         card = self.server.p_data['card']
@@ -237,6 +246,15 @@ class DeleteACardHandler(socketserver.BaseRequestHandler):
     '''
 
     def handle(self):
+        # pymongo
+        client = MongoClient(MONGODB_HOST, MONGODB_PORT)
+        db = client[MONGODB_DB]
+        cards = db.card
+        gates = db.gate
+        cardtests = db.card_test
+        users = db.user
+        system_config = db.system_config
+
         self.request.settimeout(5)
         logger.info('start an DeleteACardHandler for {}'.format(self.client_address))
         card = self.server.p_data['card']
@@ -278,6 +296,15 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
     '''
 
     def handle(self):
+        # pymongo
+        client = MongoClient(MONGODB_HOST, MONGODB_PORT)
+        db = client[MONGODB_DB]
+        cards = db.card
+        gates = db.gate
+        cardtests = db.card_test
+        users = db.user
+        system_config = db.system_config
+
         logger.info('start a new handler for {}'.format(self.client_address))
         self.request.settimeout(5)
         all_data = []
@@ -386,6 +413,15 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
 
 class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
     def handle(self):
+        # pymongo
+        client = MongoClient(MONGODB_HOST, MONGODB_PORT)
+        db = client[MONGODB_DB]
+        cards = db.card
+        gates = db.gate
+        cardtests = db.card_test
+        users = db.user
+        system_config = db.system_config
+
         # delete all cards from mc
         command_list = []
         try:
@@ -478,6 +514,16 @@ def delete_all_cards_task(server_last_time=1):
 
 @app.task()
 def send_email_of_logs():
+    # pymongo
+    client = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    db = client[MONGODB_DB]
+    cards = db.card
+    gates = db.gate
+    cardtests = db.card_test
+    users = db.user
+    system_config = db.system_config
+
+    logger.info('start send_email_of_logs task')
     config = system_config.find()[0]
 
     # process data in mongodb
@@ -620,3 +666,5 @@ def send_email_of_logs():
         with smtplib.SMTP(config['smtp_host'], config['smtp_port']) as s:
             s.login(config['smtp_username'], config['smtp_password'])
             s.send_message(msg)
+
+    logger.info('stop send_email_of_logs task')
