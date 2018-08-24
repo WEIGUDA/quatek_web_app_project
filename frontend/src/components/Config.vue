@@ -1,13 +1,14 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <b-nav vertical class="col-2 offset-1 sidebar">
+      <b-nav vertical class="col-md-2 offset-md-1 sidebar">
         <b-nav-item :to="{name: 'system-config'}">系统设置</b-nav-item>
         <b-nav-item :to="{name: 'interval-task'}">任务设置(按间隔)</b-nav-item>
         <b-nav-item :to="{name: 'crontab-task'}">任务设置(按日期)</b-nav-item>
+        <br>
       </b-nav>
 
-      <div class="col-9">
+      <div class="col-md-9">
         <router-view></router-view>
       </div>
 
