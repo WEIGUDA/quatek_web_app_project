@@ -79,7 +79,7 @@
           <thead>
             <tr>
               <th scope="col">任务</th>
-              <th scope="col">运行日期(分时日月周)</th>
+              <th scope="col">运行日期(分|时|日|月|周)</th>
               <th scope="col">删除</th>
 
             </tr>
@@ -95,7 +95,7 @@
           <tbody v-if="tasks.length">
             <tr v-for="task in computed_tasks" :key="task._id.$oid">
               <td>{{task.task}}</td>
-              <td>{{task.crontab.minute}} {{task.crontab.hour}} {{task.crontab.day_of_month}} {{task.crontab.month_of_year}} {{task.crontab.day_of_week}}</td>
+              <td>{{task.crontab.minute}} | {{task.crontab.hour}} | {{task.crontab.day_of_month}} | {{task.crontab.month_of_year}} | {{task.crontab.day_of_week}}</td>
               <td>
                 <button type="button" class="btn btn-secondary btn-quatek btn-sm" @click="delete_task(task._id.$oid)">
                   <font-awesome-icon icon="trash-alt" />
