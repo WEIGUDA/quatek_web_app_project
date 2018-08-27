@@ -30,6 +30,7 @@ def update_system_config():
     system_config.smtp_username = request.json['smtp_username']
     system_config.smtp_password = request.json['smtp_password']
     system_config.smtp_use_ssl = request.json['smtp_use_ssl']
+    system_config.smtp_use_tls = request.json['smtp_use_tls']
     system_config.emails = request.json['emails']
     system_config.work_hours = request.json['work_hours']
 

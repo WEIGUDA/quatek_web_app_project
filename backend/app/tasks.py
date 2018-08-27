@@ -660,10 +660,14 @@ def send_email_of_logs():
 
     if config['smtp_use_ssl']:
         with smtplib.SMTP_SSL(config['smtp_host'], config['smtp_port']) as s:
+            if config['smtp_use_tls']:
+                s.starttls()
             s.login(config['smtp_username'], config['smtp_password'])
             s.send_message(msg)
     else:
         with smtplib.SMTP(config['smtp_host'], config['smtp_port']) as s:
+            if config['smtp_use_tls']:
+                s.starttls()
             s.login(config['smtp_username'], config['smtp_password'])
             s.send_message(msg)
 

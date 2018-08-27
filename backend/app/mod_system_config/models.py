@@ -10,5 +10,6 @@ class SystemConfig(db.DynamicDocument):
     smtp_username = db.StringField(default='')
     smtp_password = db.StringField(default='')
     smtp_use_ssl = db.BooleanField(default=True)
+    smtp_use_tls = db.BooleanField(default=False)
     emails = db.StringField(default='')
     work_hours = db.StringField(default='8:00-18:00')

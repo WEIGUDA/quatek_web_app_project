@@ -24,6 +24,10 @@
       <input type="checkbox" class="form-check-input" id="smtp_use_ssl" v-model="config.smtp_use_ssl">
       <label class="form-check-label" for="smtp_use_ssl">使用SSL</label>
     </div>
+    <div class="form-group form-check">
+      <input type="checkbox" class="form-check-input" id="smtp_use_tls" v-model="config.smtp_use_tls">
+      <label class="form-check-label" for="smtp_use_tls">使用TLS</label>
+    </div>
     <hr>
 
     <div class="form-group">
@@ -52,6 +56,7 @@ export default {
         smtp_host: '',
         smtp_port: '465',
         smtp_use_ssl: true,
+        smtp_use_tls: true,
         smtp_username: '',
         smtp_password: '',
         emails: '',
