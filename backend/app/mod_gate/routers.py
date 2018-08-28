@@ -80,8 +80,7 @@ def cards():
                 | Q(card_category__icontains=query_string)\
                 | Q(name__icontains=query_string)\
                 | Q(job_number__icontains=query_string)\
-                | Q(department__icontains=query_string)\
-                | Q(id=query_string)
+                | Q(department__icontains=query_string)
 
         offset = request.args.get('offset', 0)
         limit = request.args.get('limit', 50)
