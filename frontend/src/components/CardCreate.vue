@@ -123,7 +123,9 @@ export default {
       let computed_rights = [];
       if (this.card.id) {
         for (let gate_right of this.card.belong_to_mc.split('|')) {
-          computed_rights.push({ gate_name: gate_right.split(':')[0], rights: gate_right.split(':')[1] });
+          if (!gate_right) {
+            computed_rights.push({ gate_name: gate_right.split(':')[0], rights: gate_right.split(':')[1] });
+          }
         }
       }
       for (let gate of this.gates) {
