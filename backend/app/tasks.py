@@ -525,6 +525,7 @@ def send_email_of_logs():
 
     logger.info('start send_email_of_logs task')
     config = system_config.find()[0]
+    logger.info(f'config: {config}')
 
     # process data in mongodb
     all_cards = cards.find()
