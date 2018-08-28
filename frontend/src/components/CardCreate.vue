@@ -191,7 +191,7 @@ export default {
     if (this.$route.params.card_id) {
       this.card.id = this.$route.params.card_id;
       axios
-        .get(`cards?q=${this.card.id}`)
+        .get(`get-card-by-id?q=${this.card.id}`)
         .then((response) => {
           console.log(response);
           this.card.card_number = response.data[0].card_number;

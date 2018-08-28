@@ -230,3 +230,17 @@ def cardtests():
 
     elif request.method == 'POST':
         pass
+
+
+@bp.route('/get-card-by-id', methods=['GET', ])
+def get_card_by_id():
+    query_string = request.args.get('q', None)
+
+    try:
+        cards = Card.objects.filter(pk=query_string)
+
+    except:
+        current_app.logger.exception('get cards failed')
+        abort(500)
+    else:
+        return make_response(cards.to_json())
