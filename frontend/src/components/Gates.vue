@@ -117,8 +117,8 @@ export default {
           .post('gates', result)
           .then((response) => {
             console.log(response);
+
             alert(`${response.data.result}台闸机信息上传成功!`);
-            this.get_gates();
           })
           .catch((response) => {
             console.log(response);

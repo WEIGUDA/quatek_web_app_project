@@ -172,7 +172,6 @@ export default {
           .then((response) => {
             console.log(response);
             alert(`${response.data.result}张卡片信息上传成功!`);
-            this.get_cards();
           })
           .catch((response) => {
             console.log(response);
