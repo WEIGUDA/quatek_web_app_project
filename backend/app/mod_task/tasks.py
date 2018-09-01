@@ -683,71 +683,110 @@ def send_email_of_logs():
 def save_to_other_database():
     logger.info('start save_to_other_database task')
 
-    # pymongo
-    client = MongoClient(MONGODB_HOST, MONGODB_PORT)
-    db = client[MONGODB_DB]
-    cards = db.card
-    cardtests = db.card_test
-    system_config = db.system_config
-    config = system_config.find()[0]
-
-    # sqlalchemy
-    engine = create_engine(URL(drivername=config['db_type'], host=config['db_host'], port=config['db_port'],
-                               database=config['db_name'], username=config['db_username'], password=config['db_password']))
-    inspector = inspect(engine)
-
-    if 'logs' not in inspector.get_table_names():
-        logger.info('create logs table')
-        Base.metadata.create_all(bind=engine)
-
-    Session = sessionmaker(bind=engine)
-    session = Session()
-
-    logs = []
-    uncopied_cardtests = list(cardtests.find({'is_copied_to_other_database': False}))
-
-    all_cards = list(cards.find())
-    for cardtest in uncopied_cardtests:
-
-        users_list = [user for user in all_cards if user['card_number'] == cardtest['card_number']]
-        if users_list:
-            user = users_list[0]
-        else:
-            user = {}
-        logs.append(Log(
-            id=str(cardtest.get('_id', '')),
-            log_id=cardtest.get('log_id', ''),
-            card_counter=cardtest.get('card_counter', ''),
-            card_number=cardtest.get('card_number', ''),
-            card_category=cardtest.get('card_category', ''),
-            in_out_symbol=cardtest.get('in_out_symbol', ''),
-            mc_id=cardtest.get('mc_id', ''),
-            test_datetime=cardtest.get('test_datetime', datetime.datetime.utcnow()),
-            is_tested=cardtest.get('is_tested', ''),
-            hand=cardtest.get('hand', ''),
-            left_foot=cardtest.get('left_foot', ''),
-            right_foot=cardtest.get('right_foot', ''),
-            after_erg=cardtest.get('after_erg', ''),
-            rsg=cardtest.get('rsg', ''),
-            name=user.get('name', ''),
-            job_number=user.get('job_number', ''),
-            department=user.get('department', ''),
-            gender=user.get('gender', ''),
-            note=user.get('note', ''),
-            belong_to_mc=user.get('belong_to_mc', ''),
-        ))
-
-    session.add_all(logs)
-    session.commit()
-    session.close()
-    engine.dispose()
-
-    requests = []
-    for cardtest in uncopied_cardtests:
-        requests.append(UpdateOne({'_id': cardtest['_id']}, {'$set': {'is_copied_to_other_database': True}}))
     try:
-        cardtests.bulk_write(requests)
-    except bulk.InvalidOperation:
-        logger.info('pymongo bulk InvalidOperation: No operations to execute')
+        # pymongo
+        client = MongoClient(MONGODB_HOST, MONGODB_PORT)
+        db = client[MONGODB_DB]
+        cards = db.card
+        cardtests = db.card_test
+        system_config = db.system_config
+        config = system_config.find()[0]
+
+        os.environ["NLS_LANG"] = 'AMERICAN_AMERICA.UTF8'
+        # sqlalchemy
+        engine = create_engine(
+            URL(
+                drivername=config['db_type'],
+                host=config['db_host'],
+                port=config['db_port'],
+                database=config['db_name'],
+                username=config['db_username'],
+                password=config['db_password']
+            ),
+        )
+
+        inspector = inspect(engine)
+
+        if 'logs' not in inspector.get_table_names():
+            logger.info('create logs table')
+            Base.metadata.create_all(bind=engine)
+
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
+        logs = []
+        uncopied_cardtests = list(cardtests.find({'is_copied_to_other_database': False}))
+
+        all_cards = list(cards.find())
+        for cardtest in uncopied_cardtests:
+            logger.info(str(cardtest))
+            users_list = [user for user in all_cards if user['card_number'] == cardtest['card_number']]
+            if users_list:
+                user = users_list[0]
+            else:
+                user = {}
+            log = Log(
+                id=str(cardtest.get('_id', '')),
+                log_id=cardtest.get('log_id', ''),
+                card_counter=cardtest.get('card_counter', ''),
+                card_number=cardtest.get('card_number', ''),
+                card_category=cardtest.get('card_category', ''),
+                in_out_symbol=cardtest.get('in_out_symbol', ''),
+                mc_id=cardtest.get('mc_id', ''),
+                test_datetime=cardtest.get('test_datetime', datetime.datetime.utcnow()),
+                test_result=cardtest.get('test_result', ''),
+                is_tested=cardtest.get('is_tested', ''),
+                hand=cardtest.get('hand', ''),
+                left_foot=cardtest.get('left_foot', ''),
+                right_foot=cardtest.get('right_foot', ''),
+                after_erg=cardtest.get('after_erg', ''),
+                rsg=cardtest.get('rsg', ''),
+                name=user.get('name', ''),
+                job_number=user.get('job_number', ''),
+                department=user.get('department', ''),
+                gender=user.get('gender', ''),
+                note=user.get('note', ''),
+                belong_to_mc=user.get('belong_to_mc', ''),
+            )
+
+            if log.card_category == '0':
+                log.card_category = 'vip'
+            if log.card_category == '1':
+                log.card_category = '只测手'
+            if log.card_category == '2':
+                log.card_category = '只测脚'
+            if log.card_category == '3':
+                log.card_category = '手脚都测'
+            if log.gender == '0':
+                log.gender = '女'
+            if log.gender == '1':
+                log.gender = '男'
+            if log.test_result == '0':
+                log.test_result = '不通过'
+            if log.test_result == '1':
+                log.test_result = '通过'
+            if log.is_tested == '0':
+                log.is_tested = '不测试'
+            if log.is_tested == '1':
+                log.is_tested = '测试'
+
+            logs.append(log)
+
+        logger.info(str(logs))
+        session.add_all(logs)
+        session.commit()
+
+        requests = []
+        for cardtest in uncopied_cardtests:
+            requests.append(UpdateOne({'_id': cardtest['_id']}, {'$set': {'is_copied_to_other_database': True}}))
+        try:
+            cardtests.bulk_write(requests)
+        except bulk.InvalidOperation:
+            logger.info('pymongo bulk InvalidOperation: No operations to execute')
+    except Exception as e:
+        logger.exception(e)
+    finally:
+        session.close()
+        engine.dispose()
 
     logger.info('stop save_to_other_database task')
