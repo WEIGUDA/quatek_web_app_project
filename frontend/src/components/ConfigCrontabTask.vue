@@ -7,6 +7,7 @@
         <option value="">------请选择任务------</option>
         <option value="app.mod_task.tasks.send_email_of_logs">任务: 发送报告</option>
         <option value="app.mod_task.tasks.get_logs_from_mc_task">任务: 从闸机获取Logs</option>
+        <option value="app.mod_task.tasks.save_to_other_database">任务: 保存到其他数据库</option>
       </select>
 
       <label class="sr-only" for="minute">分</label>
@@ -137,6 +138,8 @@ export default {
           task.task = '从闸机获取Logs';
         } else if (task.task.indexOf('send_email_of_logs') >= 0) {
           task.task = '发送报告';
+        } else if (task.task.indexOf('save_to_other_database') >= 0) {
+          task.task = '保存到其他数据库';
         }
       }
       return computed_tasks;
