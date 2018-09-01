@@ -783,10 +783,10 @@ def save_to_other_database():
             cardtests.bulk_write(requests)
         except bulk.InvalidOperation:
             logger.info('pymongo bulk InvalidOperation: No operations to execute')
-    except Exception as e:
-        logger.exception(e)
-    finally:
+
         session.close()
         engine.dispose()
+    except Exception as e:
+        logger.exception(e)
 
     logger.info('stop save_to_other_database task')

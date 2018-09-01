@@ -54,7 +54,7 @@ services:
 
   celery_worker:
     image: backend
-    build: ./backend
+    # build: ./backend
     ports:
       - '5858:5858'
     command: pipenv run celery -A app.mod_task.tasks worker
@@ -74,7 +74,7 @@ services:
 
   celery_beat:
     image: backend
-    build: ./backend
+    # build: ./backend
     command: pipenv run celery -A app.mod_task.tasks beat -S celerybeatmongo.schedulers.MongoScheduler
     depends_on:
       - flask
