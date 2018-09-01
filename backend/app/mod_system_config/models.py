@@ -14,6 +14,7 @@ class SystemConfig(db.DynamicDocument):
     emails = db.StringField(default='')
     work_hours = db.StringField(default='8:00-18:00')
     db_type = db.StringField(default='')
+    db_name = db.StringField(default='')
     db_host = db.StringField(default='')
     db_port = db.IntField(default=None)
     db_username = db.StringField(default='')

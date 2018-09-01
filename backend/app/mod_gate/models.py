@@ -54,3 +54,4 @@ class CardTest(db.DynamicDocument):
     after_erg = db.StringField(default='')  # ERG后的值
     rsg = db.StringField(default='')  # RSG值
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
+    is_copied_to_other_database = db.BooleanField(default=False)

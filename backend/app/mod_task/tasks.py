@@ -12,8 +12,13 @@ from email.message import EmailMessage
 from logging import handlers
 
 from celery import Celery
-from pymongo import MongoClient
+from pymongo import MongoClient, UpdateOne
 from openpyxl import Workbook
+from sqlalchemy import inspect, MetaData, create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.engine.url import URL
+
+from app.mod_gate.schema import Log, Base
 
 # load configs
 from instance.config_default import *
@@ -672,3 +677,74 @@ def send_email_of_logs():
             s.send_message(msg)
 
     logger.info('stop send_email_of_logs task')
+
+
+@app.task()
+def save_to_other_database():
+    logger.info('start save_to_other_database task')
+
+    # pymongo
+    client = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    db = client[MONGODB_DB]
+    cards = db.card
+    cardtests = db.card_test
+    system_config = db.system_config
+    config = system_config.find()[0]
+
+    # sqlalchemy
+    engine = create_engine(URL(drivername=config['db_type'], host=config['db_host'], port=config['db_port'],
+                               database=config['db_name'], username=config['db_username'], password=config['db_password']))
+    inspector = inspect(engine)
+
+    if 'logs' not in inspector.get_table_names():
+        logger.info('create logs table')
+        Base.metadata.create_all(bind=engine)
+
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    logs = []
+    uncopied_cardtests = list(cardtests.find({'is_copied_to_other_database': False}))
+
+    all_cards = list(cards.find())
+    for cardtest in uncopied_cardtests:
+
+        users_list = [user for user in all_cards if user['card_number'] == cardtest['card_number']]
+        if users_list:
+            user = users_list[0]
+        else:
+            user = {}
+        logs.append(Log(
+            id=str(cardtest.get('_id', '')),
+            log_id=cardtest.get('log_id', ''),
+            card_counter=cardtest.get('card_counter', ''),
+            card_number=cardtest.get('card_number', ''),
+            card_category=cardtest.get('card_category', ''),
+            in_out_symbol=cardtest.get('in_out_symbol', ''),
+            mc_id=cardtest.get('mc_id', ''),
+            test_datetime=cardtest.get('test_datetime', datetime.datetime.utcnow()),
+            is_tested=cardtest.get('is_tested', ''),
+            hand=cardtest.get('hand', ''),
+            left_foot=cardtest.get('left_foot', ''),
+            right_foot=cardtest.get('right_foot', ''),
+            after_erg=cardtest.get('after_erg', ''),
+            rsg=cardtest.get('rsg', ''),
+            name=user.get('name', ''),
+            job_number=user.get('job_number', ''),
+            department=user.get('department', ''),
+            gender=user.get('gender', ''),
+            note=user.get('note', ''),
+            belong_to_mc=user.get('belong_to_mc', ''),
+        ))
+
+    session.add_all(logs)
+    session.commit()
+    session.close()
+    engine.dispose()
+
+    requests = []
+    for cardtest in uncopied_cardtests:
+        requests.append(UpdateOne({'_id': cardtest['_id']}, {'$set': {'is_copied_to_other_database': True}}))
+    cardtests.bulk_write(requests)
+
+    logger.info('stop save_to_other_database task')
