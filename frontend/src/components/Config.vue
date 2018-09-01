@@ -2,9 +2,10 @@
   <div class="container-fluid">
     <div class="row">
       <b-nav vertical class="col-md-2 offset-md-1 sidebar">
-        <b-nav-item :to="{name: 'system-config'}">系统设置</b-nav-item>
-        <b-nav-item :to="{name: 'interval-task'}">任务设置(按间隔)</b-nav-item>
-        <b-nav-item :to="{name: 'crontab-task'}">任务设置(按日期)</b-nav-item>
+        <b-nav-item :to="{name: 'system-config'}" key="system-config">系统设置</b-nav-item>
+        <b-nav-item :to="{name: 'other-database'}" key="other-database">其他数据库</b-nav-item>
+        <b-nav-item :to="{name: 'interval-task'}" key="interval-task">任务设置(按间隔)</b-nav-item>
+        <b-nav-item :to="{name: 'crontab-task'}" key="crontab-task">任务设置(按日期)</b-nav-item>
         <br>
       </b-nav>
 

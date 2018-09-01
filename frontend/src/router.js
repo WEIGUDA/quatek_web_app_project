@@ -9,7 +9,8 @@ import Attendances from '@/components/Attendances';
 import Config from '@/components/Config';
 import ConfigIntervalTask from '@/components/ConfigIntervalTask';
 import ConfigCrontabTask from '@/components/ConfigCrontabTask';
-import SystemConfig from '@/components/SystemConfig';
+import ConfigSystemConfig from '@/components/ConfigSystemConfig';
+import ConfigOtherDatabase from '@/components/ConfigOtherDatabase';
 
 Vue.use(Router);
 
@@ -60,7 +61,7 @@ export default new Router({
         {
           path: 'system-config',
           name: 'system-config',
-          component: SystemConfig,
+          component: ConfigSystemConfig,
         },
 
         {
@@ -72,6 +73,11 @@ export default new Router({
           path: 'crontab-task',
           name: 'crontab-task',
           component: ConfigCrontabTask,
+        },
+        {
+          path: 'other-database',
+          name: 'other-database',
+          component: ConfigOtherDatabase,
         },
       ],
     },

@@ -37,3 +37,27 @@ def update_system_config():
     system_config.save()
 
     return system_config.to_json(), {'Content-Type': 'application/json'}
+
+
+@bp.route('/get-other-database-config', methods=['GET', ])
+def get_other_database_config():
+    try:
+        system_config = SystemConfig.objects.get()
+    except SystemConfig.DoesNotExist:
+        system_config = SystemConfig()
+        system_config.save()
+    finally:
+        return system_config.to_json(), {'Content-Type': 'application/json'}
+
+
+@bp.route('/update-other-database-config', methods=['POST', ])
+def update_other_database_config():
+    system_config = SystemConfig.objects.get()
+    system_config.db_type = request.json['db_type']
+    system_config.db_host = request.json['db_host']
+    system_config.db_port = int(request.json['db_port'])
+    system_config.db_username = request.json['db_username']
+    system_config.db_password = request.json['db_password']
+    system_config.save()
+
+    return system_config.to_json(), {'Content-Type': 'application/json'}

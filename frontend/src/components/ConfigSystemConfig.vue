@@ -48,7 +48,6 @@
 
 <script>
 import axios from 'axios';
-import lodash from 'lodash';
 export default {
   data: function() {
     return {
