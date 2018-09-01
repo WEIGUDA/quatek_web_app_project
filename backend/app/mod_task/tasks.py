@@ -12,7 +12,7 @@ from email.message import EmailMessage
 from logging import handlers
 
 from celery import Celery
-from pymongo import MongoClient, UpdateOne
+from pymongo import MongoClient, UpdateOne, bulk
 from openpyxl import Workbook
 from sqlalchemy import inspect, MetaData, create_engine
 from sqlalchemy.orm import sessionmaker
@@ -745,6 +745,9 @@ def save_to_other_database():
     requests = []
     for cardtest in uncopied_cardtests:
         requests.append(UpdateOne({'_id': cardtest['_id']}, {'$set': {'is_copied_to_other_database': True}}))
-    cardtests.bulk_write(requests)
+    try:
+        cardtests.bulk_write(requests)
+    except bulk.InvalidOperation:
+        logger.info('pymongo bulk InvalidOperation: No operations to execute')
 
     logger.info('stop save_to_other_database task')
