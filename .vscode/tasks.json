@@ -40,7 +40,7 @@
     {
       "label": "Celery Worker",
       "type": "shell",
-      "command": "pipenv run celery -A app.tasks worker",
+      "command": "pipenv run celery -A app.mod_task.tasks worker",
       "presentation": {
         "reveal": "always",
         "panel": "new"
@@ -57,7 +57,7 @@
     {
       "label": "Celery Beat",
       "type": "shell",
-      "command": "pipenv run celery -A app.tasks beat -S celerybeatmongo.schedulers.MongoScheduler",
+      "command": "pipenv run celery -A app.mod_task.tasks beat -S celerybeatmongo.schedulers.MongoScheduler",
       "presentation": {
         "reveal": "always",
         "panel": "new"

@@ -7,7 +7,7 @@ from mongoengine.queryset.visitor import Q
 from celerybeatmongo.models import PeriodicTask
 
 from app.mod_gate.models import Gate, Card, CardTest
-from app.tasks import update_all_cards_to_mc_task, update_a_card_to_all_mc_task, delete_a_card_from_mc_task
+from app.mod_task.tasks import update_all_cards_to_mc_task, update_a_card_to_all_mc_task, delete_a_card_from_mc_task
 
 bp = Blueprint('mod_gate', __name__)
 

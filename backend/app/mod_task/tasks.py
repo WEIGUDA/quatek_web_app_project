@@ -9,7 +9,6 @@ import time
 import smtplib
 import io
 from email.message import EmailMessage
-from email.mime.application import MIMEApplication
 from logging import handlers
 
 from celery import Celery
