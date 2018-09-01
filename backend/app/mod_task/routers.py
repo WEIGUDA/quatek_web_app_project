@@ -59,7 +59,7 @@ def task_delete():
 def does_task_exist():
     if request.method == 'GET':
         q = request.args.get('q', None)
-        tasks_count = PeriodicTask.objects.filter(task__in=['app.tasks.get_logs_from_mc_task', ]).count()
+        tasks_count = PeriodicTask.objects.filter(task__in=['app.mod_task.tasks.get_logs_from_mc_task', ]).count()
         if tasks_count > 0:
             return jsonify({'does_task_exist': True}), {'Content-Type': 'application/json'}
         else:
