@@ -719,7 +719,6 @@ def save_to_other_database():
 
         all_cards = list(cards.find())
         for cardtest in uncopied_cardtests:
-            logger.info(str(cardtest))
             users_list = [user for user in all_cards if user['card_number'] == cardtest['card_number']]
             if users_list:
                 user = users_list[0]

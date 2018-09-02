@@ -31,3 +31,6 @@ class Log(Base):
     note = Column(Unicode(200), default='')  # 其他说明
     # 进出标志 name1:1|name2:0|name3 0:可进可出, 1:禁止进入/可出, 2:禁止出去/可进, 3:禁止进出  or all:所有闸机都可进可出
     belong_to_mc = Column(Unicode(200), default='')
+
+    def __repr__(self):
+        return f"<Log(id={self.id}, log_id={self.log_id}, card_counter={self.card_counter}, card_number={self.card_number}, card_category={self.card_category}, in_out_symbol={self.in_out_symbol}, mc_id={self.mc_id}, test_datetime={self.test_datetime}, test_result={self.test_result}, is_tested={self.is_tested}, hand={self.hand}, left_foot={self.left_foot}, right_foot={self.right_foot}, after_erg={self.after_erg}, rsg={self.rsg}, name={self.name}, job_number={self.job_number}, department={self.department}, gender={self.gender}, note={self.note}, belong_to_mc={self.belong_to_mc})>"
