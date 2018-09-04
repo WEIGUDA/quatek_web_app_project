@@ -4,9 +4,9 @@ from app import db
 
 class Gate(db.DynamicDocument):
     name = db.StringField(default='')  # 闸机名
-    number = db.StringField(default='')  # 闸机编号
+    number = db.StringField(default='', unique=True)  # 闸机编号
     category = db.StringField(default='')  # 闸机分类
-    mc_id = db.StringField(default='')  # 闸机 mc id
+    mc_id = db.StringField(default='', unique=True)  # 闸机 mc id
     hand_max = db.IntField(null=True, default=None)  # 手上限值
     hand_min = db.IntField(null=True, default=None)  # 手下限值
     foot_max = db.IntField(null=True, default=None)  # 脚上限值
@@ -19,7 +19,7 @@ class Gate(db.DynamicDocument):
 
 
 class Card(db.DynamicDocument):
-    card_number = db.StringField(default='')  # 卡号号码
+    card_number = db.StringField(default='', unique=True)  # 卡号号码
     card_category = db.StringField(  # 卡片类别
         default='3',
         choices=(('0', 'vip'),
@@ -28,14 +28,14 @@ class Card(db.DynamicDocument):
                  ('3', '手脚都测'),)
     )
     name = db.StringField(default='')  # 姓名
-    job_number = db.StringField(default='')  # 工号
+    job_number = db.StringField(default='', unique=True)  # 工号
     department = db.StringField(default='')  # 部门
     gender = db.StringField(default='1', choices=(('0', '女'), ('1', '男')),)  # 性别
     note = db.StringField(default='')  # 其他说明
     belong_to_mc = db.StringField(default='all')
     # 进出标志 name1:1|name2:0|name3 0:可进可出, 1:禁止进入/可出, 2:禁止出去/可进, 3:禁止进出  or all:所有闸机都可进可出
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
-    card_counter = db.SequenceField(collection_name='card_counter')  # 卡号编号
+    card_counter = db.SequenceField(collection_name='card_counter', unique=True)  # 卡号编号
 
 
 class CardTest(db.DynamicDocument):
