@@ -5,6 +5,8 @@ from flask import (Blueprint, abort, current_app, jsonify, make_response,
                    request)
 from mongoengine.queryset.visitor import Q
 
+from app.mod_task.tasks import update_all_cards_to_mc_task, delete_all_cards_task
+
 
 bp = Blueprint('mod_task', __name__)
 
@@ -66,3 +68,15 @@ def does_task_exist():
             return jsonify({'does_task_exist': True}), {'Content-Type': 'application/json'}
         else:
             return jsonify({'does_task_exist': False}), {'Content-Type': 'application/json'}
+
+
+@bp.route('/sync-cards', methods=['POST', ])
+def sync_cards():
+    update_all_cards_to_mc_task.delay(server_last_time=5)
+    return 'done'
+
+
+@bp.route('/delete-all-cards', methods=['POST', ])
+def delete_all_cards():
+    delete_all_cards_task.delay(server_last_time=5)
+    return 'done'

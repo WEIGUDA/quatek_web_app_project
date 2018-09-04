@@ -11,6 +11,7 @@ import ConfigIntervalTask from '@/components/ConfigIntervalTask';
 import ConfigCrontabTask from '@/components/ConfigCrontabTask';
 import ConfigSystemConfig from '@/components/ConfigSystemConfig';
 import ConfigOtherDatabase from '@/components/ConfigOtherDatabase';
+import BackgroundTask from '@/components/BackgroundTask';
 
 Vue.use(Router);
 
@@ -78,6 +79,11 @@ export default new Router({
           path: 'other-database',
           name: 'other-database',
           component: ConfigOtherDatabase,
+        },
+        {
+          path: 'background-task',
+          name: 'background-task',
+          component: BackgroundTask,
         },
       ],
     },
