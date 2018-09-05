@@ -41,15 +41,16 @@ def gates():
                     continue
                 if len(gate) == 1:
                     continue
-                g1 = Gate(name=gate[0],
-                          number=gate[1],
-                          category=gate[2],
-                          mc_id=gate[3],
-                          hand_max=gate[4],
-                          hand_min=gate[5],
-                          foot_max=gate[6],
-                          foot_min=gate[7],
-                          )
+                g1 = Gate(
+                    name=gate[0],
+                    number=gate[1],
+                    category=gate[2],
+                    mc_id=gate[3],
+                    hand_max=gate[4],
+                    hand_min=gate[5],
+                    foot_max=gate[6],
+                    foot_min=gate[7],
+                )
                 if not g1.hand_max:
                     g1.hand_max = 35000
                 if not g1.hand_min:

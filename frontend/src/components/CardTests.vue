@@ -124,8 +124,14 @@ export default {
           cardtest.name = card[0].name;
           cardtest.job_number = card[0].job_number;
         } else {
-          cardtest.name = '未找到姓名';
-          cardtest.job_number = '未找到工号';
+          let card2 = this.cards.filter((obj) => String(obj.card_counter) === String(cardtest.card_counter));
+          if (card2.length > 0) {
+            cardtest.name = card2[0].name;
+            cardtest.job_number = card2[0].job_number;
+          } else {
+            cardtest.name = '未找到姓名';
+            cardtest.job_number = '未找到工号';
+          }
         }
         if (cardtest.test_result === '0') {
           cardtest.test_result = '否';
