@@ -450,14 +450,14 @@ class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
                 command = f'CLR CARD {i}\r\n'.encode(encoding='GB18030')
                 self.request.sendall(command)
                 logger.info(f'send command {command} to {mc_client["name"]}-{mc_client["mc_id"]}')
-                recv = self.request.recv(1000)
-                logger.info(f'receive {recv} from {mc_client["name"]}-{mc_client["mc_id"]}')
+
             for card in cards.find():
                 command = f'CLR CARD {card["card_counter"]}\r\n'.encode(encoding='GB18030')
                 self.request.sendall(command)
                 logger.info(f'send command {command} to {mc_client["name"]}-{mc_client["mc_id"]}')
-                recv = self.request.sendall(command)
-                logger.info(f'receive {recv} from {mc_client["name"]}-{mc_client["mc_id"]}')
+
+            recv = self.request.recv(100000)
+            logger.info(f'receive {recv} from {mc_client["name"]}-{mc_client["mc_id"]}')
 
         except:
             logger.exception(f'error from {mc_client["name"]}-{mc_client["mc_id"]}')
