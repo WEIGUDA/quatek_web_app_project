@@ -381,9 +381,11 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
 
                 if not all_data[-1]:
                     all_data.pop()
-
+                logger.info(f'format: LOG 流水号;卡片编号;卡片号码;卡片类型;进出标志;进出机号;是否通过;是否测试;RSG;手腕带检测;左脚检测;右脚检测;ERG')
+                logger.info(f'raw data: {all_data}')
                 for data in all_data:
                     data = data.split(',')
+
                     temp_dict = {
                         'log_id': data[0],
                         'card_counter': data[1],
@@ -407,14 +409,11 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                         int(cardtest['log_id']), tz=datetime.timezone.utc)
                     cardtest['is_copied_to_other_database'] = False
 
-                # client = MongoClient(MONGODB_HOST, MONGODB_PORT)
-                # db = client[MONGODB_DB]
-                # cardtests = db.cardtest
                 cardtests.insert_many(all_cardtests)
             except:
                 logger.exception('error from: {} {}'.format(mc_client, self.client_address))
 
-        logger.info('stop the GetCardTestLogHandler for {} {}'.format(mc_client, self.client_address))
+        logger.info('stop the GetCardTestLogHandler for {}'.format(mc_client,))
         time.sleep(self.server.p_data['server_last_time'])
 
 
