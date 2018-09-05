@@ -72,11 +72,11 @@ def does_task_exist():
 
 @bp.route('/sync-cards', methods=['POST', ])
 def sync_cards():
-    update_all_cards_to_mc_task.delay(server_last_time=5)
+    update_all_cards_to_mc_task.delay(server_last_time=30)
     return 'done'
 
 
 @bp.route('/delete-all-cards', methods=['POST', ])
 def delete_all_cards():
-    delete_all_cards_task.delay(server_last_time=5)
+    delete_all_cards_task.delay(server_last_time=30)
     return 'done'

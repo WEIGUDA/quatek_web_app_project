@@ -1,12 +1,12 @@
 <template>
-    <div class="form">
+  <div class="form">
 
-        <button type="button" class="btn btn-success btn-quatek" :disabled="is_button_disabled" @click.prevent.stop="sync_cards()">同步卡片信息</button>
-        <br>
-        <br>
-        <br>
-        <button type="button" class="btn btn-success btn-quatek" :disabled="is_button_disabled" @click.prevent.stop="delete_all_cards()">删除闸机上卡片信息</button>
-    </div>
+    <button type="button" class="btn btn-success btn-quatek" :disabled="is_button_disabled" @click.prevent.stop="sync_cards()">同步卡片信息</button>
+    <br>
+    <br>
+    <br>
+    <button type="button" class="btn btn-success btn-quatek" :disabled="is_button_disabled" @click.prevent.stop="delete_all_cards()">删除闸机上卡片信息</button>
+  </div>
 </template>
 
 <script>
@@ -30,7 +30,7 @@ export default {
         });
       setTimeout(() => {
         this.is_button_disabled = false;
-      }, 10000);
+      }, 30000);
     },
     delete_all_cards() {
       this.is_button_disabled = true;
@@ -44,7 +44,7 @@ export default {
         });
       setTimeout(() => {
         this.is_button_disabled = false;
-      }, 10000);
+      }, 30000);
     },
   },
   created() {},
