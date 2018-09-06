@@ -40,7 +40,7 @@
             <th scope="col">工号</th>
             <th scope="col">卡片类型</th>
             <th scope="col">进出标志</th>
-            <th scope="col">闸机名</th>
+            <th scope="col">闸机id</th>
             <th scope="col">测试时间</th>
             <th scope="col">是否通过</th>
             <th scope="col">是否测试</th>
@@ -138,6 +138,21 @@ export default {
         } else {
           cardtest.test_result = '是';
         }
+        if (cardtest.is_tested === '0') {
+          cardtest.is_tested = '否';
+        } else {
+          cardtest.is_tested = '是';
+        }
+        if (cardtest.card_category === '0') {
+          cardtest.card_category = 'VIP';
+        } else if (cardtest.card_category === '1') {
+          cardtest.card_category = '只测手';
+        } else if (cardtest.card_category === '2') {
+          cardtest.card_category = '只测脚';
+        } else if (cardtest.card_category === '3') {
+          cardtest.card_category = '手脚都测';
+        }
+        // if (cardtest.in_out_symbol === '')
       }
       console.log(computed_cardtests);
       return computed_cardtests;
