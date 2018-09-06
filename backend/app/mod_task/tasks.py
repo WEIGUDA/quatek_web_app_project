@@ -74,7 +74,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
         users = db.user
         system_config = db.system_config
 
-        self.request.settimeout(30)
+        self.request.settimeout(5)
         mc_client = {}
 
         # get mc from database
@@ -144,7 +144,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
                             raise Exception('upload card error, card: {}, from {}'.format(
                                 card, self.client_address))
         except:
-            logger.exception('error in UploadAllCardsHandler')
+            logger.exception(f'error in UploadAllCardsHandler for {mc_client["name"]}-{mc_client["mc_id"]}')
 
         logger.info(f'stop the UploadAllCardsHandler for {mc_client["name"]}-{mc_client["mc_id"]}')
         time.sleep(self.server.p_data['server_last_time'])
@@ -165,7 +165,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
         cardtests = db.card_test
         users = db.user
         system_config = db.system_config
-        self.request.settimeout(30)
+        self.request.settimeout(5)
 
         logger.info('start an UpdateACardHandler for {}'.format(self.client_address))
         mc_client = {}
@@ -260,7 +260,7 @@ class DeleteACardHandler(socketserver.BaseRequestHandler):
         users = db.user
         system_config = db.system_config
 
-        self.request.settimeout(30)
+        self.request.settimeout(5)
         logger.info('start an DeleteACardHandler for {}'.format(self.client_address))
         card = self.server.p_data['card']
 
@@ -310,7 +310,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         users = db.user
         system_config = db.system_config
 
-        self.request.settimeout(30)
+        self.request.settimeout(5)
         all_data = []
         mc_client = {}
         all_cardtests = []
@@ -419,7 +419,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
 
 class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
     def handle(self):
-        self.request.settimeout(30)
+        self.request.settimeout(5)
         mc_client = {}
 
         # pymongo
@@ -460,7 +460,7 @@ class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
             logger.info(f'receive {recv} from {mc_client["name"]}-{mc_client["mc_id"]}')
 
         except:
-            logger.exception(f'error from {mc_client["name"]}-{mc_client["mc_id"]}')
+            logger.exception(f'DeleteAllCardsFromMcHandler error from {mc_client["name"]}-{mc_client["mc_id"]}')
 
         logger.info('stop the DeleteAllCardsFromMcHandler for {} {}'.format(mc_client, self.client_address))
 

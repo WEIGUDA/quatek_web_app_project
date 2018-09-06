@@ -56,7 +56,7 @@
             <td>{{cardtest.card_category}}</td>
             <td>{{cardtest.in_out_symbol}}</td>
             <td>{{cardtest.mc_id}}</td>
-            <td>{{cardtest.test_datetime.$date | moment('YYYY-MM-DD HH:mm')}}</td>
+            <td>{{cardtest.test_datetime.$date | moment('YYYY-MM-DD HH:mm:ss')}}</td>
             <td>{{cardtest.test_result}}</td>
             <td>{{cardtest.is_tested}}</td>
             <td>{{cardtest.hand}}</td>
@@ -244,7 +244,7 @@ export default {
           }`,
         )
         .then((response) => {
-          if (response.body.length !== 0) {
+          if (response.data.length !== 0) {
             console.log(response.data);
             this.cards = response.data;
             this.currentPage++;
