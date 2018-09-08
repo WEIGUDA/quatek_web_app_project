@@ -465,7 +465,7 @@ class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
             if 'MCID' not in data:
                 raise Exception('get mc error, mc: {} {}'.format(mc_client, self.client_address))
         except:
-            logger.exception('error in UploadAllCardsHandler')
+            logger.exception('error in DeleteAllCardsFromMcHandler')
 
         logger.info(
             f'start DeleteAllCardsFromMcHandler for <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
