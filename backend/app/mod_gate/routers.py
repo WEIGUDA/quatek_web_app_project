@@ -223,7 +223,7 @@ def cardtests():
         limit = request.args.get('limit', 50)
 
         try:
-            cards = CardTest.objects.filter(q_object).order_by('created_time').skip(int(offset)).limit(int(limit))
+            cards = CardTest.objects.filter(q_object).order_by('-created_time').skip(int(offset)).limit(int(limit))
             return make_response(cards.to_json())
         except:
             current_app.logger.exception('get cardtests failed')

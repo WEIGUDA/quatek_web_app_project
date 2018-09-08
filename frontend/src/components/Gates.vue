@@ -87,13 +87,13 @@ export default {
   methods: {
     search() {
       console.log(this.query_string);
+      this.currentPage = 1;
 
       axios
         .get(`gates?q=${this.query_string}`)
         .then((response) => {
           console.log(response);
           this.gates = response.data;
-          this.currentPage = 1;
         })
         .catch((response) => {
           console.log(response);

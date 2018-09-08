@@ -109,6 +109,7 @@ export default {
         .millisecond(0)
         .format('YYYY-MM-DDTHH:mm'),
       datetime_to: this.$moment()
+        .add(12, 'hours')
         .second(0)
         .millisecond(0)
         .format('YYYY-MM-DDTHH:mm'),
@@ -152,7 +153,11 @@ export default {
         } else if (cardtest.card_category === '3') {
           cardtest.card_category = '手脚都测';
         }
-        // if (cardtest.in_out_symbol === '')
+        if (cardtest.in_out_symbol === '0') {
+          cardtest.in_out_symbol = '出';
+        } else if (cardtest.in_out_symbol === '1') {
+          cardtest.in_out_symbol = '进';
+        }
       }
       console.log(computed_cardtests);
       return computed_cardtests;
@@ -163,6 +168,7 @@ export default {
       console.log(this.query_string);
       console.log(this.datetime_from);
       console.log(this.datetime_to);
+      this.currentPage = 1;
 
       axios
         .get(`cardtests?q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${this.datetime_to}`)
@@ -242,7 +248,7 @@ export default {
         )
         .then((response) => {
           console.log(response.data);
-          this.cards = response.data;
+          this.cardtests = response.data;
           this.currentPage--;
         })
         .catch((response) => {
@@ -261,7 +267,7 @@ export default {
         .then((response) => {
           if (response.data.length !== 0) {
             console.log(response.data);
-            this.cards = response.data;
+            this.cardtests = response.data;
             this.currentPage++;
           } else {
             alert('已经到达最后一页!');

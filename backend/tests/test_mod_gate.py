@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import random
 from pprint import pprint
 
 import pytest
@@ -25,6 +26,17 @@ def client():
     mongo_client = MongoClient(app.config['MONGODB_HOST'],
                                app.config['MONGODB_PORT'])
     mongo_client.drop_database(app.config['MONGODB_DB'])
+
+
+@pytest.fixture
+def cardtest_list():
+    dt = datetime.datetime.utcnow()
+    cardtest_list = []
+    for i in range(500):
+        cardtest_list.append(CardTest(log_id=f'id{i}', card_counter=f'{i}', card_number=f'number{i}', card_category=random.choice(['0', '1', '2', '3']), in_out_symbol=random.choice(['0', '1']), mc_id=random.choice(['mc1', 'mc2']), test_datetime=dt+timedelta(
+            minutes=i), test_result=random.choice(['0', '1']), is_tested=random.choice(['0', '1']), hand=str(random.randrange(0, 100000)), left_foot=str(random.randrange(0, 100000)), right_foot=str(random.randrange(0, 100000))))
+    CardTest.objects.insert(cardtest_list)
+    yield cardtest_list
 
 
 def test_gates_filter(client):

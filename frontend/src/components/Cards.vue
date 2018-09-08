@@ -137,13 +137,13 @@ export default {
     },
     search() {
       console.log(this.query_string);
+      this.currentPage = 1;
 
       axios
         .get(`cards?q=${this.query_string}`)
         .then((response) => {
           console.log(response);
           this.cards = response.data;
-          this.currentPage = 1;
         })
         .catch((response) => {
           console.log(response);
