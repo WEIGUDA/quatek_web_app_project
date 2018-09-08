@@ -6,7 +6,7 @@
   "configurations": [
     {
       "name": "Debug current python file",
-      "type": "pythonExperimental",
+      "type": "python",
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
@@ -15,7 +15,7 @@
     },
     {
       "name": "Debug Flask",
-      "type": "pythonExperimental",
+      "type": "python",
       "request": "launch",
       "stopOnEntry": false,
       "pythonPath": "${config:python.pythonPath}",
@@ -39,7 +39,7 @@
     },
     {
       "name": "Debug PyTest",
-      "type": "pythonExperimental",
+      "type": "python",
       "request": "launch",
       "cwd": "${workspaceFolder}/backend/tests",
       "stopOnEntry": false,
