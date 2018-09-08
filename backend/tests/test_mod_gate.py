@@ -29,7 +29,7 @@ def client():
 
 
 @pytest.fixture
-def cardtest_list():
+def create_cardtest_list():
     dt = datetime.datetime.utcnow()
     cardtest_list = []
     for i in range(500):
@@ -37,6 +37,16 @@ def cardtest_list():
             minutes=i), test_result=random.choice(['0', '1']), is_tested=random.choice(['0', '1']), hand=str(random.randrange(0, 100000)), left_foot=str(random.randrange(0, 100000)), right_foot=str(random.randrange(0, 100000))))
     CardTest.objects.insert(cardtest_list)
     yield cardtest_list
+
+
+@pytest.fixture
+def create_card_list():
+    card_list = []
+    for i in range(1000):
+        card_list.append(Card(card_number=hex(random.randint(0, 4294967295))[2:].upper().rjust(
+            8, '0'), card_category=random.choice(['0', '1', '2', '3']), name=f'name{i}', job_number=random.randint(1, 9999999999), department=f'部门{i}', gender=random.choice(['0', '1']), note='default note', belong_to_mc='all', ))
+    Card.objects.insert(card_list)
+    yield card_list
 
 
 def test_gates_filter(client):
