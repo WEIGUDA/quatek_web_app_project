@@ -105,16 +105,21 @@ def cards():
                 if len(card) == 1:
                     continue
                 c1 = Card(
-                    card_number=card[0],
-                    card_category=card[1],
-                    name=card[2],
-                    job_number=card[3],
-                    department=card[4],
-                    gender=card[5],
-                    note=card[6].replace('\r', ''),
+                    card_number=card[0].upper().rjust(8, '0').strip(),
+                    card_category=card[1].strip(),
+                    name=card[2].strip(),
+                    job_number=card[3].strip(),
+                    department=card[4].strip(),
+                    gender=card[5].strip(),
+                    note=card[6].strip(),
                 )
-                if not c1['note']:
-                    c1['note'] = 'default note'
+
+                if len(c1.card_number) > 8:
+                    c1.card_number = hex(int(c1.card_number))[2:].upper().rjust(8, '0')
+
+                for key in c1:
+                    if not c1[key]:
+                        c1[key] = 'default'
 
                 c1.save()
                 return_list.append(c1)
@@ -151,34 +156,43 @@ def card_create():
     if request.method == 'POST':
         data = request.json
         try:
-            card = Card(card_number=data['card_number'],
-                        card_category=data['card_category'],
-                        name=data['name'],
-                        job_number=data['job_number'],
-                        department=data['department'],
-                        gender=data['gender'], note=data['note'],
-                        belong_to_mc=data['belong_to_mc'])
-            card.save()
+            c1 = Card(card_number=data['card_number'].upper().rjust(8, '0').strip(),
+                      card_category=data['card_category'].strip(),
+                      name=data['name'].strip(),
+                      job_number=data['job_number'].strip(),
+                      department=data['department'].strip(),
+                      gender=data['gender'].strip(),
+                      note=data['note'].strip(),
+                      belong_to_mc=data['belong_to_mc'].strip())
+
+            if len(c1.card_number) > 8:
+                c1.card_number = hex(int(c1.card_number))[2:].upper().rjust(8, '0')
+
+            for key in c1:
+                if not c1[key]:
+                    c1[key] = 'default'
+
+            c1.save()
 
         except:
             current_app.logger.exception('create card failed')
             abort(500)
         else:
-            update_a_card_to_all_mc_task.delay(json.loads(card.to_json()))
-            return make_response(card.to_json())
+            update_a_card_to_all_mc_task.delay(json.loads(c1.to_json()))
+            return make_response(c1.to_json())
 
     elif request.method == 'PATCH':
         data = request.json
         try:
             card = Card.objects.get(id=data['id'])
-            card.card_number = data['card_number']
-            card.card_category = data['card_category']
-            card.name = data['name']
-            card.job_number = data['job_number']
-            card.department = data['department']
-            card.gender = data['gender']
-            card.note = data['note']
-            card.belong_to_mc = data['belong_to_mc']
+            card.card_number = data['card_number'].upper().rjust(8, '0').strip()
+            card.card_category = data['card_category'].strip()
+            card.name = data['name'].strip()
+            card.job_number = data['job_number'].strip()
+            card.department = data['department'].strip()
+            card.gender = data['gender'].strip()
+            card.note = data['note'].strip()
+            card.belong_to_mc = data['belong_to_mc'].strip()
             card.save()
 
         except:
