@@ -2,21 +2,29 @@
   <div class="container">
     <div class="form-row search-row">
       <div class="input-group">
-
         <datetime v-model="datetime_from" type="datetime" input-class="form-control" format="yyyy-MM-dd HH:mm" :phrases="{ok: '确定', cancel: '取消'}" :minute-step="10"></datetime>
-
         <label class="col-sm-1 text-center search-space"> 至 </label>
-
         <datetime v-model="datetime_to" type="datetime" input-class="form-control" format="yyyy-MM-dd HH:mm" :phrases="{ok: '确定', cancel: '取消'}" :minute-step="10"></datetime>
-
       </div>
       <div class="w-100"><br></div>
-      <div class="input-group">
-        <input type="text" class="form-control" aria-label="Search string" aria-describedby="basic-addon2" v-model.trim="query_string" placeholder="可搜索闸机名称或卡号">
-        <div class="input-group-append">
+
+      <div class="form-inline">
+        <label class="sr-only" for="q">Query</label>
+        <div class="input-group mb-2 mr-sm-2">
+          <input name="q" type="text" class="form-control" v-model.trim="query_string" placeholder="闸机id或卡号">
+        </div>
+
+        <label class="sr-only" for="q">工号</label>
+        <div class="input-group mb-2 mr-sm-2">
+          <input name="job_number" type="text" class="form-control" v-model.trim="job_number" placeholder="工号">
+        </div>
+
+        <button type="submit" class="btn btn-success mb-2 btn_quatek" @click.prevent.stop="search()">搜索</button>
+
+        <!-- <div class="input-group-append">
           <button class="btn btn-outline-success btn-outline-quatek" type="button" @click="search()">
             <font-awesome-icon icon="search" /> Search</button>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="row btn-row">
@@ -38,7 +46,8 @@
           <tr>
             <th scope="col">姓名</th>
             <th scope="col">工号</th>
-            <th scope="col">卡片类型</th>
+            <th scope="col">卡号</th>
+            <th scope="col">测试类型</th>
             <th scope="col">进出标志</th>
             <th scope="col">闸机id</th>
             <th scope="col">测试时间</th>
@@ -53,6 +62,7 @@
           <tr v-for="cardtest in computed_cardtests" :key="cardtest._id.$oid">
             <td>{{cardtest.name}}</td>
             <td>{{cardtest.job_number}}</td>
+            <td>{{cardtest.card_number}}</td>
             <td>{{cardtest.card_category}}</td>
             <td>{{cardtest.in_out_symbol}}</td>
             <td>{{cardtest.mc_id}}</td>
@@ -87,8 +97,19 @@
             <span class="sr-only">下一页</span>
           </a>
         </li>
+        <li class="page-item">
+          <input class="page-link form-control go-to-page-number text-center" type="text" v-model="go_to_page_number">
+        </li>
+
+        <li class="page-item">
+          <a class="page-link" href="#" @click="go_to_page()">
+            <span aria-hidden="true">Go</span>
+            <span class="sr-only">Go</span>
+          </a>
+        </li>
 
       </ul>
+
     </nav>
   </div>
 </template>
@@ -114,6 +135,8 @@ export default {
         .millisecond(0)
         .format('YYYY-MM-DDTHH:mm'),
       cards: [],
+      job_number: '',
+      go_to_page_number: '',
     };
   },
   computed: {
@@ -171,7 +194,11 @@ export default {
       this.currentPage = 1;
 
       axios
-        .get(`cardtests?q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${this.datetime_to}`)
+        .get(
+          `cardtests?q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
+            this.datetime_to
+          }&job_number=${this.job_number}`,
+        )
         .then((response) => {
           console.log(response.data);
           this.cardtests = response.data;
@@ -244,7 +271,7 @@ export default {
         .get(
           `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
             this.datetime_to
-          }`,
+          }&job_number=${this.job_number}`,
         )
         .then((response) => {
           console.log(response.data);
@@ -262,7 +289,7 @@ export default {
         .get(
           `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
             this.datetime_to
-          }`,
+          }&job_number=${this.job_number}`,
         )
         .then((response) => {
           if (response.data.length !== 0) {
@@ -277,11 +304,32 @@ export default {
           console.log(response);
         });
     },
+    go_to_page() {
+      this.currentPage = +this.go_to_page_number;
+      let offset = this.currentPage - 1 * 50;
+      axios
+        .get(
+          `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
+            this.datetime_to
+          }&job_number=${this.job_number}`,
+        )
+        .then((response) => {
+          if (response.data.length !== 0) {
+            console.log(response.data);
+            this.cardtests = response.data;
+          } else {
+            alert('该页面不存在!');
+          }
+        })
+        .catch((response) => {
+          console.log(response);
+        });
+    },
   },
 
   created() {
     axios
-      .get('cards?offset=0&limit=10000')
+      .get('cards?offset=0&limit=50000')
       .then((response) => {
         console.log(response);
         this.cards = response.data;
@@ -328,7 +376,12 @@ export default {
   height: 300px;
   color: #868686;
 }
-
+.btn_quatek {
+  background-color: #059c66;
+}
+.go-to-page-number {
+  width: 50px;
+}
 @media (min-width: 576px) {
 }
 

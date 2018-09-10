@@ -11,13 +11,13 @@ def test_server(command, host='0.0.0.0', port=5858):
     s2_result = None
     try:
         s = socket.socket()
-        s.settimeout(5)
+        s.settimeout(1)
         s.bind((host, port))
         s.listen()
 
         try:
             s2, address = s.accept()
-            s2.settimeout(5)
+            s2.settimeout(1)
             s2.sendall(f'{command}'.encode())
             s2_result = s2.recv(1000).decode()
         except Exception as e:

@@ -206,20 +206,24 @@ def card_create():
 @bp.route('/cardtests', methods=['GET', 'POST'])
 def cardtests():
     if request.method == 'GET':
+        q_object = Q()
+
         query_string = request.args.get('q', None)
         datetime_from = request.args.get('datetime_from', None)
         datetime_to = request.args.get('datetime_to', None)  # '2018-07-20T07:15:00.000Z'
+        job_number = request.args.get('job_number', None)
+        card_number = request.args.get('card_number', None)
+        mc_name = request.args.get('mc_name', None)
 
         if datetime_from:
             datetime_from = datetime.datetime.strptime(
                 datetime_from, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=datetime.timezone.utc)
+            q_object = q_object & Q(test_datetime__gte=datetime_from)
 
         if datetime_to:
             datetime_to = datetime.datetime.strptime(
                 datetime_to, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=datetime.timezone.utc)
-
-        q_object = Q(test_datetime__gte=datetime_from) \
-            & Q(test_datetime__lte=datetime_to)
+            q_object = q_object & Q(test_datetime__lte=datetime_to)
 
         if query_string:
             gates = Gate.objects.filter(name__icontains=query_string)
@@ -228,17 +232,19 @@ def cardtests():
                 for gate in gates:
                     gates_mc_ids.append(gate['mc_id'])
 
-                q_object = (q_object & Q(card_number__icontains=query_string)) \
-                    | (q_object & Q(mc_id__in=gates_mc_ids))
-            else:
-                q_object = q_object & Q(card_number__icontains=query_string)
+            q_object = (q_object & Q(card_number__icontains=query_string)) \
+                | (q_object & Q(mc_id__in=gates_mc_ids))
+
+        if job_number:
+            cards = Card.objects.filter(job_number__icontains=job_number)
+            q_object = q_object & Q(card_number__in=[card.card_number for card in cards])
 
         offset = request.args.get('offset', 0)
         limit = request.args.get('limit', 50)
 
         try:
-            cards = CardTest.objects.filter(q_object).order_by('-created_time').skip(int(offset)).limit(int(limit))
-            return make_response(cards.to_json())
+            cards = CardTest.objects.filter(q_object).order_by('-test_datetime').skip(int(offset)).limit(int(limit))
+            return cards.to_json(), {'Content-Type': 'application/json'}
         except:
             current_app.logger.exception('get cardtests failed')
             abort(500)

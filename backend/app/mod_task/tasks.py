@@ -88,7 +88,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
         except:
             logger.exception(f'error in UploadAllCardsHandler')
 
-        logger.info(f'start UploadAllCardsHandler for <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+        logger.info(f'start UploadAllCardsHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
         # set datetime for mc
         try:
@@ -106,7 +106,7 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
 
         except:
             logger.exception(
-                f'error in UploadAllCardsHandler <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+                f'error in UploadAllCardsHandler <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
         # add cards to mc
         try:
@@ -149,15 +149,15 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
 
             # commands = ''.join(commands).encode()
             # self.request.sendall(commands)
-            # logger.info(f'send commands to <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>: {commands}')
+            # logger.info(f'send commands to <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>: {commands}')
             # logger.info(
-            #     f'recv from <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>: {self.request.recv(100000)}')
+            #     f'recv from <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>: {self.request.recv(100000)}')
         except:
             logger.exception(
-                f'error in UploadAllCardsHandler for <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+                f'error in UploadAllCardsHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
         finally:
             time.sleep(self.server.p_data['server_last_time'])
-            logger.info(f'stop UploadAllCardsHandler for <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+            logger.info(f'stop UploadAllCardsHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
 
 class UpdateACardHandler(socketserver.BaseRequestHandler):
@@ -192,7 +192,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
         except:
             logger.exception('error in UpdateACardHandler')
 
-        logger.info(f'start UpdateACardHandler for <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+        logger.info(f'start UpdateACardHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
         # set datetime for mc
         try:
@@ -322,7 +322,7 @@ class DeleteACardHandler(socketserver.BaseRequestHandler):
 
 class GetCardTestLogHandler(socketserver.BaseRequestHandler):
     ''' send: b'GET LOG\r\n'
-        recv：b'LOG 4294967295;0;00CF1974;3;1;16;1900-01-01 00:00:00;1;0;FREE;FREE;FREE;NO\r\n'
+        recv：b'LOG 1536388814,1,00BC5C01,1,1,0,0,0,NO,NO,NO,NO,NO\r\n'
     '''
 
     def handle(self):
@@ -352,7 +352,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         except:
             logger.exception('error in GetCardTestLogHandler')
 
-        logger.info(f'start GetCardTestLogHandler for <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+        logger.info(f'start GetCardTestLogHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
         # set datetime for mc
         try:
@@ -379,11 +379,11 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                 data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
 
                 if '0,0,00000000,0,0,0,0,0,,,,,' in data:
-                    logger.info('break, no logs in <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+                    logger.info('break, no logs in <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
                     break
 
                 if not data:
-                    logger.info('break, no data from <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+                    logger.info('break, no data from <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
                     break
 
                 all_data.append(data)
@@ -441,7 +441,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
             finally:
                 time.sleep(self.server.p_data['server_last_time'])
                 logger.info(
-                    f'stop the GetCardTestLogHandler for <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+                    f'stop the GetCardTestLogHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
 
 class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
@@ -470,7 +470,7 @@ class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
             logger.exception('error in DeleteAllCardsFromMcHandler')
 
         logger.info(
-            f'start DeleteAllCardsFromMcHandler for <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+            f'start DeleteAllCardsFromMcHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
         # delete all cards from mc
         commands = []
@@ -479,28 +479,28 @@ class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
                 # command = f'CLR CARD {i}\r\n'.encode()
                 commands.append(f'CLR CARD {i}\r\n')
                 # self.request.sendall(command)
-                # logger.info(f'send command {command} to <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+                # logger.info(f'send command {command} to <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
             for card in cards.find():
                 # command = f'CLR CARD {card["card_counter"]}\r\n'.encode()
                 commands.append(f'CLR CARD {card["card_counter"]}\r\n')
                 # self.request.sendall(command)
-                # logger.info(f'send command {command} to <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+                # logger.info(f'send command {command} to <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
             self.request.sendall(''.join(commands).encode())
-            logger.info(f'send commands to <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>: {commands}')
+            logger.info(f'send commands to <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>: {commands}')
 
             logger.info(
-                f'receive from <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>: {self.request.recv(100000)}')
+                f'receive from <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>: {self.request.recv(100000)}')
 
         except:
             logger.exception(
-                f'DeleteAllCardsFromMcHandler error from <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+                f'DeleteAllCardsFromMcHandler error from <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
         finally:
             time.sleep(self.server.p_data['server_last_time'])
             logger.info(
-                f'stop DeleteAllCardsFromMcHandler for <MC (name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+                f'stop DeleteAllCardsFromMcHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
