@@ -1,8 +1,8 @@
 version: '3'
-
 services:
   mongo:
-    image: mongo:4
+    image: 'mongo:4'
+    restart: always
     deploy:
       replicas: 1
       update_config:
@@ -15,10 +15,10 @@ services:
     networks:
       - quatek_net
     volumes:
-      - mongodb:/data/db
-
+      - 'mongodb:/data/db'
   redis:
-    image: redis:4-alpine
+    image: 'redis:4-alpine'
+    restart: always
     deploy:
       replicas: 1
       update_config:
@@ -31,11 +31,11 @@ services:
     networks:
       - quatek_net
     volumes:
-      - redis:/data
-
+      - 'redis:/data'
   flask:
     image: backend
     build: ./backend
+    restart: always
     ports:
       - '5001:5001'
     depends_on:
@@ -51,10 +51,9 @@ services:
         window: 60s
     networks:
       - quatek_net
-
   celery_worker:
     image: backend
-    # build: ./backend
+    restart: always
     ports:
       - '5858:5858'
     command: pipenv run celery -A app.mod_task.tasks worker
@@ -71,11 +70,12 @@ services:
         window: 60s
     networks:
       - quatek_net
-
   celery_beat:
     image: backend
-    # build: ./backend
-    command: pipenv run celery -A app.mod_task.tasks beat -S celerybeatmongo.schedulers.MongoScheduler
+    restart: always
+    command: >-
+      pipenv run celery -A app.mod_task.tasks beat -S
+      celerybeatmongo.schedulers.MongoScheduler
     depends_on:
       - flask
     deploy:
@@ -89,10 +89,10 @@ services:
         window: 60s
     networks:
       - quatek_net
-
   vue:
     image: frontend
     build: ./frontend
+    restart: always
     ports:
       - '80:80'
     depends_on:
@@ -108,9 +108,9 @@ services:
         window: 60s
     networks:
       - quatek_net
-
   mongo-express:
     image: mongo-express
+    restart: always
     environment:
       - ME_CONFIG_BASICAUTH_USERNAME=quatek
       - ME_CONFIG_BASICAUTH_PASSWORD=quatek
@@ -129,9 +129,8 @@ services:
         window: 60s
     networks:
       - quatek_net
-
 volumes:
-  redis:
-  mongodb:
+  redis: null
+  mongodb: null
 networks:
-  quatek_net:
+  quatek_net: null

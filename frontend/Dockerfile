@@ -2,10 +2,9 @@
 FROM node:10-alpine as build-stage
 WORKDIR /app
 COPY . /app
-# RUN npm --registry https://registry.npm.taobao.org install && \
-#     npm run build
-RUN npm install \
-    && npm run build
+RUN npm --registry https://registry.npm.taobao.org install && \
+    npm run build
+
 
 # production stage
 FROM nginx:1.15.2-alpine as production-stage

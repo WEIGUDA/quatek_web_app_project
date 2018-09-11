@@ -1,6 +1,6 @@
 FROM python:3.6-slim
 
-# LABEL Name=quatek_web_app_backend Version=0.0.1
+LABEL Name=quatek_web_app_backend Version=0.0.1
 EXPOSE 5001
 
 ENV ENV=production
@@ -16,9 +16,8 @@ COPY . /app
 
 RUN apt-get update \
     && apt-get install -y libaio1 \
-    && pip3 install -i https://pypi.douban.com/simple/ pipenv --trusted-host pypi.douban.com \
-    # && pipenv install --ignore-pipfile --verbose
-    && pipenv install --ignore-pipfile
+    && pip3 install -i http://mirrors.aliyun.com/pypi/simple pipenv --trusted-host mirrors.aliyun.com \
+    && pipenv install --pypi-mirror http://mirrors.aliyun.com/pypi/simple --verbose
 
 CMD ["pipenv", "run", "python3", "run_pro.py"]
 
