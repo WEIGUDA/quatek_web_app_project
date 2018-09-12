@@ -16,8 +16,8 @@ COPY . /app
 
 RUN apt-get update \
     && apt-get install -y libaio1 \
-    && pip3 install -i http://mirrors.aliyun.com/pypi/simple pipenv --trusted-host mirrors.aliyun.com \
-    && pipenv install --verbose
+    && pip3 install -i https://mirrors.aliyun.com/pypi/simple/ pipenv --trusted-host mirrors.aliyun.com \
+    && pipenv install --verbose --ignore-pipfile
 
 CMD ["pipenv", "run", "python3", "run_pro.py"]
 
