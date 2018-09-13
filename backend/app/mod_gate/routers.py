@@ -235,6 +235,12 @@ def cardtests():
             q_object = (q_object & Q(card_number__icontains=query_string)) \
                 | (q_object & Q(mc_id__in=gates_mc_ids))
 
+        if card_number:
+            if len(card_number) > 8:
+                card_number = hex(int(card_number))[2:].upper().rjust(8, '0')
+
+            q_object = q_object & Q(card_number__icontains=card_number)
+
         if job_number:
             cards = Card.objects.filter(job_number__icontains=job_number)
             q_object = q_object & Q(card_number__in=[card.card_number for card in cards])

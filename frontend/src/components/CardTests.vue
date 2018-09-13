@@ -9,12 +9,12 @@
       <div class="w-100"><br></div>
 
       <div class="form-inline">
-        <label class="sr-only" for="q">Query</label>
+        <label class="sr-only" for="card_number">Query</label>
         <div class="input-group mb-2 mr-sm-2">
-          <input name="q" type="text" class="form-control" v-model.trim="query_string" placeholder="闸机id或卡号">
+          <input name="card_number" type="text" class="form-control" v-model.trim="card_number" placeholder="卡号">
         </div>
 
-        <label class="sr-only" for="q">工号</label>
+        <label class="sr-only" for="job_number">工号</label>
         <div class="input-group mb-2 mr-sm-2">
           <input name="job_number" type="text" class="form-control" v-model.trim="job_number" placeholder="工号">
         </div>
@@ -137,6 +137,7 @@ export default {
       cards: [],
       job_number: '',
       go_to_page_number: '',
+      card_number: '',
     };
   },
   computed: {
@@ -197,7 +198,7 @@ export default {
         .get(
           `cardtests?q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
             this.datetime_to
-          }&job_number=${this.job_number}`,
+          }&job_number=${this.job_number}&card_number=${this.card_number}`,
         )
         .then((response) => {
           console.log(response.data);
@@ -271,7 +272,7 @@ export default {
         .get(
           `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
             this.datetime_to
-          }&job_number=${this.job_number}`,
+          }&job_number=${this.job_number}&card_number=${this.card_number}`,
         )
         .then((response) => {
           console.log(response.data);
@@ -289,7 +290,7 @@ export default {
         .get(
           `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
             this.datetime_to
-          }&job_number=${this.job_number}`,
+          }&job_number=${this.job_number}&card_number=${this.card_number}`,
         )
         .then((response) => {
           if (response.data.length !== 0) {
@@ -311,7 +312,7 @@ export default {
         .get(
           `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
             this.datetime_to
-          }&job_number=${this.job_number}`,
+          }&job_number=${this.job_number}&card_number=${this.card_number}`,
         )
         .then((response) => {
           if (response.data.length !== 0) {
