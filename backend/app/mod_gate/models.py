@@ -29,9 +29,9 @@ class Card(db.DynamicDocument):
     )
     name = db.StringField(default='')  # 姓名
     job_number = db.StringField(default='', unique=True)  # 工号
-    department = db.StringField(default='')  # 部门
+    department = db.StringField(default='department')  # 部门
     gender = db.StringField(default='1', choices=(('0', '女'), ('1', '男')),)  # 性别
-    note = db.StringField(default='')  # 其他说明
+    note = db.StringField(default='default')  # 其他说明
     belong_to_mc = db.StringField(default='all')
     # 进出标志 name1:1|name2:0|name3 0:可进可出, 1:禁止进入/可出, 2:禁止出去/可进, 3:禁止进出  or all:所有闸机都可进可出
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
