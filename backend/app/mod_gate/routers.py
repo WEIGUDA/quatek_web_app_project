@@ -169,9 +169,8 @@ def card_create():
             if len(c1.card_number) > 8:
                 c1.card_number = hex(int(c1.card_number))[2:].upper().rjust(8, '0')
 
-            for key in c1:
-                if not c1[key]:
-                    c1[key] = 'default'
+            if not c1.note:
+                c1.note = 'default'
 
             c1.save()
 
