@@ -55,7 +55,8 @@ app = Celery('quatek-task', broker=REDIS_URL, result_backend=REDIS_URL)
 app.conf.update({
     'CELERY_MONGODB_SCHEDULER_DB': MONGODB_DB,
     'CELERY_MONGODB_SCHEDULER_COLLECTION': "schedules",
-    'CELERY_MONGODB_SCHEDULER_URL': f"mongodb://{MONGODB_HOST}:{MONGODB_PORT}"
+    'CELERY_MONGODB_SCHEDULER_URL': f"mongodb://{MONGODB_HOST}:{MONGODB_PORT}",
+    'timezone': datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
 })
 
 
