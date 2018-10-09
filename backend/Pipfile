@@ -17,6 +17,10 @@ flask-jwt-extended = "*"
 openpyxl = "*"
 sqlalchemy = "*"
 cx-oracle = "*"
+pyexcel-xlsx = "*"
+pyexcel-xls = "*"
+pyexcel = "*"
+flask-excel = "*"
 
 [dev-packages]
 pylint = "*"

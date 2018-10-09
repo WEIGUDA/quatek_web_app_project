@@ -24,7 +24,7 @@
       "env": {
         "FLASK_APP": "app"
       },
-      "args": ["run", "--no-debugger", "--no-reload"]
+      "args": ["run", "--port=5001", "--no-debugger", "--no-reload"]
     },
     {
       "type": "chrome",

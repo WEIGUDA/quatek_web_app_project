@@ -12,6 +12,7 @@ import ConfigCrontabTask from '@/components/ConfigCrontabTask';
 import ConfigSystemConfig from '@/components/ConfigSystemConfig';
 import ConfigOtherDatabase from '@/components/ConfigOtherDatabase';
 import BackgroundTask from '@/components/BackgroundTask';
+import LastFailedUpload from '@/components/LastFailedUpload';
 
 Vue.use(Router);
 
@@ -52,6 +53,12 @@ export default new Router({
       path: '/attendances',
       name: 'Attendances',
       component: Attendances,
+    },
+
+    {
+      path: '/last-failed-upload',
+      name: 'LastFailedUpload',
+      component: LastFailedUpload,
     },
 
     {

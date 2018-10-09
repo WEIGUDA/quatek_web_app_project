@@ -4,6 +4,7 @@ from flask import Flask
 from flask_mongoengine import MongoEngine
 from flask_socketio import SocketIO
 from flask_cors import CORS
+import flask_excel
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 
 
@@ -38,6 +39,7 @@ def create_app(config=None):
     socketio.init_app(app)
     cors.init_app(app)
     jwt.init_app(app)
+    flask_excel.init_excel(app)
 
     # register blueprints
     from app.mod_gate.routers import bp as mod_gate_bp

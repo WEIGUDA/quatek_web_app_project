@@ -50,17 +50,30 @@
 
       </ul>
     </nav>
-    <b-modal v-model="show_modal" title="上传闸机信息" ok-only ok-title="上传" :lazy="true" @ok="upload()" ok-variant="success">
+    <b-modal v-model="show_modal" title="上传闸机信息" ok-only ok-title="上传" :lazy="true" @ok="upload2()" ok-variant="success">
       <b-container fluid>
         <b-row>
-          <a class="template_download" href="" @click.prevent="download_gates_upload_template()">闸机信息模版.csv</a>
+          <a class="template_download" href="" @click.prevent="download_gates_upload_template2()">闸机上传模版.xlsx</a>
         </b-row>
+        <br>
         <b-row>
-          <b-form-file v-model="gates_upload_file" placeholder="请选择文件..." accept="text/csv"></b-form-file>
+          <input type="file" name="excel_file" id="excel_file" ref="excel_file">
         </b-row>
-        <b-row>
 
+      </b-container>
+
+    </b-modal>
+
+    <b-modal v-model="show_modal2" title="上传闸机信息" ok-only ok-title="查看详情" :lazy="true" @ok="routeToFailedUploadPage()" ok-variant="success">
+      <b-container fluid>
+        <b-row>
+          {{this.last_upload_result.result}} 台闸机上传成功
         </b-row>
+        <br>
+        <b-row>
+          {{this.last_upload_result.failed_numbers}} 台失败
+        </b-row>
+
       </b-container>
 
     </b-modal>
@@ -70,6 +83,7 @@
 
 <script>
 import axios from 'axios';
+import fileDownload from 'js-file-download';
 import Gate from '@/components/Gate';
 
 export default {
@@ -80,7 +94,9 @@ export default {
       gates: [],
       query_string: '',
       show_modal: false,
-      gates_upload_file: '',
+      file2: '',
+      show_modal2: false,
+      last_upload_result: {},
     };
   },
 
@@ -104,57 +120,48 @@ export default {
       this.show_modal = true;
     },
 
-    upload() {
-      var reader = new FileReader();
-      reader.onload = function(event) {
-        let result = event.target.result;
-        result = result.split('\n');
-        for (let [index, item] of result.entries()) {
-          result[index] = item.split(',');
-        }
-        console.log(result);
-        axios
-          .post('gates', result)
-          .then((response) => {
-            console.log(response);
-
-            alert(`${response.data.result}台闸机信息上传成功!`);
-          })
-          .catch((response) => {
-            console.log(response);
-            alert('上传失败!');
-          });
-      };
-      reader.readAsText(this.gates_upload_file);
+    upload2() {
+      let formData = new FormData();
+      let excel_file = this.$refs.excel_file.files[0];
+      formData.append('excel_file', excel_file);
+      console.log(formData);
+      axios
+        .post('upload_gates_excel', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then((response) => {
+          console.log(response);
+          this.last_upload_result = response.data;
+          this.$store.commit('setLastFailedUpload', response.data.failed);
+          this.show_modal2 = true;
+        })
+        .catch((response) => {
+          console.log(response);
+        });
     },
 
-    download_gates_upload_template() {
-      try {
-        let title = 'gates_upload_template';
-        let csv_header =
-          '*gate_name,*gate_number,*gate_category,*mc_id,*hand_max,*hand_min,*foot_max,*foot_min,gate_ip,gate_port\n';
-        let csv = [];
-        let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
-        let link = document.createElement('a');
+    routeToFailedUploadPage() {
+      this.$router.push({ name: 'LastFailedUpload' });
+    },
 
-        link.id = 'csv-download-id';
-        link.href = uri;
-
-        document.body.appendChild(link);
-
-        document.getElementById(link.id).style.visibility = 'hidden';
-        document.getElementById(link.id).download = title + '.csv';
-
-        document.body.appendChild(link);
-        document.getElementById(link.id).click();
-
-        setTimeout(function() {
-          document.body.removeChild(link);
+    download_gates_upload_template2() {
+      axios
+        .get('download_gates_upload_template', {
+          responseType: 'blob',
+        })
+        .then((response) => {
+          console.log(response);
+          fileDownload(
+            response.data,
+            '闸机上传模版.xlsx',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          );
+        })
+        .catch((response) => {
+          console.log(response);
         });
-        return true;
-      } catch (err) {
-        return false;
-      }
     },
     prevPage() {
       let offset = (this.currentPage - 2) * 50;
@@ -252,6 +259,7 @@ export default {
   },
   components: {
     AppGate: Gate,
+    FileReader,
   },
 
   created() {
@@ -289,6 +297,7 @@ export default {
   height: 300px;
   color: #868686;
 }
+
 @media (min-width: 576px) {
 }
 

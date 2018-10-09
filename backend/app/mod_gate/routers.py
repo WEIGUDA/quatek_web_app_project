@@ -1,10 +1,11 @@
 import datetime
 import json
-from uuid import uuid1
-from flask import Blueprint, request, make_response, current_app, abort, jsonify
+from flask import Blueprint, request, make_response, current_app, abort, jsonify, send_file
 from mongoengine.queryset.visitor import Q
-
 from celerybeatmongo.models import PeriodicTask
+import flask_excel as excel
+import pyexcel as excel
+
 
 from app.mod_gate.models import Gate, Card, CardTest
 from app.mod_task.tasks import update_all_cards_to_mc_task, update_a_card_to_all_mc_task, delete_a_card_from_mc_task
@@ -271,3 +272,47 @@ def get_card_by_id():
         abort(500)
     else:
         return make_response(cards.to_json())
+
+
+@bp.route('/download_gates_upload_template', methods=['GET', ])
+def download_gates_upload_template2():
+    return send_file('mod_gate/static/闸机上传模版.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+
+@bp.route('/upload_gates_excel', methods=['POST', ])
+def upload_gates_excel():
+    print(request.files['excel_file'])
+    gates_list = request.get_array(field_name='excel_file')
+    return_list = []
+    failed_list = []
+    for index, gate in enumerate(gates_list):
+        if index == 0:
+            continue
+        g1 = Gate(
+            name=gate[0],
+            number=str(gate[1]),
+            category=gate[2],
+            mc_id=str(gate[3]),
+            hand_max=gate[4],
+            hand_min=gate[5],
+            foot_max=gate[6],
+            foot_min=gate[7],
+        )
+        if not g1.hand_max:
+            g1.hand_max = 35000
+        if not g1.hand_min:
+            g1.hand_min = 750
+        if not g1.foot_max:
+            g1.foot_max = 200000
+        if not g1.foot_min:
+            g1.foot_min = 200
+
+        try:
+            g1.save()
+        except Exception as e:
+            failed_list.append((g1.to_json(), str(e)))
+        else:
+            return_list.append(g1.to_json())
+
+    print(failed_list)
+    return jsonify({'result': len(return_list), 'failed': failed_list, 'failed_numbers': len(failed_list)}), {'Content-Type': 'application/json'}
