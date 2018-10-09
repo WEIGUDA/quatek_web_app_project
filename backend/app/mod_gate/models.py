@@ -40,6 +40,9 @@ class Card(db.DynamicDocument):
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
     card_counter = db.SequenceField(collection_name='card_counter', unique=True)  # 卡号编号
 
+    def __str__(self):
+        return f'<Card (card_number={self.card_number}, card_counter={self.card_counter}, card_category={self.card_category}, name={self.name}, job_number={self.job_number}, department={self.department}, gender={self.gender}, note={self.note}, belong_to_mc={self.belong_to_mc}, created_time={self.created_time}>'
+
 
 class CardTest(db.DynamicDocument):
     log_id = db.StringField(default='')  # 记录流水号

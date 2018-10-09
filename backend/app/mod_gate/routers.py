@@ -281,7 +281,6 @@ def download_gates_upload_template2():
 
 @bp.route('/upload_gates_excel', methods=['POST', ])
 def upload_gates_excel():
-    print(request.files['excel_file'])
     gates_list = request.get_array(field_name='excel_file')
     return_list = []
     failed_list = []
@@ -314,5 +313,47 @@ def upload_gates_excel():
         else:
             return_list.append(g1.to_json())
 
-    print(failed_list)
+    return (jsonify({'result': len(return_list), 'failed': failed_list, 'failed_numbers': len(failed_list)}),
+            {'Content-Type': 'application/json'})
+
+
+@bp.route('/download_cards_upload_template', methods=['GET', ])
+def download_cards_upload_template():
+    return send_file('mod_gate/static/卡片上传模版.xlsx',
+                     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+
+@bp.route('/upload_cards_excel', methods=['POST', ])
+def upload_cards_excel():
+    cards_list = request.get_array(field_name='excel_file')
+    return_list = []
+    failed_list = []
+
+    for index, card in enumerate(cards_list):
+        if index == 0:
+            continue
+
+        c1 = Card(
+            card_number=str(card[0]).upper().rjust(8, '0').strip(),
+            card_category=str(card[1]).strip(),
+            name=str(card[2]).strip(),
+            job_number=str(card[3]).strip(),
+            department=str(card[4]).strip(),
+            gender=str(card[5]).strip(),
+            note=str(card[6]).strip(),
+        )
+
+        if len(c1.card_number) > 8:
+            c1.card_number = hex(int(c1.card_number))[2:].upper().rjust(8, '0')
+
+        if not c1.note:
+            c1.note = 'default'
+
+        try:
+            c1.save()
+        except Exception as e:
+            failed_list.append((c1.to_json(), str(e)))
+        else:
+            return_list.append(c1.to_json())
+
     return jsonify({'result': len(return_list), 'failed': failed_list, 'failed_numbers': len(failed_list)}), {'Content-Type': 'application/json'}

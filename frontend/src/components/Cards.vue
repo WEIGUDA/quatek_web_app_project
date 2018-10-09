@@ -83,19 +83,30 @@
 
       </ul>
     </nav>
-    <b-modal v-model="show_modal" title="上传卡片信息" ok-only ok-title="上传" :lazy="true" @ok="upload()" ok-variant="success">
+    <b-modal v-model="show_modal" title="上传卡片信息" ok-only ok-title="上传" :lazy="true" @ok="upload2()" ok-variant="success">
       <b-container fluid>
         <b-row>
-          <a class="template_download" href="" @click.prevent="download_cards_upload_template()">卡片信息模版.csv</a>
+          <a class="template_download" href="" @click.prevent="download_cards_upload_template2()">卡片上传模版.xlsx</a>
         </b-row>
+        <br>
         <b-row>
-          <b-form-file v-model="cards_file" placeholder="请选择文件..." accept="text/csv"></b-form-file>
+          <input type="file" name="excel_file" id="excel_file" ref="excel_file">
         </b-row>
-        <b-row>
 
-        </b-row>
       </b-container>
+    </b-modal>
 
+    <b-modal v-model="show_modal2" title="上传卡片信息" ok-only ok-title="查看详情" :lazy="true" @ok="routeToFailedUploadPage()" ok-variant="success">
+      <b-container fluid>
+        <b-row>
+          {{this.last_upload_result.result}} 台闸机上传成功
+        </b-row>
+        <br>
+        <b-row>
+          {{this.last_upload_result.failed_numbers}} 台失败
+        </b-row>
+
+      </b-container>
     </b-modal>
   </div>
 </template>
@@ -103,6 +114,7 @@
 <script>
 import lodash from 'lodash';
 import axios from 'axios';
+import fileDownload from 'js-file-download';
 export default {
   name: 'Cards',
   data() {
@@ -112,6 +124,9 @@ export default {
       query_string: '',
       show_modal: false,
       cards_file: '',
+      excel_file: '',
+      show_modal2: false,
+      last_upload_result: {},
     };
   },
   computed: {
@@ -158,56 +173,48 @@ export default {
       this.show_modal = true;
     },
 
-    upload() {
-      var reader = new FileReader();
-      reader.onload = function(event) {
-        let result = event.target.result;
-        result = result.split('\n');
-        for (let [index, item] of result.entries()) {
-          result[index] = item.split(',');
-        }
-        console.log(result);
-        axios
-          .post('cards', result)
-          .then((response) => {
-            console.log(response);
-            alert(`${response.data.result}张卡片信息上传成功!`);
-          })
-          .catch((response) => {
-            console.log(response);
-            alert('上传失败!');
-          });
-      };
-      reader.readAsText(this.cards_file);
+    upload2() {
+      let formData = new FormData();
+      let excel_file = this.$refs.excel_file.files[0];
+      formData.append('excel_file', excel_file);
+      console.log(formData);
+      axios
+        .post('upload_cards_excel', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then((response) => {
+          console.log(response);
+          this.last_upload_result = response.data;
+          this.$store.commit('setLastFailedUpload', response.data.failed);
+          this.show_modal2 = true;
+        })
+        .catch((response) => {
+          console.log(response);
+        });
     },
 
-    download_cards_upload_template() {
-      try {
-        let title = 'cards_upload_template';
-        let csv_header =
-          '*card_number,*card_category(0:vip|1:hands_only|2:feet_only|3:test_both),*name,*job_number,*department,*gender(0:female|1:male),note,\n';
-        let csv = [];
-        let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
-        let link = document.createElement('a');
+    routeToFailedUploadPage() {
+      this.$router.push({ name: 'LastFailedUpload' });
+    },
 
-        link.id = 'csv-download-id';
-        link.href = uri;
-
-        document.body.appendChild(link);
-
-        document.getElementById(link.id).style.visibility = 'hidden';
-        document.getElementById(link.id).download = title + '.csv';
-
-        document.body.appendChild(link);
-        document.getElementById(link.id).click();
-
-        setTimeout(function() {
-          document.body.removeChild(link);
+    download_cards_upload_template2() {
+      axios
+        .get('download_cards_upload_template', {
+          responseType: 'blob',
+        })
+        .then((response) => {
+          console.log(response);
+          fileDownload(
+            response.data,
+            '卡片上传模版.xlsx',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          );
+        })
+        .catch((response) => {
+          console.log(response);
         });
-        return true;
-      } catch (err) {
-        return false;
-      }
     },
 
     delete_cards(cards_array) {

@@ -75,7 +75,6 @@
         </b-row>
 
       </b-container>
-
     </b-modal>
   </div>
 
@@ -94,7 +93,6 @@ export default {
       gates: [],
       query_string: '',
       show_modal: false,
-      file2: '',
       show_modal2: false,
       last_upload_result: {},
     };
