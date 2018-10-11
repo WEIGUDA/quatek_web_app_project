@@ -99,11 +99,11 @@
     <b-modal v-model="show_modal2" title="上传卡片信息" ok-only ok-title="查看详情" :lazy="true" @ok="routeToFailedUploadPage()" ok-variant="success">
       <b-container fluid>
         <b-row>
-          {{this.last_upload_result.result}} 台闸机上传成功
+          {{this.last_upload_result.result}} 张卡片上传成功
         </b-row>
         <br>
         <b-row>
-          {{this.last_upload_result.failed_numbers}} 台失败
+          {{this.last_upload_result.failed_numbers}} 张失败
         </b-row>
 
       </b-container>
