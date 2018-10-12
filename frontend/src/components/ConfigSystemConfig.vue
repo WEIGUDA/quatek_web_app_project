@@ -10,12 +10,17 @@
       <input type="text" class="form-control" id="smtp_port" v-model="config.smtp_port">
     </div>
 
-    <div class="form-group">
+    <div class="form-group form-check">
+      <input type="checkbox" class="form-check-input" id="smtp_need_auth" v-model="config.smtp_need_auth">
+      <label class="form-check-label" for="smtp_need_auth">需要验证</label>
+    </div>
+
+    <div class="form-group" v-show=config.smtp_need_auth>
       <label for="smtp_username">SMTP 用户名</label>
       <input type="text" class="form-control" id="smtp_username" v-model="config.smtp_username">
     </div>
 
-    <div class="form-group">
+    <div class="form-group" v-show=config.smtp_need_auth>
       <label for="smtp_password">SMTP 密码</label>
       <input type="text" class="form-control" id="smtp_password" v-model="config.smtp_password">
     </div>
@@ -60,6 +65,7 @@ export default {
         smtp_password: '',
         emails: '',
         work_hours: '8:00-18:00',
+        smtp_need_auth: true,
       },
     };
   },
@@ -70,9 +76,11 @@ export default {
         .post('update-system-config', this.config)
         .then((response) => {
           console.log(response.data);
+          alert('保存成功!');
         })
         .catch((response) => {
           console.log(response);
+          alert('保存失败!');
         });
     },
     get_system_config() {

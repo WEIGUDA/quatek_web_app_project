@@ -62,9 +62,11 @@ export default {
         .post('update-other-database-config', this.config)
         .then((response) => {
           console.log(response.data);
+          alert('保存成功!');
         })
         .catch((response) => {
           console.log(response);
+          alert('保存失败!');
         });
     },
 
