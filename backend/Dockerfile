@@ -19,5 +19,5 @@ RUN apt-get update \
     && pip3 install -i https://mirrors.aliyun.com/pypi/simple/ pipenv --trusted-host mirrors.aliyun.com \
     && pipenv install --system --verbose --ignore-pipfile --deploy
 
-CMD ["pipenv", "run", "python3", "run_pro.py"]
+CMD python run_pro.py
 
