@@ -32,9 +32,14 @@ def client():
 def create_cardtest_list():
     dt = datetime.datetime.utcnow()
     cardtest_list = []
-    for i in range(500):
-        cardtest_list.append(CardTest(log_id=f'id{i}', card_counter=f'{i}', card_number=f'number{i}', card_category=random.choice(['0', '1', '2', '3']), in_out_symbol=random.choice(['0', '1']), mc_id=random.choice(['mc1', 'mc2']), test_datetime=dt+timedelta(
-            minutes=i), test_result=random.choice(['0', '1']), is_tested=random.choice(['0', '1']), hand=str(random.randrange(0, 100000)), left_foot=str(random.randrange(0, 100000)), right_foot=str(random.randrange(0, 100000))))
+    cards = Card.objects.all()
+    card_numbers = set()
+    for card in cards:
+        card_numbers.add(card.card_number)
+    card_numbers = list(card_numbers)
+    for i in range(50000):
+        cardtest_list.append(CardTest(log_id=f'id{i}', card_counter=f'{i}', card_number=random.choice(card_numbers), card_category=random.choice(['0', '1', '2', '3']), in_out_symbol=random.choice(['0', '1']), mc_id=random.choice(
+            ['mc1', 'mc2']), test_datetime=dt + datetime.timedelta(minutes=i), test_result=random.choice(['0', '1']), is_tested=random.choice(['0', '1']), hand=str(random.randrange(0, 100000)), left_foot=str(random.randrange(0, 100000)), right_foot=str(random.randrange(0, 100000))))
     CardTest.objects.insert(cardtest_list)
     yield cardtest_list
 
@@ -42,9 +47,9 @@ def create_cardtest_list():
 @pytest.fixture
 def create_card_list():
     card_list = []
-    for i in range(1000):
-        card_list.append(Card(card_number=hex(random.randint(0, 4294967295))[2:].upper().rjust(
-            8, '0'), card_category=random.choice(['0', '1', '2', '3']), name=f'name{i}', job_number=random.randint(1, 9999999999), department=f'部门{i}', gender=random.choice(['0', '1']), note='default note', belong_to_mc='all', ))
+    for i in range(5000):
+        card_list.append(Card(card_number=hex(random.randint(0, 4294967295))[2:].upper().rjust(8, '0'), card_category=random.choice(['0', '1', '2', '3']), name=f'name{i}', job_number=str(
+            random.randint(1, 9999999999)), department=f'部门{i}', gender=random.choice(['0', '1']), note='default note', belong_to_mc='all', ))
     Card.objects.insert(card_list)
     yield card_list
 
