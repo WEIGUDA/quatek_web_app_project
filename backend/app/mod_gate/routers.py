@@ -215,6 +215,7 @@ def cardtests():
         job_number = request.args.get('job_number', None)
         card_number = request.args.get('card_number', None)
         mc_name = request.args.get('mc_name', None)
+        department = request.args.get('department', None)
 
         if datetime_from:
             datetime_from = datetime.datetime.strptime(
@@ -244,6 +245,10 @@ def cardtests():
 
         if job_number:
             cards = Card.objects.filter(job_number__icontains=job_number)
+            q_object = q_object & Q(card_number__in=[card.card_number for card in cards])
+
+        if department:
+            cards = Card.objects.filter(department__icontains=department)
             q_object = q_object & Q(card_number__in=[card.card_number for card in cards])
 
         offset = request.args.get('offset', 0)

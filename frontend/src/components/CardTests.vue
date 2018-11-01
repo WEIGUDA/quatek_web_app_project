@@ -19,12 +19,13 @@
           <input name="job_number" type="text" class="form-control" v-model.trim="job_number" placeholder="工号">
         </div>
 
+        <label class="sr-only" for="department">部门</label>
+        <div class="input-group mb-2 mr-sm-2">
+          <input name="department" type="text" class="form-control" v-model.trim="department" placeholder="部门">
+        </div>
+
         <button type="submit" class="btn btn-success mb-2 btn_quatek" @click.prevent.stop="search()">搜索</button>
 
-        <!-- <div class="input-group-append">
-          <button class="btn btn-outline-success btn-outline-quatek" type="button" @click="search()">
-            <font-awesome-icon icon="search" /> Search</button>
-        </div> -->
       </div>
     </div>
     <div class="row btn-row">
@@ -47,6 +48,7 @@
             <th scope="col">姓名</th>
             <th scope="col">工号</th>
             <th scope="col">卡号</th>
+            <th scope="col">部门</th>
             <th scope="col">测试类型</th>
             <th scope="col">进出标志</th>
             <th scope="col">闸机id</th>
@@ -63,6 +65,7 @@
             <td>{{cardtest.name}}</td>
             <td>{{cardtest.job_number}}</td>
             <td>{{cardtest.card_number}}</td>
+            <td>{{cardtest.department}}</td>
             <td>{{cardtest.card_category}}</td>
             <td>{{cardtest.in_out_symbol}}</td>
             <td>{{cardtest.mc_id}}</td>
@@ -138,6 +141,7 @@ export default {
       job_number: '',
       go_to_page_number: '',
       card_number: '',
+      department: '',
     };
   },
   computed: {
@@ -148,14 +152,17 @@ export default {
         if (card.length > 0) {
           cardtest.name = card[0].name;
           cardtest.job_number = card[0].job_number;
+          cardtest.department = card[0].department;
         } else {
           let card2 = this.cards.filter((obj) => String(obj.card_counter) === String(cardtest.card_counter));
           if (card2.length > 0) {
             cardtest.name = card2[0].name;
             cardtest.job_number = card2[0].job_number;
+            cardtest.department = card[0].department;
           } else {
             cardtest.name = '未找到姓名';
             cardtest.job_number = '未找到工号';
+            cardtest.department = '未找到部门';
           }
         }
         if (cardtest.test_result === '0') {
@@ -198,7 +205,7 @@ export default {
         .get(
           `cardtests?q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
             this.datetime_to
-          }&job_number=${this.job_number}&card_number=${this.card_number}`,
+          }&job_number=${this.job_number}&card_number=${this.card_number}&department=${this.department}`,
         )
         .then((response) => {
           console.log(response.data);
@@ -272,7 +279,7 @@ export default {
         .get(
           `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
             this.datetime_to
-          }&job_number=${this.job_number}&card_number=${this.card_number}`,
+          }&job_number=${this.job_number}&card_number=${this.card_number}&department=${this.department}`,
         )
         .then((response) => {
           console.log(response.data);
@@ -290,7 +297,7 @@ export default {
         .get(
           `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
             this.datetime_to
-          }&job_number=${this.job_number}&card_number=${this.card_number}`,
+          }&job_number=${this.job_number}&card_number=${this.card_number}&department=${this.department}`,
         )
         .then((response) => {
           if (response.data.length !== 0) {
@@ -305,6 +312,7 @@ export default {
           console.log(response);
         });
     },
+
     go_to_page() {
       this.currentPage = +this.go_to_page_number;
       let offset = this.currentPage - 1 * 50;
@@ -312,7 +320,7 @@ export default {
         .get(
           `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
             this.datetime_to
-          }&job_number=${this.job_number}&card_number=${this.card_number}`,
+          }&job_number=${this.job_number}&card_number=${this.card_number}&department=${this.department}`,
         )
         .then((response) => {
           if (response.data.length !== 0) {
