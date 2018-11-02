@@ -1,5 +1,81 @@
 version: "3"
 services:
+  flask:
+    image: registry.cn-shanghai.aliyuncs.com/weiguda/quatek_esd_backend
+    build: ./backend
+    restart: always
+    ports:
+      - "5001:5001"
+    depends_on:
+      - mongo
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: any
+        delay: 10s
+        window: 60s
+    networks:
+      - quatek_net
+  celery_worker:
+    image: registry.cn-shanghai.aliyuncs.com/weiguda/quatek_esd_backend
+    restart: always
+    ports:
+      - "5858:5858"
+    command: celery -A app.mod_task.tasks worker
+    depends_on:
+      - flask
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: any
+        delay: 10s
+        window: 60s
+    networks:
+      - quatek_net
+  celery_beat:
+    image: registry.cn-shanghai.aliyuncs.com/weiguda/quatek_esd_backend
+    restart: always
+    command: >-
+      celery -A app.mod_task.tasks beat -S
+      celerybeatmongo.schedulers.MongoScheduler
+    depends_on:
+      - flask
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: any
+        delay: 10s
+        window: 60s
+    networks:
+      - quatek_net
+  vue:
+    image: registry.cn-shanghai.aliyuncs.com/weiguda/quatek_esd_frontend
+    build: ./frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - flask
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: any
+        delay: 10s
+        window: 60s
+    networks:
+      - quatek_net
   mongo:
     image: "mongo:4"
     restart: always
@@ -32,82 +108,6 @@ services:
       - quatek_net
     volumes:
       - "redis:/data"
-  flask:
-    image: backend
-    build: ./backend
-    restart: always
-    ports:
-      - "5001:5001"
-    depends_on:
-      - mongo
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 2
-        delay: 10s
-      restart_policy:
-        condition: any
-        delay: 10s
-        window: 60s
-    networks:
-      - quatek_net
-  celery_worker:
-    image: backend
-    restart: always
-    ports:
-      - "5858:5858"
-    command: celery -A app.mod_task.tasks worker
-    depends_on:
-      - flask
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 2
-        delay: 10s
-      restart_policy:
-        condition: any
-        delay: 10s
-        window: 60s
-    networks:
-      - quatek_net
-  celery_beat:
-    image: backend
-    restart: always
-    command: >-
-      celery -A app.mod_task.tasks beat -S
-      celerybeatmongo.schedulers.MongoScheduler
-    depends_on:
-      - flask
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 2
-        delay: 10s
-      restart_policy:
-        condition: any
-        delay: 10s
-        window: 60s
-    networks:
-      - quatek_net
-  vue:
-    image: frontend
-    build: ./frontend
-    restart: always
-    ports:
-      - "80:80"
-    depends_on:
-      - flask
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 2
-        delay: 10s
-      restart_policy:
-        condition: any
-        delay: 10s
-        window: 60s
-    networks:
-      - quatek_net
   mongo-express:
     image: mongo-express
     restart: always
