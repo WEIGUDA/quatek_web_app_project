@@ -4,7 +4,6 @@ from flask import Blueprint, request, make_response, current_app, abort, jsonify
 from mongoengine.queryset.visitor import Q
 from celerybeatmongo.models import PeriodicTask
 import flask_excel as excel
-import pyexcel as excel
 
 
 from app.mod_gate.models import Gate, Card, CardTest
@@ -214,8 +213,8 @@ def cardtests():
         datetime_to = request.args.get('datetime_to', None)  # '2018-07-20T07:15:00.000Z'
         job_number = request.args.get('job_number', None)
         card_number = request.args.get('card_number', None)
-        mc_name = request.args.get('mc_name', None)
         department = request.args.get('department', None)
+        is_downloading_excel = request.args.get('is_downloading_excel', None)
 
         if datetime_from:
             datetime_from = datetime.datetime.strptime(
@@ -255,6 +254,46 @@ def cardtests():
         limit = request.args.get('limit', 50)
 
         try:
+            if is_downloading_excel:
+                results = [['log_id', '卡片编号', '卡片号码', '卡片分类', '进出标志', 'mc id',
+                            '测试时间', '测试结果', '是否测试', '手测试值(KΩ)', '左脚测试值(KΩ)', '右脚测试值(KΩ)', 'erg后数值', 'rsg', ], ]
+                logs = CardTest.objects.filter(q_object).order_by('-test_datetime').skip(0).limit(100000)
+                for log in logs:
+                    card_category = ''
+                    if log['card_category'] == '0':
+                        card_category = 'VIP'
+                    if log['card_category'] == '1':
+                        card_category = '只测手'
+                    if log['card_category'] == '2':
+                        card_category = '只测脚'
+                    if log['card_category'] == '3':
+                        card_category = '手脚都测'
+
+                    in_out_symbol = ''
+                    if log['in_out_symbol'] == '0':
+                        card_category = '出'
+                    if log['in_out_symbol'] == '1':
+                        card_category = '进'
+
+                    local_tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+                    test_datetime = log['test_datetime'].replace(tzinfo=local_tz).isoformat()
+
+                    test_result = ''
+                    if log['test_result'] == '0':
+                        test_result = '不通过'
+                    if log['test_result'] == '1':
+                        test_result = '通过'
+
+                    is_tested = ''
+                    if log['is_tested'] == '0':
+                        is_tested = '不测试'
+                    if log['is_tested'] == '1':
+                        is_tested = '测试'
+
+                    results.append([log['log_id'], log['card_counter'], log['card_number'], card_category, in_out_symbol, log['mc_id'],
+                                    test_datetime, test_result, is_tested, log['hand'], log['left_foot'], log['right_foot'], log['after_erg'], log['rsg'], ])
+                return excel.make_response_from_array(results, "xlsx")
+
             cards = CardTest.objects.filter(q_object).order_by('-test_datetime').skip(int(offset)).limit(int(limit))
             return cards.to_json(), {'Content-Type': 'application/json'}
         except:

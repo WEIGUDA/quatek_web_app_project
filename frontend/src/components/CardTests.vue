@@ -30,7 +30,7 @@
     </div>
     <div class="row btn-row">
       <p class="w-100 text-right">
-        <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="下载" @click="download_csv()">
+        <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="下载" @click="download_excel()">
           <!-- <font-awesome-icon icon="envelope" /> -->
           <font-awesome-icon icon="download" />
         </button>
@@ -119,6 +119,7 @@
 
 <script>
 import lodash from 'lodash';
+import fileDownload from 'js-file-download';
 import axios from 'axios';
 export default {
   name: '',
@@ -273,7 +274,30 @@ export default {
       }
     },
 
-    download_excel() {},
+    download_excel() {
+      axios
+        .get(
+          `cardtests?q=${this.query_string}&datetime_from=${this.datetime_from}&datetime_to=${
+            this.datetime_to
+          }&job_number=${this.job_number}&card_number=${this.card_number}&department=${
+            this.department
+          }&is_downloading_excel=true`,
+          {
+            responseType: 'blob',
+          },
+        )
+        .then((response) => {
+          console.log(response);
+          fileDownload(
+            response.data,
+            '静电测试数据.xlsx',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          );
+        })
+        .catch((response) => {
+          console.log(response);
+        });
+    },
 
     prevPage() {
       let offset = (this.currentPage - 2) * 50;
