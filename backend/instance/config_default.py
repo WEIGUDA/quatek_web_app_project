@@ -10,3 +10,5 @@ MONGODB_PORT = os.environ.get('MONGODB_PORT', 27017)
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://127.0.0.1')
 SOCKET_HOST = os.environ.get('SOCKET_HOST', '0.0.0.0')
 SOCKET_PORT = os.environ.get('SOCKET_PORT', 5858)
+
+JWT_SECRET_KEY = SECRET_KEY

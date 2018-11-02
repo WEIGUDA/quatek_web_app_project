@@ -5,7 +5,10 @@ from flask_mongoengine import MongoEngine
 from flask_socketio import SocketIO
 from flask_cors import CORS
 import flask_excel
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
+)
 
 
 db = MongoEngine()

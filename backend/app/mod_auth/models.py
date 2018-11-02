@@ -5,7 +5,7 @@ from app import db
 class User(db.DynamicDocument):
     """ for card user
     """
-    username = db.StringField(default='')  # 用户名
+    username = db.StringField(default='', unique=True)  # 用户名
     password = db.StringField(default='')  # 密码hash
     birthday = db.DateTimeField(default=datetime.date.today)  # 生日
     telephone = db.StringField(default='')  # 电话
@@ -13,11 +13,14 @@ class User(db.DynamicDocument):
     hire_date = db.DateTimeField(default=datetime.date.today)  # 入职时间
     is_trained = db.BooleanField(default=False)  # 是否通过ESD培训
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
+    permissions = db.ListField(default=[])  # 权限
+
+    def __str__(self):
+        return f'<User> {self.to_json()}'
 
 
-class Admin(db.DynamicDocument):
-    """ for user login
+class Permission(db.DynamicDocument):
+    """permission records
     """
-    username = db.StringField(default='')  # 用户名
-    password = db.StringField(default='')  # 密码hash
+    name = db.StringField(default='')
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
