@@ -15,7 +15,7 @@
                 <b-nav-item :to="{name: 'Cards'}">卡片管理</b-nav-item>
                 <b-nav-item :to="{name: 'CardTests'}">静电测试</b-nav-item>
                 <!-- <b-nav-item :to="{name: 'Attendances'}">考勤管理</b-nav-item> -->
-                <b-nav-item :to="{name: 'Config'}">设置</b-nav-item>
+                <b-nav-item :to="{name: 'Config'}" v-if="!!this.$store.getters.getJwtToken">设置</b-nav-item>
                 <!-- <b-nav-item href="#">帮助</b-nav-item> -->
             </b-navbar-nav>
 
@@ -40,8 +40,8 @@
                         <em>我的</em>
                     </template>
                     <!-- <b-dropdown-item href="#">Profile</b-dropdown-item> -->
-                    <b-dropdown-item href="#">登录</b-dropdown-item>
-                    <b-dropdown-item href="#">退出</b-dropdown-item>
+                    <b-dropdown-item :to="{name: 'login'}" v-if="!this.$store.getters.getJwtToken">登入</b-dropdown-item>
+                    <b-dropdown-item @click.prevent="logout()" v-if="!!this.$store.getters.getJwtToken">退出</b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
 
@@ -50,8 +50,16 @@
 </template>
 <script>
 export default {
+  data() {
+    return {};
+  },
   methods: {
     toIndex() {
+      this.$router.push({ name: 'Index' });
+    },
+    logout() {
+      console.log(this.$store.getters.getJwtToken);
+      this.$store.commit('resetJwtToken');
       this.$router.push({ name: 'Index' });
     },
   },

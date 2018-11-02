@@ -6,6 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     lastFailedUpload: [],
+    jwt_token: '',
   },
   getters: {
     getLastFailedUpload(state) {
@@ -14,10 +15,19 @@ export default new Vuex.Store({
       }
       return state.lastFailedUpload;
     },
+    getJwtToken(state) {
+      return state.jwt_token;
+    },
   },
   mutations: {
     setLastFailedUpload(state, newFailedUpload) {
       state.lastFailedUpload = newFailedUpload;
+    },
+    setJwtToken(state, new_token) {
+      state.jwt_token = new_token;
+    },
+    resetJwtToken(state) {
+      state.jwt_token = '';
     },
   },
   actions: {},

@@ -55,9 +55,9 @@
             <th scope="col">测试时间</th>
             <th scope="col">是否通过</th>
             <th scope="col">是否测试</th>
-            <th scope="col">手腕检测值</th>
-            <th scope="col">左脚检测值</th>
-            <th scope="col">右脚检测值</th>
+            <th scope="col">手腕检测值(KΩ)</th>
+            <th scope="col">左脚检测值(KΩ)</th>
+            <th scope="col">右脚检测值(KΩ)</th>
           </tr>
         </thead>
         <tbody>
@@ -272,6 +272,8 @@ export default {
         alert('没有数据可供下载!');
       }
     },
+
+    download_excel() {},
 
     prevPage() {
       let offset = (this.currentPage - 2) * 50;

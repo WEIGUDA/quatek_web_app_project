@@ -13,6 +13,7 @@ import ConfigSystemConfig from '@/components/ConfigSystemConfig';
 import ConfigOtherDatabase from '@/components/ConfigOtherDatabase';
 import BackgroundTask from '@/components/BackgroundTask';
 import LastFailedUpload from '@/components/LastFailedUpload';
+import Login from '@/components/Login';
 
 Vue.use(Router);
 
@@ -53,6 +54,12 @@ export default new Router({
       path: '/attendances',
       name: 'Attendances',
       component: Attendances,
+    },
+
+    {
+      path: '/login',
+      name: 'login',
+      component: Login,
     },
 
     {

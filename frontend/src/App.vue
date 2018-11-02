@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <AppHeader></AppHeader>
-    <router-view/>
+    <router-view />
     <AppFooter></AppFooter>
   </div>
 
@@ -10,6 +10,7 @@
 <script>
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+// import axios from 'axios';
 
 export default {
   components: {

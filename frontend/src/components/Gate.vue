@@ -17,25 +17,25 @@
       <table class="gate-table">
         <tr>
           <td rowspan="2" class="text-center align-middle gate-icon">
-            <font-awesome-icon icon="shoe-prints" :transform="{ rotate: 270 }" size="2x" />
+            <font-awesome-icon icon="shoe-prints" :transform="{ rotate: 270 }" size="1x" />
           </td>
 
-          <td class="gate-max-min-left-td">max</td>
-          <td class="gate-value-left-td">{{gate.hand_max}}</td>
+          <td class="gate-max-min-left-td text-small">max</td>
+          <td class="gate-value-left-td text-small">{{gate.hand_max}}KΩ</td>
           <td></td>
-          <td class="gate-value-right-td">{{gate.foot_max}}</td>
-          <td class="gate-max-min-right-td">max</td>
+          <td class="gate-value-right-td text-small">{{gate.foot_max}}KΩ</td>
+          <td class="gate-max-min-right-td text-small">max</td>
 
           <td rowspan="2" class="text-center align-middle gate-icon">
-            <font-awesome-icon icon="hand-paper" size="2x" />
+            <font-awesome-icon icon="hand-paper" size="1x" />
           </td>
         </tr>
         <tr>
-          <td class="gate-max-min-left-td">min</td>
-          <td class="gate-value-left-td">{{gate.hand_min}}</td>
+          <td class="gate-max-min-left-td text-small">min</td>
+          <td class="gate-value-left-td text-small">{{gate.hand_min}}KΩ</td>
           <td></td>
-          <td class="gate-value-right-td">{{gate.foot_min}}</td>
-          <td class="gate-max-min-right-td">min</td>
+          <td class="gate-value-right-td text-small">{{gate.foot_min}}KΩ</td>
+          <td class="gate-max-min-right-td text-small">min</td>
         </tr>
       </table>
     </div>
@@ -124,6 +124,9 @@ export default {
 @media (min-width: 992px) {
   .gate-btn-on-off {
     width: 70px;
+  }
+  .text-small {
+    font-size: 50%;
   }
 }
 
