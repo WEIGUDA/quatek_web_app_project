@@ -1,16 +1,16 @@
 <template>
-    <div class="container">
-        <div class="card card-container login-card">
-            <form class="form-signin">
-                <input type="text" id="inputEmail" class="form-control" placeholder="用户名" autofocus v-model="username">
-                <br>
-                <input type="password" id="inputPassword" class="form-control" placeholder="密码" v-model="password">
-                <br>
-                <button class="btn btn-lg btn-success btn-block btn-signin btn-quatek" @click="login()" type="submit">登入</button>
-            </form><!-- /form -->
+  <div class="container">
+    <div class="card card-container login-card">
+      <form class="form-signin">
+        <input type="text" id="inputEmail" class="form-control" placeholder="用户名" autofocus v-model="username">
+        <br>
+        <input type="password" id="inputPassword" class="form-control" placeholder="密码" v-model="password">
+        <br>
+        <button class="btn btn-lg btn-success btn-block btn-signin btn-quatek" @click="login()" type="submit">登入</button>
+      </form><!-- /form -->
 
-        </div><!-- /card-container -->
-    </div><!-- /container -->
+    </div><!-- /card-container -->
+  </div><!-- /container -->
 </template>
 
 <script>
@@ -36,6 +36,7 @@ export default {
         })
         .catch((response) => {
           console.log(response);
+          alert('用户名或密码错误!');
         });
     },
   },
