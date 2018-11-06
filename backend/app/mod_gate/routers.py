@@ -385,6 +385,7 @@ def upload_cards_excel():
             department=str(card[4]).strip(),
             gender=str(card[5]).strip(),
             note=str(card[6]).strip(),
+            class_time=str(card[7]).strip()
         )
 
         if len(c1.card_number) > 8:
@@ -392,6 +393,9 @@ def upload_cards_excel():
 
         if not c1.note:
             c1.note = 'default'
+
+        if not c1.class_time:
+            c1.class_time = 'default'
 
         try:
             c1.save()
