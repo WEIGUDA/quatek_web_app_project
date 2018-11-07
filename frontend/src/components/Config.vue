@@ -7,6 +7,7 @@
         <b-nav-item :to="{name: 'interval-task'}" key="interval-task">任务设置(按间隔)</b-nav-item>
         <b-nav-item :to="{name: 'crontab-task'}" key="crontab-task">任务设置(按日期)</b-nav-item>
         <b-nav-item :to="{name: 'background-task'}" key="background-task">管理员工具</b-nav-item>
+        <b-nav-item :to="{name: 'class-time-config'}" key="class-time-config">班别设置</b-nav-item>
         <br>
       </b-nav>
 

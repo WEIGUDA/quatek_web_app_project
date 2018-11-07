@@ -14,7 +14,7 @@
         <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="上传" @click="upload_show()">
           <font-awesome-icon icon="upload" />
         </button>
-        <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="下载" @click="download_csv()">
+        <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="下载" @click="download_excel()">
           <font-awesome-icon icon="download" />
         </button>
         <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="添加卡片" @click="cardAdd()">
@@ -320,6 +320,21 @@ export default {
         return false;
       }
     },
+
+    download_excel() {
+      axios
+        .get('download-cards', {
+          responseType: 'blob',
+        })
+        .then((response) => {
+          console.log(response);
+          fileDownload(response.data, '卡片.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        })
+        .catch((response) => {
+          console.log(response);
+        });
+    },
+
     get_cards() {
       axios
         .get('cards')

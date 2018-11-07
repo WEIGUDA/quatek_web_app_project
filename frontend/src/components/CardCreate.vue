@@ -55,6 +55,13 @@
       </div>
 
       <div class="form-group row">
+        <label for="class-time" class="col-sm-2 col-form-label">班别</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="class_time" v-model="card.class_time">
+        </div>
+      </div>
+
+      <div class="form-group row">
         <label for="note" class="col-sm-2 col-form-label">备注</label>
         <div class="col-sm-10">
           <input type="text" class="form-control" id="note" v-model="card.note">
@@ -112,6 +119,7 @@ export default {
         gender: '',
         note: '',
         belong_to_mc: '',
+        class_time: '',
       },
       submit_is_disabled: false,
       show_modal: false,
@@ -205,6 +213,7 @@ export default {
           this.card.note = response.data[0].note;
           this.card.belong_to_mc = response.data[0].belong_to_mc;
           this.card.number_in_mc = response.data[0].number_in_mc;
+          this.card.class_time = response.data[0].class_time;
           console.log(this.card);
         })
         .catch((response) => {

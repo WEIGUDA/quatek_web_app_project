@@ -14,6 +14,7 @@ import ConfigOtherDatabase from '@/components/ConfigOtherDatabase';
 import BackgroundTask from '@/components/BackgroundTask';
 import LastFailedUpload from '@/components/LastFailedUpload';
 import Login from '@/components/Login';
+import ConfigClassTime from '@/components/ConfigClassTime';
 
 Vue.use(Router);
 
@@ -98,6 +99,11 @@ export default new Router({
           path: 'background-task',
           name: 'background-task',
           component: BackgroundTask,
+        },
+        {
+          path: 'class-time-config',
+          name: 'class-time-config',
+          component: ConfigClassTime,
         },
       ],
     },
