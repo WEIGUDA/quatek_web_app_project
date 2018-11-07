@@ -54,12 +54,12 @@ def create_app(config=None):
     app.register_blueprint(mod_task_bp)
     app.register_blueprint(mod_system_config_bp)
 
-    from app.mod_gate.models import Card, CardTest, Gate
+    from app.mod_gate.models import Card, CardTest, Gate, CardClassTime
     from app.mod_auth.models import User
 
     @app.shell_context_processor
     def make_shell_context():
-        return {'app': app, 'User': User, 'CardTest': CardTest, 'Gate': Gate, 'Card': Card}
+        return {'app': app, 'User': User, 'CardTest': CardTest, 'Gate': Gate, 'Card': Card, 'CardClassTime': CardClassTime}
 
     if app.config['DEBUG']:
         pprint(app.config)
