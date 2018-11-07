@@ -6,7 +6,7 @@ from celerybeatmongo.models import PeriodicTask
 import flask_excel as excel
 
 
-from app.mod_gate.models import Gate, Card, CardTest
+from app.mod_gate.models import Gate, Card, CardTest, CardClassTime
 from app.mod_task.tasks import update_all_cards_to_mc_task, update_a_card_to_all_mc_task, delete_a_card_from_mc_task
 
 bp = Blueprint('mod_gate', __name__)
@@ -164,7 +164,8 @@ def card_create():
                       department=data['department'].strip(),
                       gender=data['gender'].strip(),
                       note=data['note'].strip(),
-                      belong_to_mc=data['belong_to_mc'].strip())
+                      belong_to_mc=data['belong_to_mc'].strip(),
+                      class_time=data['class_time'].strip())
 
             if len(c1.card_number) > 8:
                 c1.card_number = hex(int(c1.card_number))[2:].upper().rjust(8, '0')
@@ -193,6 +194,7 @@ def card_create():
             card.gender = data['gender'].strip()
             card.note = data['note'].strip()
             card.belong_to_mc = data['belong_to_mc'].strip()
+            card.class_time = data['class_time'].strip()
             card.save()
 
         except:
@@ -201,6 +203,16 @@ def card_create():
         else:
             update_a_card_to_all_mc_task.delay(json.loads(card.to_json()))
             return make_response(card.to_json())
+
+
+@bp.route('/download-cards', methods=['GET', ])
+def download_cards():
+    cards = [['*card_number', '*card_category(0:vip|1:hands_only|2:feet_only|3:test_both)',
+              '*name', '*job_number', '*department', '*gender(0:female|1:male)', 'note', '班别'], ]
+    for card in Card.objects.all():
+        cards.append([card.card_number, card.card_category, card.name, card.job_number,
+                      card.department, card.gender, card.note, card.class_time])
+    return excel.make_response_from_array(cards, 'xlsx')
 
 
 @bp.route('/cardtests', methods=['GET', 'POST'])
@@ -377,6 +389,18 @@ def upload_cards_excel():
         if index == 0:
             continue
 
+        card = Card.objects.filter(card_number=str(card[0]).upper().rjust(
+            8, '0').strip(), job_number=str(card[3]).strip()).first()
+        if card:
+            card.card_category = str(card[1]).strip(),
+            card.name = str(card[2]).strip(),
+            card.department = str(card[4]).strip(),
+            card.gender = str(card[5]).strip(),
+            card.note = str(card[6]).strip(),
+            card.class_time = str(card[7]).strip()
+            card.save()
+            continue
+
         c1 = Card(
             card_number=str(card[0]).upper().rjust(8, '0').strip(),
             card_category=str(card[1]).strip(),
@@ -405,3 +429,28 @@ def upload_cards_excel():
             return_list.append(c1.to_json())
 
     return jsonify({'result': len(return_list), 'failed': failed_list, 'failed_numbers': len(failed_list)}), {'Content-Type': 'application/json'}
+
+
+@bp.route('/get-class-times', methods=['GET', ])
+def get_class_times():
+    class_times = CardClassTime.objects.filter()
+    return class_times.to_json(), {'Content-Type': 'application/json'}
+
+
+@bp.route('/add-class-time', methods=['POST', ])
+def add_class_time():
+    data = request.json
+    class_time = CardClassTime(
+        name=data['class_time_name'],
+        working_time_from=data['class_time_from'],
+        working_time_to=data['class_time_to'])
+    class_time.save()
+    return jsonify({'result': 'created', 'content': class_time.to_json()}), 201
+
+
+@bp.route('/delete-class-time', methods=['POST', ])
+def delete_class_time():
+    data = request.json
+    c = CardClassTime.objects.get(id=data['class_time_id'])
+    c.delete()
+    return jsonify({'result': 'created', 'content': c.to_json()}), 200
