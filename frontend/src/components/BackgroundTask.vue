@@ -1,11 +1,11 @@
 <template>
   <div class="form">
 
-    <button type="button" class="btn btn-success btn-quatek" :disabled="is_button_disabled" @click.prevent.stop="sync_cards()">同步卡片信息</button>
+    <button type="button" class="btn btn-success btn-block btn-quatek" :disabled="is_button_disabled" @click.prevent.stop="delete_all_cards()">删除闸机上卡片信息</button>
     <br>
     <br>
-    <br>
-    <button type="button" class="btn btn-success btn-quatek" :disabled="is_button_disabled" @click.prevent.stop="delete_all_cards()">删除闸机上卡片信息</button>
+
+    <button type="button" class="btn btn-success btn-block btn-quatek" :disabled="is_button_disabled" @click.prevent.stop="sync_cards()">同步卡片信息</button>
   </div>
 </template>
 
