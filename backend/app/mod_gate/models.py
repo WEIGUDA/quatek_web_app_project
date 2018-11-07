@@ -68,3 +68,6 @@ class CardClassTime(db.DynamicDocument):
     name = db.StringField(default='default')
     working_time_from = db.StringField()
     working_time_to = db.StringField()
+
+    def __str__(self):
+        return f'<CardClassTime> {self.to_json()}'
