@@ -34,6 +34,7 @@
             <th scope="col">卡号</th>
             <th scope="col">卡类型</th>
             <th scope="col">部门</th>
+            <th scope="col">班别</th>
             <th scope="col">修改</th>
             <th scope="col">删除</th>
           </tr>
@@ -46,6 +47,7 @@
             <td>{{card.card_number}}</td>
             <td>{{card.card_category}}</td>
             <td>{{card.department}}</td>
+            <td>{{card.class_time}}</td>
             <td>
               <button type="button" class="btn btn-secondary btn-quatek btn-sm" @click="edit_card(card._id.$oid)">
                 <font-awesome-icon icon="pencil-alt" />
