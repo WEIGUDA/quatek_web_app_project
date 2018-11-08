@@ -42,7 +42,7 @@ class Card(db.DynamicDocument):
     class_time = db.StringField(default='')  # 班别
 
     def __str__(self):
-        return f'<Card (card_number={self.card_number}, card_counter={self.card_counter}, card_category={self.card_category}, name={self.name}, job_number={self.job_number}, department={self.department}, gender={self.gender}, note={self.note}, belong_to_mc={self.belong_to_mc}, created_time={self.created_time}, class_time={self.class_time}>'
+        return f'{self.to_json()}>'
 
 
 class CardTest(db.DynamicDocument):
