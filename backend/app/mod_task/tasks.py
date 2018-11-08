@@ -13,12 +13,12 @@ from logging import handlers
 
 from celery import Celery
 from pymongo import MongoClient, UpdateOne, bulk
-from openpyxl import Workbook
-from sqlalchemy import inspect, MetaData, create_engine
+from sqlalchemy import inspect, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine.url import URL
-
+import pyexcel
 from app.mod_gate.schema import Log, Base
+from app.mod_gate.utils import card_log_calculate
 
 # load configs
 from instance.config_default import *
@@ -583,148 +583,33 @@ def delete_all_cards_task(server_last_time=3):
 
 
 @app.task()
-def send_email_of_logs():
+def send_email_of_logs(card_class_time=''):
     # pymongo
     client = MongoClient(MONGODB_HOST, MONGODB_PORT)
     db = client[MONGODB_DB]
-    cards = db.card
-    gates = db.gate
-    cardtests = db.card_test
-    users = db.user
     system_config = db.system_config
+    card_class_time_collection = db.card_class_time
+    card_class = card_class_time_collection.find_one({'name': card_class_time})
 
     logger.info('start send_email_of_logs task')
     config = system_config.find()[0]
     logger.info(f'config: {config}')
 
-    # process data in mongodb
-    all_cards = cards.find()
-    local_tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
-
-    work_hours_start = datetime.datetime.now().replace(
-        hour=int(config['work_hours'].split('-')[0].split(':')[0]),
-        minute=int(config['work_hours'].split('-')[0].split(':')[1]),
-        second=0,
-        microsecond=0,
-        tzinfo=local_tz,
-    )
-    work_hours_end = datetime.datetime.now().replace(
-        hour=int(config['work_hours'].split('-')[1].split(':')[0]),
-        minute=int(config['work_hours'].split('-')[1].split(':')[1]),
-        second=0,
-        microsecond=0,
-        tzinfo=local_tz,
-    )
-
-    # 该测试而未测试
-    tested_card_number_list = cardtests.find(
-        {'test_datetime': {'$gte': work_hours_start, '$lte': work_hours_end}, }).distinct('card_number')
-
-    all_cards_should_test_but_not_tested = cards.find({
-        'card_number': {'$nin': tested_card_number_list}
-    })
-    wb = Workbook()
-    ws_should_test_but_not_tested = wb.active
-    ws_should_test_but_not_tested.title = "该测试而未测试"
-
-    ws_should_test_but_not_tested.cell(row=1, column=1).value = '卡号号码'
-    ws_should_test_but_not_tested.cell(row=1, column=2).value = '卡片类别'
-    ws_should_test_but_not_tested.cell(row=1, column=3).value = '姓名'
-    ws_should_test_but_not_tested.cell(row=1, column=4).value = '工号'
-    ws_should_test_but_not_tested.cell(row=1, column=5).value = '部门'
-    ws_should_test_but_not_tested.cell(row=1, column=6).value = '性别'
-    ws_should_test_but_not_tested.cell(row=1, column=7).value = '其他说明'
-    ws_should_test_but_not_tested.cell(row=1, column=8).value = '权限'
-    ws_should_test_but_not_tested.cell(row=1, column=9).value = '卡号编号'
-
-    for i, card in enumerate(all_cards_should_test_but_not_tested):
-        ws_should_test_but_not_tested.cell(row=i+2, column=1).value = card.get('card_number', '')
-        card_category = card.get('card_category', '')
-        if card_category == '0':
-            ws_should_test_but_not_tested.cell(row=i+2, column=2).value = 'VIP'
-        elif card_category == '1':
-            ws_should_test_but_not_tested.cell(row=i+2, column=2).value = '只测手'
-        elif card_category == '2':
-            ws_should_test_but_not_tested.cell(row=i+2, column=2).value = '只测脚'
-        elif card_category == '3':
-            ws_should_test_but_not_tested.cell(row=i+2, column=2).value = '手脚都测'
-        ws_should_test_but_not_tested.cell(row=i+2, column=3).value = card.get('name', '')
-        ws_should_test_but_not_tested.cell(row=i+2, column=4).value = card.get('job_number', '')
-        ws_should_test_but_not_tested.cell(row=i+2, column=5).value = card.get('department', '')
-        gender = card.get('gender', '')
-        if gender == '0':
-            ws_should_test_but_not_tested.cell(row=i+2, column=6).value = '女'
-        elif gender == '1':
-            ws_should_test_but_not_tested.cell(row=i+2, column=6).value = '男'
-        ws_should_test_but_not_tested.cell(row=i+2, column=7).value = card.get('note', '')
-        ws_should_test_but_not_tested.cell(row=i+2, column=8).value = card.get('belong_to_mc', '')
-        ws_should_test_but_not_tested.cell(row=i+2, column=9).value = card.get('card_counter', '')
-
-    # 已测试而未通过
-    all_logs_tested_but_not_passed = cardtests.find({
-        'test_result': '0',
-        'test_datetime': {'$gte': work_hours_start, '$lte': work_hours_end},
-    })
-
-    ws_tested_but_not_passed = wb.create_sheet("已测试而未通过")
-    ws_tested_but_not_passed.cell(row=1, column=1).value = '记录流水号'
-    ws_tested_but_not_passed.cell(row=1, column=2).value = '卡片编号'
-    ws_tested_but_not_passed.cell(row=1, column=3).value = '卡片号码'
-    ws_tested_but_not_passed.cell(row=1, column=4).value = '卡片类型'
-    ws_tested_but_not_passed.cell(row=1, column=5).value = '进出标志'
-    ws_tested_but_not_passed.cell(row=1, column=6).value = '闸机 mc id'
-    ws_tested_but_not_passed.cell(row=1, column=7).value = '测试时间'
-    ws_tested_but_not_passed.cell(row=1, column=8).value = '是否通过'
-    ws_tested_but_not_passed.cell(row=1, column=9).value = '是否测试'
-    ws_tested_but_not_passed.cell(row=1, column=10).value = '手腕检测值'
-    ws_tested_but_not_passed.cell(row=1, column=11).value = '左脚检测值'
-    ws_tested_but_not_passed.cell(row=1, column=12).value = '右脚检测值'
-    ws_tested_but_not_passed.cell(row=1, column=13).value = 'ERG后的值'
-    ws_tested_but_not_passed.cell(row=1, column=14).value = 'RSG值'
-
-    for i, log in enumerate(all_logs_tested_but_not_passed):
-        ws_tested_but_not_passed.cell(row=i+2, column=1).value = log.get('log_id', '')
-        ws_tested_but_not_passed.cell(row=i+2, column=2).value = log.get('card_counter', '')
-        ws_tested_but_not_passed.cell(row=i+2, column=3).value = log.get('card_number', '')
-        card_category = log.get('card_category', '')
-        if card_category == '0':
-            ws_tested_but_not_passed.cell(row=i+2, column=4).value = 'VIP'
-        elif card_category == '1':
-            ws_tested_but_not_passed.cell(row=i+2, column=4).value = '只测手'
-        elif card_category == '2':
-            ws_tested_but_not_passed.cell(row=i+2, column=4).value = '只测脚'
-        elif card_category == '3':
-            ws_tested_but_not_passed.cell(row=i+2, column=4).value = '手脚都测'
-        else:
-            ws_tested_but_not_passed.cell(row=i+2, column=4).value = card_category
-        ws_tested_but_not_passed.cell(row=i+2, column=5).value = log.get('in_out_symbol', '')
-        ws_tested_but_not_passed.cell(row=i+2, column=6).value = log.get('mc_id', '')
-        ws_tested_but_not_passed.cell(row=i+2, column=7).value = log.get('test_datetime', '').astimezone(local_tz)
-        test_result = log.get('test_result', '')
-        if test_result == '0':
-            ws_tested_but_not_passed.cell(row=i+2, column=8).value = '不通过'
-        elif test_result == '1':
-            ws_tested_but_not_passed.cell(row=i+2, column=8).value = '通过'
-        is_tested = log.get('is_tested', '')
-        if is_tested == '0':
-            ws_tested_but_not_passed.cell(row=i+2, column=9).value = '不测试'
-        elif is_tested == '1':
-            ws_tested_but_not_passed.cell(row=i+2, column=9).value = '测试'
-        ws_tested_but_not_passed.cell(row=i+2, column=10).value = log.get('hand', '')
-        ws_tested_but_not_passed.cell(row=i+2, column=11).value = log.get('left_foot', '')
-        ws_tested_but_not_passed.cell(row=i+2, column=12).value = log.get('right_foot', '')
-        ws_tested_but_not_passed.cell(row=i+2, column=13).value = log.get('after_erg', '')
-        ws_tested_but_not_passed.cell(row=i+2, column=14).value = log.get('rsg', '')
+    # process data
+    wb = card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB,
+                            hours_start=card_class['working_time_from'],
+                            hours_end=card_class['working_time_to'],
+                            card_class_time=card_class_time)
 
     # sending email
-    file_name = f'report-{datetime.datetime.now()}'
+    file_name = f"report_generated_at_{datetime.datetime.now()}_for_{card_class['name']}_{card_class['working_time_from']}_{card_class['working_time_to']}"
     msg = EmailMessage()
     msg['Subject'] = file_name
     msg['From'] = config['smtp_username']
     msg['To'] = ', '.join(config['emails'].split(','))
     msg.preamble = file_name
     excel_data = io.BytesIO()
-    wb.save(excel_data)
+    pyexcel.get_book(bookdict=wb).save_to_memory('xlsx', stream=excel_data)
     excel_data.seek(0)
     msg.add_attachment(excel_data.read(), maintype='application', subtype='vnd.ms-excel',
                        filename=f'{file_name}.xlsx')

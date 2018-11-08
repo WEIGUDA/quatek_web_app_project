@@ -39,7 +39,7 @@ class Card(db.DynamicDocument):
     # 进出标志 name1:1|name2:0|name3 0:可进可出, 1:禁止进入/可出, 2:禁止出去/可进, 3:禁止进出  or all:所有闸机都可进可出
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
     card_counter = db.SequenceField(collection_name='card_counter', unique=True)  # 卡号编号
-    class_time = db.StringField(default='all')  # 班别
+    class_time = db.StringField(default='')  # 班别
 
     def __str__(self):
         return f'<Card (card_number={self.card_number}, card_counter={self.card_counter}, card_category={self.card_category}, name={self.name}, job_number={self.job_number}, department={self.department}, gender={self.gender}, note={self.note}, belong_to_mc={self.belong_to_mc}, created_time={self.created_time}, class_time={self.class_time}>'

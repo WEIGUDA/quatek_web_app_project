@@ -2,7 +2,6 @@ import datetime
 import json
 from flask import Blueprint, request, make_response, current_app, abort, jsonify, send_file
 from mongoengine.queryset.visitor import Q
-from celerybeatmongo.models import PeriodicTask
 import flask_excel as excel
 
 

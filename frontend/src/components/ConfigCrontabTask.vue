@@ -5,9 +5,11 @@
       <label class="sr-only" for="task">任务</label>
       <select name="task" id="task" class="custom-select  mb-2 mr-sm-2" v-model="crontab_task.task">
         <option value="">------请选择任务------</option>
-        <option value="app.mod_task.tasks.send_email_of_logs">任务: 发送报告</option>
+        <option value="app.mod_task.tasks.send_email_of_logs:">任务: 发送所有班别报告</option>
         <option value="app.mod_task.tasks.get_logs_from_mc_task">任务: 从闸机获取Logs</option>
         <option value="app.mod_task.tasks.save_to_other_database">任务: 保存到其他数据库</option>
+        <option v-for="card_class in card_classes" :value="'app.mod_task.tasks.send_email_of_logs:'+card_class.name" :key="card_class.name">任务: 发送{{card_class.name}}班别报告</option>
+
       </select>
 
       <label class="sr-only" for="minute">分</label>
@@ -95,10 +97,10 @@
 
           <tbody v-if="tasks.length">
             <tr v-for="task in computed_tasks" :key="task._id.$oid">
-              <td>{{task.task}}</td>
+              <td>{{task.task}} <span v-if="task.kwargs.card_class_time">: {{task.kwargs.card_class_time}} 班别</span></td>
               <td>{{task.crontab.minute}} | {{task.crontab.hour}} | {{task.crontab.day_of_month}} | {{task.crontab.month_of_year}} | {{task.crontab.day_of_week}}</td>
               <td>
-                <button type="button" class="btn btn-secondary btn-quatek btn-sm" @click="delete_task(task._id.$oid)">
+                <button type=" button" class="btn btn-secondary btn-quatek btn-sm" @click="delete_task(task._id.$oid)">
                   <font-awesome-icon icon="trash-alt" />
                 </button>
               </td>
@@ -128,6 +130,7 @@ export default {
         month_of_year: '*',
         day_of_week: '*',
       },
+      card_classes: [],
     };
   },
   computed: {
@@ -231,10 +234,23 @@ export default {
           console.log(response);
         });
     },
+
+    get_class_times() {
+      axios
+        .get('get-class-times')
+        .then((response) => {
+          console.log(response);
+          this.card_classes = response.data;
+        })
+        .catch((response) => {
+          console.log(response);
+        });
+    },
   },
 
   created() {
     this.get_tasks();
+    this.get_class_times();
   },
 };
 </script>

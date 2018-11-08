@@ -5,7 +5,7 @@
       <label class="sr-only" for="task">任务</label>
       <select name="task" id="task" class="custom-select  mb-2 mr-sm-2" v-model="interval_task.task">
         <option value="">------请选择任务------</option>
-        <option value="app.mod_task.tasks.send_email_of_logs">任务: 发送报告</option>
+        <option value="app.mod_task.tasks.send_email_of_logs:">任务: 发送所有班别报告</option>
         <option value="app.mod_task.tasks.get_logs_from_mc_task">任务: 从闸机获取Logs</option>
         <option value="app.mod_task.tasks.save_to_other_database">任务: 保存到其他数据库</option>
       </select>

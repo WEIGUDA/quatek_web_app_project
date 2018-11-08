@@ -15,6 +15,7 @@
                 <b-nav-item :to="{name: 'Cards'}">卡片管理</b-nav-item>
                 <b-nav-item :to="{name: 'CardTests'}">静电测试</b-nav-item>
                 <!-- <b-nav-item :to="{name: 'Attendances'}">考勤管理</b-nav-item> -->
+                <!-- <b-nav-item :to="{name: 'Analysis'}" v-if="!!this.$store.getters.getJwtToken">数据统计</b-nav-item> -->
                 <b-nav-item :to="{name: 'Config'}" v-if="!!this.$store.getters.getJwtToken">设置</b-nav-item>
                 <!-- <b-nav-item href="#">帮助</b-nav-item> -->
             </b-navbar-nav>
