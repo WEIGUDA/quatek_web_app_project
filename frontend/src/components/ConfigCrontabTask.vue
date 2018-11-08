@@ -97,7 +97,7 @@
 
           <tbody v-if="tasks.length">
             <tr v-for="task in computed_tasks" :key="task._id.$oid">
-              <td>{{task.task}} <span v-if="task.kwargs.card_class_time">: {{task.kwargs.card_class_time}} 班别</span></td>
+              <td>{{task.task}} <span v-if="task.args">: {{task.args[0]}} 班别</span></td>
               <td>{{task.crontab.minute}} | {{task.crontab.hour}} | {{task.crontab.day_of_month}} | {{task.crontab.month_of_year}} | {{task.crontab.day_of_week}}</td>
               <td>
                 <button type=" button" class="btn btn-secondary btn-quatek btn-sm" @click="delete_task(task._id.$oid)">
