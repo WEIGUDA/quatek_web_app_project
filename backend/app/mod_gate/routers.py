@@ -388,17 +388,20 @@ def upload_cards_excel():
         if index == 0:
             continue
 
-        card1 = Card.objects.filter(card_number=str(card[0]).upper().rjust(
-            8, '0').strip(), job_number=str(card[3]).strip()).first()
+        card1 = Card.objects.filter(
+            card_number=str(card[0]).upper().rjust(8, '0').strip(),
+            job_number=str(card[3]).strip()
+        )
 
-        if card1:
-            card1.card_category = str(card[1]).strip(),
-            card1.name = str(card[2]).strip(),
-            card1.department = str(card[4]).strip(),
-            card1.gender = str(card[5]).strip(),
-            card1.note = str(card[6]).strip(),
-            card1.class_time = str(card[7]).strip()
-            card1.save()
+        if card1.first():
+            card_tmp = card1.first()
+            card_tmp.card_category = str(card[1]).strip()
+            card_tmp.name = str(card[2]).strip()
+            card_tmp.department = str(card[4]).strip()
+            card_tmp.gender = str(card[5]).strip()
+            card_tmp.note = str(card[6]).strip()
+            card_tmp.class_time = str(card[7]).strip()
+            card_tmp.save()
             continue
 
         c1 = Card(
