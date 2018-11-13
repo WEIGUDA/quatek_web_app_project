@@ -380,11 +380,11 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                 data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
 
                 if '0,0,00000000,0,0,0,0,0,,,,,' in data:
-                    logger.info('break, no logs in <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+                    logger.info(f'break, no logs in <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
                     break
 
                 if not data:
-                    logger.info('break, no data from <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+                    logger.info(f'break, no data from <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
                     break
 
                 all_data.append(data)
