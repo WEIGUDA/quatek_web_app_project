@@ -156,9 +156,9 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
         except:
             logger.exception(
                 f'error in UploadAllCardsHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
-        finally:
-            time.sleep(self.server.p_data['server_last_time'])
-            logger.info(f'stop UploadAllCardsHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+
+        time.sleep(self.server.p_data['server_last_time'])
+        logger.info(f'stop UploadAllCardsHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
 
 class UpdateACardHandler(socketserver.BaseRequestHandler):
@@ -253,9 +253,8 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
         except:
             logger.exception('error in UpdateACardHandler')
 
-        finally:
-            time.sleep(self.server.p_data['server_last_time'])
-            logger.info('stop the UpdateACardHandler for mc {} {}'.format(mc_client, self.client_address))
+        time.sleep(self.server.p_data['server_last_time'])
+        logger.info('stop the UpdateACardHandler for mc {} {}'.format(mc_client, self.client_address))
 
 
 class DeleteACardHandler(socketserver.BaseRequestHandler):
@@ -316,9 +315,9 @@ class DeleteACardHandler(socketserver.BaseRequestHandler):
                     card, self.client_address))
         except:
             logger.exception('error in DeleteACardHandler')
-        finally:
-            time.sleep(self.server.p_data['server_last_time'])
-            logger.info('stop DeleteACardHandler for {}'.format(self.client_address))
+
+        time.sleep(self.server.p_data['server_last_time'])
+        logger.info('stop DeleteACardHandler for {}'.format(self.client_address))
 
 
 class GetCardTestLogHandler(socketserver.BaseRequestHandler):
@@ -439,10 +438,9 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
             except:
                 logger.exception('error from: {} {}'.format(mc_client, self.client_address))
 
-            finally:
-                time.sleep(self.server.p_data['server_last_time'])
-                logger.info(
-                    f'stop the GetCardTestLogHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+        time.sleep(self.server.p_data['server_last_time'])
+        logger.info(
+            f'stop the GetCardTestLogHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
 
 class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
@@ -498,10 +496,9 @@ class DeleteAllCardsFromMcHandler(socketserver.BaseRequestHandler):
             logger.exception(
                 f'DeleteAllCardsFromMcHandler error from <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
-        finally:
-            time.sleep(self.server.p_data['server_last_time'])
-            logger.info(
-                f'stop DeleteAllCardsFromMcHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
+        time.sleep(self.server.p_data['server_last_time'])
+        logger.info(
+            f'stop DeleteAllCardsFromMcHandler for <MC(name={mc_client["name"]}, mc_id={mc_client["mc_id"]})>')
 
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
