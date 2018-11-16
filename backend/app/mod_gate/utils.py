@@ -28,7 +28,6 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
     )
 
     # 该测试而未测试
-
     tested_card_number_list = cardtests.find(
         {'test_datetime': {'$gte': work_hours_start, '$lte': work_hours_end}, }
     ).distinct('card_number')
@@ -63,7 +62,7 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
         elif card.get('gender', '') == '1':
             gender = '男'
         ws_should_test_but_not_tested.append(
-            [card.get('card_number', ''). card_category, card.get('name', ''), card.get('job_number', ''),
+            [card.get('card_number', ''), card_category, card.get('name', ''), card.get('job_number', ''),
              card.get('department', ''), gender, card.get('note', ''), card.get('belong_to_mc', ''), card.get('card_counter', '')])
 
     # 已测试而未通过
@@ -105,7 +104,8 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
             card_category,
             log.get('in_out_symbol', ''),
             log.get('mc_id', ''),
-            log.get('test_datetime', '').astimezone(local_tz),
+            log.get('test_datetime', '').replace(tzinfo=datetime.timezone.utc).astimezone(
+                local_tz).strftime('%Y-%m-%d %H:%M:%S'),
             test_result,
             is_tested,
             log.get('hand', ''),
@@ -154,7 +154,8 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
             card_category,
             log.get('in_out_symbol', ''),
             log.get('mc_id', ''),
-            log.get('test_datetime', '').astimezone(local_tz),
+            log.get('test_datetime', '').replace(tzinfo=datetime.timezone.utc).astimezone(
+                local_tz).strftime('%Y-%m-%d %H:%M:%S'),
             test_result,
             is_tested,
             log.get('hand', ''),

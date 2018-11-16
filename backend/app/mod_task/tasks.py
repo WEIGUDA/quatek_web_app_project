@@ -21,15 +21,15 @@ from app.mod_gate.schema import Log, Base
 from app.mod_gate.utils import card_log_calculate
 
 # load configs
-from instance.config_default import *
+from instance.config_default import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, SOCKET_HOST, SOCKET_PORT, REDIS_URL
 
 try:
-    from instance.config_dev import *
+    from instance.config_dev import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, SOCKET_HOST, SOCKET_PORT, REDIS_URL
 except:
     pass
 
 try:
-    from instance.config_pro import *
+    from instance.config_pro import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, SOCKET_HOST, SOCKET_PORT, REDIS_URL
 except:
     pass
 
@@ -171,11 +171,7 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
         # pymongo
         client = MongoClient(MONGODB_HOST, MONGODB_PORT)
         db = client[MONGODB_DB]
-        cards = db.card
         gates = db.gate
-        cardtests = db.card_test
-        users = db.user
-        system_config = db.system_config
         self.request.settimeout(5)
 
         mc_client = {}
@@ -266,11 +262,7 @@ class DeleteACardHandler(socketserver.BaseRequestHandler):
         # pymongo
         client = MongoClient(MONGODB_HOST, MONGODB_PORT)
         db = client[MONGODB_DB]
-        cards = db.card
         gates = db.gate
-        cardtests = db.card_test
-        users = db.user
-        system_config = db.system_config
         mc_client = {}
 
         self.request.settimeout(5)
@@ -329,11 +321,8 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         # pymongo
         client = MongoClient(MONGODB_HOST, MONGODB_PORT)
         db = client[MONGODB_DB]
-        cards = db.card
         gates = db.gate
         cardtests = db.card_test
-        users = db.user
-        system_config = db.system_config
 
         self.request.settimeout(5)
         all_data = []
@@ -586,11 +575,18 @@ def send_email_of_logs(card_class_time=''):
     db = client[MONGODB_DB]
     system_config = db.system_config
     card_class_time_collection = db.card_class_time
-    card_class = card_class_time_collection.find_one({'name': card_class_time})
 
     logger.info('start send_email_of_logs task')
     config = system_config.find()[0]
     logger.info(f'config: {config}')
+
+    card_class = {}
+    if card_class_time:
+        card_class = card_class_time_collection.find_one({'name': card_class_time})
+    else:
+        card_class = {'name': 'all',
+                      'working_time_from': config['work_hours'].split('-')[0],
+                      'working_time_to': config['work_hours'].split('-')[1]}
 
     # process data
     wb = card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB,
