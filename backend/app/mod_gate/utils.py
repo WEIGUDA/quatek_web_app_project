@@ -3,6 +3,20 @@ from pymongo import MongoClient
 
 
 def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hours_end, card_class_time):
+    """根据班别, 统计删选卡片和测试数据
+
+    Arguments:
+        MONGODB_HOST {[type]} -- [description]
+        MONGODB_PORT {[type]} -- [description]
+        MONGODB_DB {[type]} -- [description]
+        hours_start {[type]} -- [description]
+        hours_end {[type]} -- [description]
+        card_class_time {str} -- 班别名称
+
+    Returns:
+        dict -- dict of list
+    """
+
     # pymongo
     client = MongoClient(MONGODB_HOST, MONGODB_PORT)
     db = client[MONGODB_DB]
@@ -26,6 +40,8 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
         microsecond=0,
         tzinfo=local_tz,
     )
+    # 初始化
+    wb = {}
 
     # 该测试而未测试
     tested_card_number_list = cardtests.find(
@@ -39,9 +55,9 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
     else:
         all_cards_should_test_but_not_tested = cards.find({
             'card_number': {'$nin': tested_card_number_list},
-            'class_time': card_class_time,
+            'classes': card_class_time,
         })
-    wb = {}
+
     ws_should_test_but_not_tested = []
 
     ws_should_test_but_not_tested.append(['卡号号码', '卡片类别', '姓名', '工号', '部门', '性别', '其他说明', '权限', '卡号编号'])
