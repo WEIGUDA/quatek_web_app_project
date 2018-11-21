@@ -27,16 +27,13 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import vueMoment from 'vue-moment';
 import Datetime from 'vue-datetime';
 import 'vue-datetime/dist/vue-datetime.css';
-import VueResource from 'vue-resource';
 import axios from 'axios';
 import { IP_ADDRESS, PORT } from '@/config';
 
 Vue.use(BootstrapVue);
 Vue.use(vueMoment);
 Vue.use(Datetime);
-Vue.use(VueResource);
 
-Vue.http.options.root = `http://${IP_ADDRESS}:${PORT}`;
 axios.defaults.baseURL = `http://${IP_ADDRESS}:${PORT}`;
 console.log('backend: ' + `http://${IP_ADDRESS}:${PORT}`);
 

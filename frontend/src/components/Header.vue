@@ -11,12 +11,12 @@
 
             <b-navbar-nav>
                 <b-nav-item :to="{name: 'Index'}" exact>首页</b-nav-item>
-                <b-nav-item :to="{name: 'Gates'}" v-if="!!this.$store.getters.getJwtToken">闸机列表</b-nav-item>
-                <b-nav-item :to="{name: 'Cards'}" v-if="!!this.$store.getters.getJwtToken">卡片管理</b-nav-item>
+                <b-nav-item :to="{name: 'Gates'}" v-if="is_authenticated">闸机列表</b-nav-item>
+                <b-nav-item :to="{name: 'Cards'}" v-if="is_authenticated">卡片管理</b-nav-item>
                 <b-nav-item :to="{name: 'CardTests'}">静电测试</b-nav-item>
                 <!-- <b-nav-item :to="{name: 'Attendances'}">考勤管理</b-nav-item> -->
-                <!-- <b-nav-item :to="{name: 'Analysis'}" v-if="!!this.$store.getters.getJwtToken">数据统计</b-nav-item> -->
-                <b-nav-item :to="{name: 'Config'}" v-if="!!this.$store.getters.getJwtToken">设置</b-nav-item>
+                <!-- <b-nav-item :to="{name: 'Analysis'}" v-if="is_authenticated">数据统计</b-nav-item> -->
+                <b-nav-item :to="{name: 'Config'}" v-if="is_authenticated">设置</b-nav-item>
                 <!-- <b-nav-item href="#">帮助</b-nav-item> -->
             </b-navbar-nav>
 
@@ -41,8 +41,8 @@
                         <em>我的</em>
                     </template>
                     <!-- <b-dropdown-item href="#">Profile</b-dropdown-item> -->
-                    <b-dropdown-item :to="{name: 'login'}" v-if="!this.$store.getters.getJwtToken">登入</b-dropdown-item>
-                    <b-dropdown-item @click.prevent="logout()" v-if="!!this.$store.getters.getJwtToken">退出</b-dropdown-item>
+                    <b-dropdown-item :to="{name: 'login'}" v-if="!is_authenticated">登入</b-dropdown-item>
+                    <b-dropdown-item @click.stop.prevent="logout()" v-if="is_authenticated">退出</b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
 
@@ -50,19 +50,20 @@
     </b-navbar>
 </template>
 <script>
+import { mapActions, mapGetters } from 'vuex';
 export default {
   data() {
     return {};
+  },
+  computed: {
+    ...mapGetters(['is_authenticated']),
   },
   methods: {
     toIndex() {
       this.$router.push({ name: 'Index' });
     },
-    logout() {
-      console.log(this.$store.getters.getJwtToken);
-      this.$store.commit('resetJwtToken');
-      this.$router.push({ name: 'Index' });
-    },
+
+    ...mapActions(['logout']),
   },
 };
 </script>

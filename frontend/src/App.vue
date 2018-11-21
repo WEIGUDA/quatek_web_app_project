@@ -11,14 +11,21 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 // import axios from 'axios';
-
+import { mapActions } from 'vuex';
 export default {
   components: {
     AppHeader: Header,
     AppFooter: Footer,
   },
-  methods: {},
-  created() {},
+  methods: {
+    ...mapActions(['init_jwt_token', 'logout']),
+  },
+  created() {
+    this.init_jwt_token();
+  },
+  destroyed() {
+    this.logout();
+  },
 };
 </script>
 

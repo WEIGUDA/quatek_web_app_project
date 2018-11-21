@@ -6,7 +6,7 @@
         <br>
         <input type="password" id="inputPassword" class="form-control" placeholder="密码" v-model="password">
         <br>
-        <button class="btn btn-lg btn-success btn-block btn-signin btn-quatek" @click="login()" type="submit">登入</button>
+        <button class="btn btn-lg btn-success btn-block btn-signin btn-quatek" @click.stop.prevent="login({username: username, password: password})" type="submit">登入</button>
       </form><!-- /form -->
 
     </div><!-- /card-container -->
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { mapActions } from 'vuex';
 export default {
   name: 'login',
   data: function() {
@@ -25,20 +25,7 @@ export default {
   },
   props: {},
   methods: {
-    login() {
-      axios
-        .post(`login`, { username: this.username, password: this.password })
-        .then((response) => {
-          console.log(response.data);
-          this.$store.commit('setJwtToken', response.data.access_token);
-          console.log(this.$store);
-          this.$router.push({ name: 'Index' });
-        })
-        .catch((response) => {
-          console.log(response);
-          alert('用户名或密码错误!');
-        });
-    },
+    ...mapActions(['login']),
   },
   components: {},
 };
