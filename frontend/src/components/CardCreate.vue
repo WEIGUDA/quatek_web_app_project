@@ -57,7 +57,7 @@
       <div class="form-group row">
         <label for="class-time" class="col-sm-2 col-form-label">班别</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="class_time" v-model="card.class_time">
+          <input type="text" class="form-control" id="classes" v-model="card.classes">
         </div>
       </div>
 
@@ -119,7 +119,7 @@ export default {
         gender: '',
         note: '',
         belong_to_mc: '',
-        class_time: '',
+        classes: '',
       },
       submit_is_disabled: false,
       show_modal: false,
@@ -213,7 +213,7 @@ export default {
           this.card.note = response.data[0].note;
           this.card.belong_to_mc = response.data[0].belong_to_mc;
           this.card.number_in_mc = response.data[0].number_in_mc;
-          this.card.class_time = response.data[0].class_time;
+          this.card.classes = response.data[0].classes;
           console.log(this.card);
         })
         .catch((response) => {

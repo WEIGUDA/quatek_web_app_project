@@ -40,6 +40,7 @@ class Card(db.DynamicDocument):
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
     card_counter = db.SequenceField(collection_name='card_counter', unique=True)  # 卡号编号
     class_time = db.StringField(default='')  # 班别
+    classes = db.ListField(default=[])  # 多班别
 
     def __str__(self):
         return f'{self.to_json()}>'

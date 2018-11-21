@@ -47,7 +47,7 @@
             <td>{{card.card_number}}</td>
             <td>{{card.card_category}}</td>
             <td>{{card.department}}</td>
-            <td>{{card.class_time}}</td>
+            <td>{{card.classes}}</td>
             <td>
               <button type="button" class="btn btn-secondary btn-quatek btn-sm" @click="edit_card(card._id.$oid)">
                 <font-awesome-icon icon="pencil-alt" />
@@ -143,6 +143,9 @@ export default {
           card.card_category = '只测脚';
         } else if (card.card_category === '3') {
           card.card_category = '手脚都测';
+        }
+        if (card.classes) {
+          card.classes = card.classes.toString();
         }
       }
       return computed_cards;

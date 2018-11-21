@@ -193,7 +193,7 @@ def card_create():
             card.gender = data['gender'].strip()
             card.note = data['note'].strip()
             card.belong_to_mc = data['belong_to_mc'].strip()
-            card.class_time = data['class_time'].strip()
+            card.classes = data['classes'].strip().split(',')
             card.save()
 
         except:
@@ -400,8 +400,9 @@ def upload_cards_excel():
             card_tmp.department = str(card[4]).strip()
             card_tmp.gender = str(card[5]).strip()
             card_tmp.note = str(card[6]).strip()
-            card_tmp.class_time = str(card[7]).strip()
+            card_tmp.classes = str(card[7]).strip().split(',')
             card_tmp.save()
+            return_list.append(card_tmp.to_json())
             continue
 
         c1 = Card(
@@ -412,7 +413,7 @@ def upload_cards_excel():
             department=str(card[4]).strip(),
             gender=str(card[5]).strip(),
             note=str(card[6]).strip(),
-            class_time=str(card[7]).strip()
+            classes=str(card[7]).strip().split(',')
         )
 
         if len(c1.card_number) > 8:
