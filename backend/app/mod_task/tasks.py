@@ -583,6 +583,7 @@ def send_email_of_logs(card_class_time=''):
     card_class = {}
     if card_class_time:
         card_class = card_class_time_collection.find_one({'name': card_class_time})
+
     else:
         card_class = {'name': 'all',
                       'working_time_from': config['work_hours'].split('-')[0],

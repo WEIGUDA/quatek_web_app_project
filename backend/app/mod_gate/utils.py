@@ -22,10 +22,17 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
     db = client[MONGODB_DB]
     cards = db.card
     cardtests = db.card_test
+    gate_collection = db.gate
 
-    # process data in mongodb
+    # 初始化 excel dict
+    wb = {}
+
+    # 当前时区 和 时间
     local_tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+    now = datetime.datetime.now().replace(tzinfo=local_tz)
 
+    # 设定 筛选时间段
+    # a 如果上班时间 < 下班时间, 说明是白班
     work_hours_start = datetime.datetime.now().replace(
         hour=int(hours_start.split(':')[0]),
         minute=int(hours_start.split(':')[1]),
@@ -33,15 +40,23 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
         microsecond=0,
         tzinfo=local_tz,
     )
-    work_hours_end = datetime.datetime.now().replace(
+
+    work_hours_end = work_hours_start.replace(
         hour=int(hours_end.split(':')[0]),
         minute=int(hours_end.split(':')[1]),
-        second=0,
-        microsecond=0,
-        tzinfo=local_tz,
     )
-    # 初始化
-    wb = {}
+
+    # b 如果上班时间 > 下班时间, 说明是通宵班
+    if hours_start.split(':')[0] > hours_end.split(':')[0]:
+        work_hours_end = (work_hours_start + datetime.timedelta(days=1)).replace(
+            hour=int(hours_end.split(':')[0]),
+            minute=int(hours_end.split(':')[1]),
+        )
+
+    # 当发送邮件时间 < 筛选时间段结尾, 筛选时间段往前移一天
+    if now < work_hours_end:
+        work_hours_start = work_hours_start - datetime.timedelta(days=1)
+        work_hours_end = work_hours_end - datetime.timedelta(days=1)
 
     # 该测试而未测试
     tested_card_number_list = cardtests.find(
@@ -181,8 +196,57 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
             log.get('rsg', ''), ]
         )
 
+    # 近失效记录
+    card_number_set = set()
+    all_gates = [x for x in gate_collection.find()]
+    for log in cardtests.find({'test_datetime': {'$gte': work_hours_start, '$lte': work_hours_end}}):
+        gates = [g for g in all_gates if g['mc_id'] == log['mc_id']]
+        if gates:
+            gate = gates[0]
+            if gate['hand_max'] < int(log['hand']) < gate['hand_near_max'] \
+                    or gate['hand_near_min'] < int(log['hand']) < gate['hand_min'] \
+                    or gate['foot_near_min'] < int(log['left_foot']) < gate['foot_min'] \
+                    or gate['foot_max'] < int(log['left_foot']) < gate['foot_near_max'] \
+                    or gate['foot_near_min'] < int(log['right_foot']) < gate['foot_min'] \
+                    or gate['foot_max'] < int(log['right_foot']) < gate['foot_near_max']:
+                card_number_set.add(log['card_number'])
+
+    if not card_class_time:
+        near_test_cards = cards.find({
+            'card_number': {'$nin': list(card_number_set)},
+        })
+    else:
+        near_test_cards = cards.find({
+            'card_number': {'$nin': list(card_number_set)},
+            'classes': card_class_time,
+        })
+
+    ws_near_tests = []
+
+    ws_near_tests.append(['卡号号码', '卡片类别', '姓名', '工号', '部门', '性别', '其他说明', '权限', '卡号编号'])
+
+    for card in near_test_cards:
+        card_category = ''
+        if card.get('card_category', '') == '0':
+            card_category = 'VIP'
+        elif card.get('card_category', '') == '1':
+            card_category = '只测手'
+        elif card.get('card_category', '') == '2':
+            card_category = '只测脚'
+        elif card.get('card_category', '') == '3':
+            card_category = '手脚都测'
+        gender = ''
+        if card.get('gender', '') == '0':
+            gender = '女'
+        elif card.get('gender', '') == '1':
+            gender = '男'
+        ws_near_tests.append(
+            [card.get('card_number', ''), card_category, card.get('name', ''), card.get('job_number', ''),
+             card.get('department', ''), gender, card.get('note', ''), card.get('belong_to_mc', ''), card.get('card_counter', '')])
+
     wb["该测试而未测试"] = ws_should_test_but_not_tested
     wb["已测试而未通过"] = ws_tested_but_not_passed
     wb["测试已通过"] = ws_tested_and_passed
+    wb["近失效"] = ws_near_tests
 
     return wb

@@ -17,6 +17,11 @@ class Gate(db.DynamicDocument):
     port = db.IntField(null=True, default=None)  # 端口
     created_time = db.DateTimeField(default=datetime.datetime.utcnow)
 
+    hand_near_max = db.IntField(null=True, default=None)  # 手近失效上限值
+    hand_near_min = db.IntField(null=True, default=None)  # 手近失效下限值
+    foot_near_max = db.IntField(null=True, default=None)  # 脚近失效上限值
+    foot_near_min = db.IntField(null=True, default=None)  # 脚近失效下限值
+
     def __str__(self):
         return f'<Gate (name={self.name}, number={self.number}, category={self.category}, mc_id={self.mc_id}, hand_max={self.hand_max}, hand_min={self.hand_min}, foot_max={self.foot_max}, foot_min={self.foot_min}, is_on={self.is_on}, is_online={self.is_online}, ip={self.ip}, port={self.port}, created_time={self.created_time})>'
 

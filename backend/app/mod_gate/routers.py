@@ -351,6 +351,10 @@ def upload_gates_excel():
             hand_min=gate[5],
             foot_max=gate[6],
             foot_min=gate[7],
+            hand_near_max=gate[8],
+            hand_near_min=gate[9],
+            foot_near_max=gate[10],
+            foot_near_min=gate[11],
         )
         if not g1.hand_max:
             g1.hand_max = 35000
@@ -360,6 +364,15 @@ def upload_gates_excel():
             g1.foot_max = 200000
         if not g1.foot_min:
             g1.foot_min = 200
+
+        if not g1.hand_near_max:
+            g1.hand_near_max = 35000
+        if not g1.hand_near_min:
+            g1.hand_near_min = 750
+        if not g1.foot_near_max:
+            g1.foot_near_max = 200000
+        if not g1.foot_near_min:
+            g1.foot_near_min = 200
 
         try:
             g1.save()
