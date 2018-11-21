@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import store from './store';
+
 import Index from '@/components/Index';
 import Gates from '@/components/Gates';
 import Cards from '@/components/Cards';
@@ -18,7 +20,7 @@ import ConfigClassTime from '@/components/ConfigClassTime';
 
 Vue.use(Router);
 
-export default new Router({
+export const router = new Router({
   mode: 'history',
   routes: [
     {
@@ -109,4 +111,36 @@ export default new Router({
       ],
     },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+  // 限制访问的 route
+  const guarded_routes = [
+    'Gates',
+    'Cards',
+    'CardCreate',
+    'CardEdit',
+    'Config',
+    'class-time-config',
+    'background-task',
+    'other-database',
+    'crontab-task',
+    'interval-task',
+    'system-config',
+  ];
+  // 如果是限制访问的 route, 进行检测
+  if (guarded_routes.includes(to.name)) {
+    // 如果已登录, 则放行:
+    if (store.getters.is_authenticated) {
+      next();
+    }
+    // 如果未登录, 则到首页
+    else {
+      next({ name: 'Index' });
+    }
+  }
+  // 不是限制访问的 route, 则放行
+  else {
+    next();
+  }
 });
