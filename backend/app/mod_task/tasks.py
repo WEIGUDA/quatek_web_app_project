@@ -9,6 +9,18 @@ import time
 import smtplib
 import io
 from email.message import EmailMessage
+from email.utils import formataddr
+from email.utils import formatdate
+from email.utils import COMMASPACE
+
+from email.header import Header
+from email import encoders
+
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.application import MIMEApplication
 from logging import handlers
 
 from celery import Celery
@@ -596,17 +608,20 @@ def send_email_of_logs(card_class_time=''):
                             card_class_time=card_class_time)
 
     # sending email
-    file_name = f"report_generated_at_{datetime.datetime.now()}_for_{card_class['name']}_{card_class['working_time_from']}_{card_class['working_time_to']}"
+    file_name_utf = f"report_generated_at_{datetime.datetime.now()}_for_{card_class['name']}_{card_class['working_time_from']}_{card_class['working_time_to']}"
+    file_name = f"report_generated_at_{datetime.datetime.now()}"
     msg = EmailMessage()
     msg['Subject'] = file_name
     msg['From'] = config['smtp_username']
     msg['To'] = ', '.join(config['emails'].split(','))
-    msg.preamble = file_name
+    msg.add_alternative(file_name_utf + '\n')
+    # msg.preamble = file_name
     excel_data = io.BytesIO()
     pyexcel.get_book(bookdict=wb).save_to_memory('xlsx', stream=excel_data)
     excel_data.seek(0)
+
     msg.add_attachment(excel_data.read(), maintype='application', subtype='vnd.ms-excel',
-                       filename=f'{file_name}.xlsx')
+                       filename=f'{file_name_utf}.xlsx',)
 
     if config['smtp_use_ssl']:
         with smtplib.SMTP_SSL(config['smtp_host'], config['smtp_port']) as s:
