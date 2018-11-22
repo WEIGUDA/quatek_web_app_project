@@ -71,7 +71,7 @@ class CardTest(db.DynamicDocument):
 
 
 class CardClassTime(db.DynamicDocument):
-    name = db.StringField(default='default')
+    name = db.StringField(default='', unique=True)
     working_time_from = db.StringField()
     working_time_to = db.StringField()
 
