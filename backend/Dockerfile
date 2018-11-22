@@ -1,6 +1,5 @@
 FROM python:slim
 
-LABEL Name=quatek_web_app_backend Version=0.0.1
 EXPOSE 5001
 
 ENV ENV=production
