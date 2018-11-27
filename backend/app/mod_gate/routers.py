@@ -164,7 +164,7 @@ def card_create():
                       gender=data['gender'].strip(),
                       note=data['note'].strip(),
                       belong_to_mc=data['belong_to_mc'].strip(),
-                      class_time=data['class_time'].strip())
+                      classes=data['classes'].strip().split(','))
 
             if len(c1.card_number) > 8:
                 c1.card_number = hex(int(c1.card_number))[2:].upper().rjust(8, '0')
