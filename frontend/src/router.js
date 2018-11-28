@@ -17,6 +17,7 @@ import BackgroundTask from '@/components/BackgroundTask';
 import LastFailedUpload from '@/components/LastFailedUpload';
 import Login from '@/components/Login';
 import ConfigClassTime from '@/components/ConfigClassTime';
+import card_number_convertor_config from '@/components/card_number_convertor_config';
 
 Vue.use(Router);
 
@@ -108,6 +109,12 @@ export const router = new Router({
           name: 'class-time-config',
           component: ConfigClassTime,
         },
+
+        {
+          path: 'card_number_convertor_config',
+          name: 'card_number_convertor_config',
+          component: card_number_convertor_config,
+        },
       ],
     },
   ],
@@ -127,6 +134,7 @@ router.beforeEach((to, from, next) => {
     'crontab-task',
     'interval-task',
     'system-config',
+    'card_number_convertor_config',
   ];
   // 如果是限制访问的 route, 进行检测
   if (guarded_routes.includes(to.name)) {

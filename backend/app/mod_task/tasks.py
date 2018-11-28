@@ -608,8 +608,10 @@ def send_email_of_logs(card_class_time=''):
                             card_class_time=card_class_time)
 
     # sending email
-    file_name_utf = f"report_generated_at_{datetime.datetime.now()}_for_{card_class['name']}_{card_class['working_time_from']}_{card_class['working_time_to']}"
-    file_name = f"report_generated_at_{datetime.datetime.now()}"
+    local_tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+
+    file_name_utf = f"report_generated_at_{datetime.datetime.now().replace(tzinfo=local_tz)}_for_{card_class['name']}_{card_class['working_time_from']}_{card_class['working_time_to']}"
+    file_name = f"report_generated_at_{datetime.datetime.now().replace(tzinfo=local_tz)}"
     msg = EmailMessage()
     msg['Subject'] = file_name
     msg['From'] = config['smtp_username']

@@ -4,8 +4,10 @@ from celerybeatmongo.models import PeriodicTask
 from flask import (Blueprint, abort, current_app, jsonify, make_response,
                    request)
 from mongoengine.queryset.visitor import Q
+import flask_excel as excel
 
 from app.mod_system_config.models import SystemConfig
+from app.mod_system_config.utils import convertor1
 
 
 bp = Blueprint('mod_system_config', __name__)
@@ -63,3 +65,11 @@ def update_other_database_config():
     system_config.save()
 
     return system_config.to_json(), {'Content-Type': 'application/json'}
+
+
+@bp.route('/hid_card_convertor', methods=['POST', ])
+def hid_card_convertor():
+    card_number_list = request.get_array(field_name='hid_excel_file')
+    for row_list in card_number_list:
+        row_list.append(convertor1(row_list[0]))
+    return excel.make_response_from_array(card_number_list, 'xlsx',)
