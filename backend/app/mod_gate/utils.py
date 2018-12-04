@@ -1,6 +1,9 @@
 import datetime
 from pymongo import MongoClient
 
+# TODO: change to aggregate
+#  logs.aggregate([{'$lookup': {'from': 'card', 'localField': 'card_number', 'foreignField': 'card_number', 'as': 'cards'}}])
+
 
 def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hours_end, card_class_time):
     """根据班别, 统计删选卡片和测试数据
