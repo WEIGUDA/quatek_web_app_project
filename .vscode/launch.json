@@ -44,7 +44,18 @@
       "cwd": "${workspaceFolder}/backend/tests",
       "stopOnEntry": false,
       "module": "pytest",
-      "console": "none"
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug Celery",
+      "type": "python",
+      "request": "launch",
+      "module": "celery",
+      "stopOnEntry": false,
+      "pythonPath": "${config:python.pythonPath}",
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal",
+      "args": ["worker", "--app=app.mod_task.tasks", "-l=INFO"]
     }
   ]
 }
