@@ -84,7 +84,8 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
 
     ws_should_test_but_not_tested = []
 
-    ws_should_test_but_not_tested.append(['卡号号码', '卡片类别', '姓名', '工号', '部门', '性别', '其他说明', '权限', '卡号编号'])
+    ws_should_test_but_not_tested.append(['卡号号码', '卡片类别', '姓名', '工号', '部门', '性别', '其他说明', '权限',
+                                          '卡号编号'])
 
     for card in all_cards_should_test_but_not_tested:
         card_category = ''
@@ -103,7 +104,8 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
             gender = '男'
         ws_should_test_but_not_tested.append(
             [card.get('card_number', ''), card_category, card.get('name', ''), card.get('job_number', ''),
-             card.get('department', ''), gender, card.get('note', ''), card.get('belong_to_mc', ''), card.get('card_counter', '')])
+             card.get('department', ''), gender, card.get('note', ''), card.get('belong_to_mc', ''),
+             card.get('card_counter', '')])
 
     # 2. 已测试而未通过的 logs
     all_logs_tested_but_not_passed = []
@@ -121,8 +123,9 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
         })
 
     ws_tested_but_not_passed = []
-    ws_tested_but_not_passed.append(['记录流水号', '卡片编号', '卡片号码', '卡片类型', '进出标志',
-                                     '闸机 mc id', '测试时间', '是否通过', '是否测试', '手腕检测值', '左脚检测值', '右脚检测值', 'ERG后的值', 'RSG值', '姓名', '工号'])
+    ws_tested_but_not_passed.append(['记录流水号', '卡片编号', '卡片号码', '卡片类型', '进出标志', '闸机 mc id', '测试时间',
+                                     '是否通过', '是否测试', '手腕检测值', '左脚检测值', '右脚检测值', 'ERG后的值', 'RSG值',
+                                     '姓名', '工号'])
 
     for log in all_logs_tested_but_not_passed:
         card_category = ''
@@ -192,8 +195,9 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
         })
 
     ws_tested_and_passed = []
-    ws_tested_and_passed.append(['记录流水号', '卡片编号', '卡片号码', '卡片类型', '进出标志',
-                                 '闸机 mc id', '测试时间', '是否通过', '是否测试', '手腕检测值', '左脚检测值', '右脚检测值', 'ERG后的值', 'RSG值', '姓名', '工号'])
+    ws_tested_and_passed.append(['记录流水号', '卡片编号', '卡片号码', '卡片类型', '进出标志', '闸机 mc id', '测试时间',
+                                 '是否通过', '是否测试', '手腕检测值', '左脚检测值', '右脚检测值', 'ERG后的值', 'RSG值', '姓名',
+                                 '工号'])
 
     for log in all_logs_tested_and_passed:
         card_category = ''
