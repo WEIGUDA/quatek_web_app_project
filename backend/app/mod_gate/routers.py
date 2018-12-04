@@ -1,12 +1,15 @@
 import datetime
 import json
-from flask import Blueprint, request, make_response, current_app, abort, jsonify, send_file
-from mongoengine.queryset.visitor import Q
+
 import flask_excel as excel
+from flask import (Blueprint, abort, current_app, jsonify, make_response,
+                   request, send_file)
+from mongoengine.queryset.visitor import Q
 
-
-from app.mod_gate.models import Gate, Card, CardTest, CardClassTime
-from app.mod_task.tasks import update_all_cards_to_mc_task, update_a_card_to_all_mc_task, delete_a_card_from_mc_task
+from app.mod_gate.models import Card, CardClassTime, CardTest, Gate
+from app.mod_task.tasks import (delete_a_card_from_mc_task,
+                                update_a_card_to_all_mc_task,
+                                update_all_cards_to_mc_task)
 
 bp = Blueprint('mod_gate', __name__)
 
@@ -267,8 +270,12 @@ def cardtests():
         try:
             if is_downloading_excel:
                 results = [['log_id', '卡片编号', '卡片号码', '卡片分类', '进出标志', 'mc id',
-                            '测试时间', '测试结果', '是否测试', '手测试值(KΩ)', '左脚测试值(KΩ)', '右脚测试值(KΩ)', 'erg后数值', 'rsg', ], ]
+                            '测试时间', '测试结果', '是否测试', '手测试值(KΩ)', '左脚测试值(KΩ)', '右脚测试值(KΩ)', 'erg后数值',
+                            'rsg', '姓名', '工号'], ]
                 logs = CardTest.objects.filter(q_object).order_by('-test_datetime').skip(0).limit(100000)
+
+                all_cards = [x for x in Card.objects.all()]
+
                 for log in logs:
                     card_category = ''
                     if log['card_category'] == '0':
@@ -301,8 +308,21 @@ def cardtests():
                     if log['is_tested'] == '1':
                         is_tested = '测试'
 
-                    results.append([log['log_id'], log['card_counter'], log['card_number'], card_category, in_out_symbol, log['mc_id'],
-                                    test_datetime, test_result, is_tested, log['hand'], log['left_foot'], log['right_foot'], log['after_erg'], log['rsg'], ])
+                    name = ''
+                    card_number = ''
+                    try:
+                        card = list(filter(lambda card: card['card_number'] ==
+                                           log['card_number'], all_cards))[0]
+                        name = card['name']
+                        card_number = card['card_number']
+
+                    except:
+                        pass
+
+                    results.append([log['log_id'], log['card_counter'], log['card_number'], card_category,
+                                    in_out_symbol, log['mc_id'], test_datetime, test_result, is_tested, log['hand'],
+                                    log['left_foot'], log['right_foot'], log['after_erg'], log['rsg'], name,
+                                    card_number])
                 return excel.make_response_from_array(results, "xlsx")
 
             cards = CardTest.objects.filter(q_object).order_by('-test_datetime').skip(int(offset)).limit(int(limit))
