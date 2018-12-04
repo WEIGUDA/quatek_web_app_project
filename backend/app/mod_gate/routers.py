@@ -274,8 +274,6 @@ def cardtests():
                             'rsg', '姓名', '工号'], ]
                 logs = CardTest.objects.filter(q_object).order_by('-test_datetime').skip(0).limit(100000)
 
-                all_cards = [x for x in Card.objects.all()]
-
                 for log in logs:
                     card_category = ''
                     if log['card_category'] == '0':
@@ -311,8 +309,7 @@ def cardtests():
                     name = ''
                     card_number = ''
                     try:
-                        card = list(filter(lambda card: card['card_number'] ==
-                                           log['card_number'], all_cards))[0]
+                        card = Card.objects.filter(card_number=log['card_number']).first()
                         name = card['name']
                         card_number = card['card_number']
 
