@@ -1,5 +1,4 @@
 import datetime
-from pprint import pprint
 from pymongo import MongoClient
 
 
@@ -123,7 +122,7 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
 
     ws_tested_but_not_passed = []
     ws_tested_but_not_passed.append(['记录流水号', '卡片编号', '卡片号码', '卡片类型', '进出标志',
-                                     '闸机 mc id', '测试时间', '是否通过', '是否测试', '手腕检测值', '左脚检测值', '右脚检测值', 'ERG后的值', 'RSG值'])
+                                     '闸机 mc id', '测试时间', '是否通过', '是否测试', '手腕检测值', '左脚检测值', '右脚检测值', 'ERG后的值', 'RSG值', '姓名', '工号'])
 
     for log in all_logs_tested_but_not_passed:
         card_category = ''
@@ -147,6 +146,16 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
             is_tested = '不测试'
         elif log.get('is_tested', '') == '1':
             is_tested = '测试'
+        name = ''
+        job_number = ''
+        try:
+            card = cards.find_one({'card_number': log['card_number']})
+            name = card['name']
+            job_number = card['job_number']
+
+        except:
+            pass
+
         ws_tested_but_not_passed.append([
             log.get('log_id', ''),
             log.get('card_counter', ''),
@@ -162,7 +171,9 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
             log.get('left_foot', ''),
             log.get('right_foot', ''),
             log.get('after_erg', ''),
-            log.get('rsg', ''), ]
+            log.get('rsg', ''),
+            name,
+            job_number]
         )
 
     # 3. 测试已通过的 logs
@@ -182,7 +193,7 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
 
     ws_tested_and_passed = []
     ws_tested_and_passed.append(['记录流水号', '卡片编号', '卡片号码', '卡片类型', '进出标志',
-                                 '闸机 mc id', '测试时间', '是否通过', '是否测试', '手腕检测值', '左脚检测值', '右脚检测值', 'ERG后的值', 'RSG值'])
+                                 '闸机 mc id', '测试时间', '是否通过', '是否测试', '手腕检测值', '左脚检测值', '右脚检测值', 'ERG后的值', 'RSG值', '姓名', '工号'])
 
     for log in all_logs_tested_and_passed:
         card_category = ''
@@ -206,6 +217,16 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
             is_tested = '不测试'
         elif log.get('is_tested', '') == '1':
             is_tested = '测试'
+
+        name = ''
+        job_number = ''
+        try:
+            card = cards.find_one({'card_number': log['card_number']})
+            name = card['name']
+            job_number = card['job_number']
+
+        except:
+            pass
         ws_tested_and_passed.append([
             log.get('log_id', ''),
             log.get('card_counter', ''),
@@ -221,7 +242,9 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
             log.get('left_foot', ''),
             log.get('right_foot', ''),
             log.get('after_erg', ''),
-            log.get('rsg', ''), ]
+            log.get('rsg', ''),
+            name,
+            job_number]
         )
 
     # 4. 近失效记录
@@ -257,8 +280,8 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
 
     ws_near_tests = []
 
-    ws_near_tests.append(['记录流水号', '卡片编号', '卡片号码', '卡片类型', '进出标志',
-                          '闸机 mc id', '测试时间', '是否通过', '是否测试', '手腕检测值', '左脚检测值', '右脚检测值', 'ERG后的值', 'RSG值'])
+    ws_near_tests.append(['记录流水号', '卡片编号', '卡片号码', '卡片类型', '进出标志', '闸机 mc id', '测试时间', '是否通过',
+                          '是否测试', '手腕检测值', '左脚检测值', '右脚检测值', 'ERG后的值', 'RSG值', '姓名', '工号'])
 
     for log in near_failure_logs:
         card_category = ''
@@ -282,6 +305,17 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
             is_tested = '不测试'
         elif log.get('is_tested', '') == '1':
             is_tested = '测试'
+
+        name = ''
+        job_number = ''
+        try:
+            card = cards.find_one({'card_number': log['card_number']})
+            name = card['name']
+            job_number = card['job_number']
+
+        except:
+            pass
+
         ws_near_tests.append([
             log.get('log_id', ''),
             log.get('card_counter', ''),
@@ -297,7 +331,9 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
             log.get('left_foot', ''),
             log.get('right_foot', ''),
             log.get('after_erg', ''),
-            log.get('rsg', ''), ]
+            log.get('rsg', ''),
+            name,
+            job_number]
         )
 
     wb["该测试而未测试"] = ws_should_test_but_not_tested
