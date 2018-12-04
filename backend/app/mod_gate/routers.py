@@ -307,11 +307,11 @@ def cardtests():
                         is_tested = '测试'
 
                     name = ''
-                    card_number = ''
+                    job_number = ''
                     try:
                         card = Card.objects.filter(card_number=log['card_number']).first()
                         name = card['name']
-                        card_number = card['card_number']
+                        job_number = card['job_number']
 
                     except:
                         pass
@@ -319,7 +319,7 @@ def cardtests():
                     results.append([log['log_id'], log['card_counter'], log['card_number'], card_category,
                                     in_out_symbol, log['mc_id'], test_datetime, test_result, is_tested, log['hand'],
                                     log['left_foot'], log['right_foot'], log['after_erg'], log['rsg'], name,
-                                    card_number])
+                                    job_number])
                 return excel.make_response_from_array(results, "xlsx")
 
             cards = CardTest.objects.filter(q_object).order_by('-test_datetime').skip(int(offset)).limit(int(limit))
