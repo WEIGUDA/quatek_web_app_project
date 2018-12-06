@@ -1,10 +1,7 @@
 <template>
   <div>
     <form class="form-inline">
-      <label
-        class="sr-only"
-        for="class_time_name"
-      >班别名称</label>
+      <label class="sr-only" for="class_time_name">班别名称</label>
       <div class="input-group mb-2 mr-sm-2">
         <input
           type="text"
@@ -13,13 +10,9 @@
           v-model="class_time_name"
           placeholder="班别名称"
         >
-
       </div>
 
-      <label
-        class="sr-only"
-        for="class_time_from"
-      >班别开始时间</label>
+      <label class="sr-only" for="class_time_from">班别开始时间</label>
       <div class="input-group mb-2 mr-sm-2">
         <input
           type="text"
@@ -28,13 +21,9 @@
           v-model="class_time_from"
           placeholder="班别开始时间"
         >
-
       </div>
 
-      <label
-        class="sr-only"
-        for="class_time_to"
-      >班别结束时间</label>
+      <label class="sr-only" for="class_time_to">班别结束时间</label>
       <div class="input-group mb-2 mr-sm-2">
         <input
           type="text"
@@ -43,7 +32,6 @@
           v-model="class_time_to"
           placeholder="班别结束时间"
         >
-
       </div>
 
       <button
@@ -62,25 +50,17 @@
               <th scope="col">开始时间</th>
               <th scope="col">结束时间</th>
               <th scope="col">删除</th>
-
             </tr>
           </thead>
 
           <tbody v-if="!class_times.length">
             <tr>
-              <td
-                colspan="4"
-                class="text-center"
-              >没有找到班别</td>
+              <td colspan="4" class="text-center">没有找到班别</td>
             </tr>
-
           </tbody>
 
           <tbody v-if="class_times.length">
-            <tr
-              v-for="class_time in class_times"
-              :key="class_time._id.$oid"
-            >
+            <tr v-for="class_time in class_times" :key="class_time._id.$oid">
               <td>{{class_time.name}}</td>
               <td>{{class_time.working_time_from}}</td>
               <td>{{class_time.working_time_to}}</td>
@@ -90,30 +70,27 @@
                   class="btn btn-secondary btn-quatek btn-sm"
                   @click="delete_class_time(class_time._id.$oid)"
                 >
-                  <font-awesome-icon icon="trash-alt" />
+                  <font-awesome-icon icon="trash-alt"/>
                 </button>
               </td>
             </tr>
           </tbody>
-
         </table>
       </div>
     </div>
-
   </div>
-
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 // import lodash from 'lodash';
 export default {
   data: function() {
     return {
       class_times: [],
-      class_time_name: '',
-      class_time_from: '',
-      class_time_to: ''
+      class_time_name: "",
+      class_time_from: "",
+      class_time_to: ""
     };
   },
   computed: {},
@@ -123,16 +100,16 @@ export default {
         return;
       }
       axios
-        .post(`add-class-time`, {
+        .post(`/add-class-time`, {
           class_time_name: this.class_time_name,
           class_time_from: this.class_time_from,
           class_time_to: this.class_time_to
         })
         .then(response => {
           console.log(response.data);
-          this.class_time_name = '';
-          this.class_time_from = '';
-          this.class_time_to = '';
+          this.class_time_name = "";
+          this.class_time_from = "";
+          this.class_time_to = "";
           this.get_class_times();
         })
         .catch(response => {
@@ -144,7 +121,7 @@ export default {
 
     delete_class_time(class_time_id) {
       axios
-        .post('delete-class-time', { class_time_id: class_time_id })
+        .post("/delete-class-time", { class_time_id: class_time_id })
         .then(response => {
           console.log(response.data);
           this.get_class_times();
@@ -156,7 +133,7 @@ export default {
 
     get_class_times() {
       axios
-        .get('get-class-times')
+        .get("/get-class-times")
         .then(response => {
           console.log(response);
           this.class_times = response.data;

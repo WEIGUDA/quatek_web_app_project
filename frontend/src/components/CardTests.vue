@@ -248,7 +248,7 @@ export default {
 
       axios
         .get(
-          `cardtests?q=${this.query_string}&datetime_from=${
+          `/cardtests?q=${this.query_string}&datetime_from=${
             this.datetime_from
           }&datetime_to=${this.datetime_to}&job_number=${
             this.job_number
@@ -324,7 +324,7 @@ export default {
     download_excel() {
       axios
         .get(
-          `cardtests?q=${this.query_string}&datetime_from=${
+          `/cardtests?q=${this.query_string}&datetime_from=${
             this.datetime_from
           }&datetime_to=${this.datetime_to}&job_number=${
             this.job_number
@@ -352,7 +352,7 @@ export default {
       let offset = (this.currentPage - 2) * 50;
       axios
         .get(
-          `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${
+          `/cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${
             this.datetime_from
           }&datetime_to=${this.datetime_to}&job_number=${
             this.job_number
@@ -372,7 +372,7 @@ export default {
       let offset = this.currentPage * 50;
       axios
         .get(
-          `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${
+          `/cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${
             this.datetime_from
           }&datetime_to=${this.datetime_to}&job_number=${
             this.job_number
@@ -397,7 +397,7 @@ export default {
       let offset = this.currentPage - 1 * 50;
       axios
         .get(
-          `cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${
+          `/cardtests?offset=${offset}&q=${this.query_string}&datetime_from=${
             this.datetime_from
           }&datetime_to=${this.datetime_to}&job_number=${
             this.job_number
@@ -419,7 +419,7 @@ export default {
 
   created() {
     axios
-      .get("cards?offset=0&limit=50000")
+      .get("/cards?offset=0&limit=50000")
       .then(response => {
         console.log(response);
         this.cards = response.data;

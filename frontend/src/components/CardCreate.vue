@@ -2,98 +2,49 @@
   <div class="container">
     <form class="card-create-form">
       <div class="form-group row">
-        <label
-          for="cardNumber"
-          class="col-sm-2 col-form-label"
-        >卡号 *</label>
+        <label for="cardNumber" class="col-sm-2 col-form-label">卡号 *</label>
         <div class="col-sm-10">
-          <input
-            type="text"
-            class="form-control"
-            id="cardNumber"
-            v-model="card.card_number"
-          >
-
+          <input type="text" class="form-control" id="cardNumber" v-model="card.card_number">
         </div>
-
       </div>
 
       <div class="form-group row">
-        <label
-          for="card_category"
-          class="col-sm-2 col-form-label"
-        >卡类别 *</label>
+        <label for="card_category" class="col-sm-2 col-form-label">卡类别 *</label>
         <div class="col-sm-10">
-          <select
-            class="form-control"
-            id="card_category"
-            v-model="card.card_category"
-          >
+          <select class="form-control" id="card_category" v-model="card.card_category">
             <option value="0">VIP</option>
             <option value="1">只测手</option>
             <option value="2">只测脚</option>
             <option value="3">手脚都测</option>
           </select>
-
         </div>
       </div>
 
       <div class="form-group row">
-        <label
-          for="name"
-          class="col-sm-2 col-form-label"
-        >姓名 *</label>
+        <label for="name" class="col-sm-2 col-form-label">姓名 *</label>
         <div class="col-sm-10">
-          <input
-            type="text"
-            class="form-control"
-            id="name"
-            v-model="card.name"
-          >
+          <input type="text" class="form-control" id="name" v-model="card.name">
         </div>
       </div>
 
       <div class="form-group row">
-        <label
-          for="job_number"
-          class="col-sm-2 col-form-label"
-        >工号 *</label>
+        <label for="job_number" class="col-sm-2 col-form-label">工号 *</label>
         <div class="col-sm-10">
-          <input
-            type="text"
-            class="form-control"
-            id="job_number"
-            v-model="card.job_number"
-          >
+          <input type="text" class="form-control" id="job_number" v-model="card.job_number">
         </div>
       </div>
 
       <div class="form-group row">
-        <label
-          for="department"
-          class="col-sm-2 col-form-label"
-        >部门 *</label>
+        <label for="department" class="col-sm-2 col-form-label">部门 *</label>
         <div class="col-sm-10">
-          <input
-            type="text"
-            class="form-control"
-            id="department"
-            v-model="card.department"
-          >
+          <input type="text" class="form-control" id="department" v-model="card.department">
         </div>
       </div>
 
       <div class="form-group row">
-        <label
-          for="gender"
-          class="col-sm-2 col-form-label"
-        >性别 *</label>
+        <label for="gender" class="col-sm-2 col-form-label">性别 *</label>
         <div class="col-sm-10">
-          <select
-            class="form-control"
-            id="gender"
-            v-model="card.gender"
-          >
+          <select class="form-control" id="gender" v-model="card.gender">
             <option value="0">女</option>
             <option value="1">男</option>
           </select>
@@ -101,40 +52,21 @@
       </div>
 
       <div class="form-group row">
-        <label
-          for="classes"
-          class="col-sm-2 col-form-label"
-        >班别</label>
+        <label for="classes" class="col-sm-2 col-form-label">班别</label>
         <div class="col-sm-10">
-          <input
-            type="text"
-            class="form-control"
-            id="classes"
-            v-model="card.classes"
-          >
+          <input type="text" class="form-control" id="classes" v-model="card.classes">
         </div>
       </div>
 
       <div class="form-group row">
-        <label
-          for="note"
-          class="col-sm-2 col-form-label"
-        >备注</label>
+        <label for="note" class="col-sm-2 col-form-label">备注</label>
         <div class="col-sm-10">
-          <input
-            type="text"
-            class="form-control"
-            id="note"
-            v-model="card.note"
-          >
+          <input type="text" class="form-control" id="note" v-model="card.note">
         </div>
       </div>
 
       <div class="form-group row">
-        <label
-          for="belong_to_mc"
-          class="col-sm-2 col-form-label"
-        >对应闸机&权限</label>
+        <label for="belong_to_mc" class="col-sm-2 col-form-label">对应闸机&权限</label>
         <div class="col-sm-10">
           <input
             type="text"
@@ -144,7 +76,9 @@
             @focus="show_modal=true"
             readonly
           >
-          <small class="form-text text-muted">format: "gate_1:0|gate_2:1|gate_3:3"; 其中gate_1, gate_2, gate_3: 闸机名, 0:可进可出, 1:禁止进入/可出, 2:禁止出去/可进, 3:禁止进出; "all"/留空 代表所有闸机都可进可出</small>
+          <small
+            class="form-text text-muted"
+          >format: "gate_1:0|gate_2:1|gate_3:3"; 其中gate_1, gate_2, gate_3: 闸机名, 0:可进可出, 1:禁止进入/可出, 2:禁止出去/可进, 3:禁止进出; "all"/留空 代表所有闸机都可进可出</small>
         </div>
       </div>
 
@@ -155,7 +89,7 @@
             class="btn btn-success btn-block submit-btn"
             @click.prevent="submit()"
             :disabled="submit_is_disabled"
-          > 保存 </button>
+          >保存</button>
         </div>
       </div>
     </form>
@@ -169,24 +103,10 @@
       @ok="confirm()"
       ok-variant="success"
     >
-      <b-container
-        fluid
-        class="form-inline"
-      >
-        <b-row
-          v-for="(gate,index) in computed_rights"
-          :key="gate.gate_name"
-          class="w-100"
-        >
-          <label
-            :for="'gate_'+index"
-            class="col-6"
-          >{{index+1}} - 闸机名: {{gate.gate_name}}</label>
-          <select
-            :id=" 'gate_'+index"
-            class="form-control col-6"
-            v-model="gate.rights"
-          >
+      <b-container fluid class="form-inline">
+        <b-row v-for="(gate,index) in computed_rights" :key="gate.gate_name" class="w-100">
+          <label :for="'gate_'+index" class="col-6">{{index+1}} - 闸机名: {{gate.gate_name}}</label>
+          <select :id=" 'gate_'+index" class="form-control col-6" v-model="gate.rights">
             <option value="0">可进可出</option>
             <option value="1">禁止进入/可出</option>
             <option value="2">禁止出去/可进</option>
@@ -194,11 +114,8 @@
           </select>
           <hr class="w-100">
         </b-row>
-
       </b-container>
-
     </b-modal>
-
   </div>
 </template>
 
@@ -263,7 +180,7 @@ export default {
       ) {
         if (this.card.id) {
           axios
-            .patch("cards/create", this.card)
+            .patch("/cards/create", this.card)
             .then(response => {
               console.log(response);
               alert("保存成功!");
@@ -276,7 +193,7 @@ export default {
             });
         } else {
           axios
-            .post("cards/create", this.card)
+            .post("/cards/create", this.card)
             .then(response => {
               console.log(response);
               alert("保存成功!");
@@ -306,7 +223,7 @@ export default {
     if (this.$route.params.card_id) {
       this.card.id = this.$route.params.card_id;
       axios
-        .get(`get-card-by-id?q=${this.card.id}`)
+        .get(`/get-card-by-id?q=${this.card.id}`)
         .then(response => {
           console.log(response);
           this.card.card_number = response.data[0].card_number;
@@ -327,7 +244,7 @@ export default {
     }
 
     axios
-      .get(`gates?offset=0&limit=10000`)
+      .get(`/gates?offset=0&limit=10000`)
       .then(response => {
         console.log(response);
         this.gates = response.data;

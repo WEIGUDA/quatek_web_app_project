@@ -144,7 +144,7 @@ export default {
       this.currentPage = 1;
 
       axios
-        .get(`gates?q=${this.query_string}`)
+        .get(`/gates?q=${this.query_string}`)
         .then(response => {
           console.log(response);
           this.gates = response.data;
@@ -164,7 +164,7 @@ export default {
       formData.append("excel_file", excel_file);
       console.log(formData);
       axios
-        .post("upload_gates_excel", formData, {
+        .post("/upload_gates_excel", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -186,7 +186,7 @@ export default {
 
     download_gates_upload_template2() {
       axios
-        .get("download_gates_upload_template", {
+        .get("/download_gates_upload_template", {
           responseType: "blob"
         })
         .then(response => {
@@ -204,7 +204,7 @@ export default {
     prevPage() {
       let offset = (this.currentPage - 2) * 50;
       axios
-        .get(`gates?offset=${offset}&q=${this.query_string}`)
+        .get(`/gates?offset=${offset}&q=${this.query_string}`)
         .then(response => {
           console.log(response);
           this.gates = response.data;
@@ -217,7 +217,7 @@ export default {
     nextPage() {
       let offset = this.currentPage * 50;
       axios
-        .get(`gates?offset=${offset}&q=${this.query_string}`)
+        .get(`/gates?offset=${offset}&q=${this.query_string}`)
         .then(response => {
           if (response.data.length !== 0) {
             console.log(response);
@@ -285,7 +285,7 @@ export default {
     },
     get_gates() {
       axios
-        .get("gates")
+        .get("/gates")
         .then(response => {
           console.log(response);
           this.gates = response.data;

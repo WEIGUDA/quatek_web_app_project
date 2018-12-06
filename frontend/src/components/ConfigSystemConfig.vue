@@ -11,26 +11,41 @@
     </div>
 
     <div class="form-group form-check">
-      <input type="checkbox" class="form-check-input" id="smtp_need_auth" v-model="config.smtp_need_auth">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        id="smtp_need_auth"
+        v-model="config.smtp_need_auth"
+      >
       <label class="form-check-label" for="smtp_need_auth">需要验证</label>
     </div>
 
-    <div class="form-group" v-show=config.smtp_need_auth>
+    <div class="form-group" v-show="config.smtp_need_auth">
       <label for="smtp_username">SMTP 用户名</label>
       <input type="text" class="form-control" id="smtp_username" v-model="config.smtp_username">
     </div>
 
-    <div class="form-group" v-show=config.smtp_need_auth>
+    <div class="form-group" v-show="config.smtp_need_auth">
       <label for="smtp_password">SMTP 密码</label>
       <input type="text" class="form-control" id="smtp_password" v-model="config.smtp_password">
     </div>
 
     <div class="form-group form-check">
-      <input type="checkbox" class="form-check-input" id="smtp_use_ssl" v-model="config.smtp_use_ssl">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        id="smtp_use_ssl"
+        v-model="config.smtp_use_ssl"
+      >
       <label class="form-check-label" for="smtp_use_ssl">使用SSL</label>
     </div>
     <div class="form-group form-check">
-      <input type="checkbox" class="form-check-input" id="smtp_use_tls" v-model="config.smtp_use_tls">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        id="smtp_use_tls"
+        v-model="config.smtp_use_tls"
+      >
       <label class="form-check-label" for="smtp_use_tls">使用TLS</label>
     </div>
     <hr>
@@ -52,52 +67,52 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   data: function() {
     return {
       config: {
-        smtp_host: '',
-        smtp_port: '465',
+        smtp_host: "",
+        smtp_port: "465",
         smtp_use_ssl: true,
         smtp_use_tls: true,
-        smtp_username: '',
-        smtp_password: '',
-        emails: '',
-        work_hours: '8:00-18:00',
-        smtp_need_auth: true,
-      },
+        smtp_username: "",
+        smtp_password: "",
+        emails: "",
+        work_hours: "8:00-18:00",
+        smtp_need_auth: true
+      }
     };
   },
   methods: {
     submit() {
       console.log(this.config);
       axios
-        .post('update-system-config', this.config)
-        .then((response) => {
+        .post("/update-system-config", this.config)
+        .then(response => {
           console.log(response.data);
-          alert('保存成功!');
+          alert("保存成功!");
         })
-        .catch((response) => {
+        .catch(response => {
           console.log(response);
-          alert('保存失败!');
+          alert("保存失败!");
         });
     },
     get_system_config() {
       axios
-        .get('get-system-config')
-        .then((response) => {
+        .get("/get-system-config")
+        .then(response => {
           console.log(response.data);
           this.config = response.data;
         })
-        .catch((response) => {
+        .catch(response => {
           console.log(response);
         });
-    },
+    }
   },
   created() {
     this.get_system_config();
-  },
+  }
 };
 </script>
 

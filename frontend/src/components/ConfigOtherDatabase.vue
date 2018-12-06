@@ -1,10 +1,9 @@
 <template>
   <div class="form">
-
     <div class="form-group">
       <label for="db_type">数据库类型</label>
       <select name="db_type" id="db_type" class="form-control" v-model="config.db_type">
-        <option value="">------------</option>
+        <option value>------------</option>
         <option value="oracle">Oracle</option>
       </select>
     </div>
@@ -41,50 +40,50 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   data: function() {
     return {
       config: {
-        db_type: '',
-        db_name: '',
-        db_host: '',
-        db_port: '',
-        db_username: '',
-        db_password: '',
-      },
+        db_type: "",
+        db_name: "",
+        db_host: "",
+        db_port: "",
+        db_username: "",
+        db_password: ""
+      }
     };
   },
   methods: {
     submit() {
       console.log(this.config);
       axios
-        .post('update-other-database-config', this.config)
-        .then((response) => {
+        .post("/update-other-database-config", this.config)
+        .then(response => {
           console.log(response.data);
-          alert('保存成功!');
+          alert("保存成功!");
         })
-        .catch((response) => {
+        .catch(response => {
           console.log(response);
-          alert('保存失败!');
+          alert("保存失败!");
         });
     },
 
     get_other_database_config() {
       axios
-        .get('get-other-database-config')
-        .then((response) => {
+        .get("/get-other-database-config")
+        .then(response => {
           console.log(response.data);
           this.config = response.data;
         })
-        .catch((response) => {
+        .catch(response => {
           console.log(response);
         });
-    },
+    }
   },
   created() {
     this.get_other_database_config();
-  },
+  }
 };
 </script>
 
