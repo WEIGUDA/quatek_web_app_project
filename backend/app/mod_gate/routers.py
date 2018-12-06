@@ -167,7 +167,7 @@ def card_create():
                       gender=data['gender'].strip(),
                       note=data['note'].strip(),
                       belong_to_mc=data['belong_to_mc'].strip(),
-                      classes=data['classes'].strip().split(','))
+                      classes=data['classes'].split(','))
 
             if len(c1.card_number) > 8:
                 c1.card_number = hex(int(c1.card_number))[2:].upper().rjust(8, '0')
@@ -196,7 +196,7 @@ def card_create():
             card.gender = data['gender'].strip()
             card.note = data['note'].strip()
             card.belong_to_mc = data['belong_to_mc'].strip()
-            card.classes = data['classes'].strip().split(',')
+            card.classes = data['classes'].split(',')
             card.save()
 
         except:
