@@ -30,6 +30,7 @@ logger = get_logger(__file__)
 
 
 if __name__ == "__main__":
+    os.environ['ENV'] = 'development'
+    os.environ['DEBUG'] = 'True'
     app = create_app()
-    app.run(host='0.0.0.0', port=5001)
-    # socketio.run(app)
+    socketio.run(app, host='0.0.0.0', port=5001, debug=True, use_reloader=True,)

@@ -1,49 +1,34 @@
 import datetime
+import io
 import logging
 import os
 import re
+import smtplib
 import socketserver
 import sys
 import threading
 import time
-import smtplib
-import io
 from email.message import EmailMessage
-from email.utils import formataddr
-from email.utils import formatdate
-from email.utils import COMMASPACE
-
-from email.header import Header
-from email import encoders
-
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from email.mime.application import MIMEApplication
 from logging import handlers
 
+import pyexcel
 from celery import Celery
 from pymongo import MongoClient, UpdateOne, bulk
-from sqlalchemy import inspect, create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.engine.url import URL
-import pyexcel
-from app.mod_gate.schema import Log, Base
+from sqlalchemy.orm import sessionmaker
+
+from app.mod_gate.schema import Base, Log
 from app.mod_gate.utils import card_log_calculate
 
 # load configs
-from instance.config_default import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, SOCKET_HOST, SOCKET_PORT, REDIS_URL
+MONGODB_DB = os.environ.get('MONGODB_DB', 'quatek_web_app')
+MONGODB_HOST = os.environ.get('MONGODB_HOST', '127.0.0.1')
+MONGODB_PORT = os.environ.get('MONGODB_PORT', 27017)
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://127.0.0.1')
+SOCKET_HOST = os.environ.get('SOCKET_HOST', '0.0.0.0')
+SOCKET_PORT = os.environ.get('SOCKET_PORT', 5858)
 
-try:
-    from instance.config_dev import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, SOCKET_HOST, SOCKET_PORT, REDIS_URL
-except:
-    pass
-
-try:
-    from instance.config_pro import MONGODB_DB, MONGODB_HOST, MONGODB_PORT, SOCKET_HOST, SOCKET_PORT, REDIS_URL
-except:
-    pass
 
 # logging
 logger = logging.getLogger(os.path.splitext(
