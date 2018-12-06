@@ -26,7 +26,7 @@ def create_app():
     app.config['MONGODB_DB'] = os.environ.get('MONGODB_DB', 'quatek_web_app')
     app.config['MONGODB_HOST'] = os.environ.get('MONGODB_HOST', '127.0.0.1')
     app.config['MONGODB_PORT'] = os.environ.get('MONGODB_PORT', 27017)
-    app.config['REDIS_URL'] = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')
+    app.config['REDIS_URL'] = os.environ.get('REDIS_URL', 'redis://127.0.0.1')
     app.config['SOCKET_HOST'] = os.environ.get('SOCKET_HOST', '0.0.0.0')
     app.config['SOCKET_PORT'] = os.environ.get('SOCKET_PORT', 5858)
     app.config['JWT_SECRET_KEY'] = app.config['SECRET_KEY']

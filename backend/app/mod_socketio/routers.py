@@ -20,7 +20,6 @@ def test_disconnect():
     current_app.logger.info('Client disconnected')
 
 
-@socketio.on('chat message')
-def handle_message(data):
-    # print('backend received message: ' + str(data))
-    emit('my response', data, broadcast=True)
+@socketio.on('test_event')
+def handle_test_message(data):
+    current_app.logger.info('backend received message: ' + str(data))

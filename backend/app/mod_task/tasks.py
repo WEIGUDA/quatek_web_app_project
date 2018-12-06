@@ -1,3 +1,4 @@
+import copy
 import datetime
 import io
 import logging
@@ -13,6 +14,7 @@ from logging import handlers
 
 import pyexcel
 from celery import Celery
+from flask_socketio import SocketIO
 from pymongo import MongoClient, UpdateOne, bulk
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.engine.url import URL
@@ -319,6 +321,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
         client = MongoClient(MONGODB_HOST, MONGODB_PORT)
         db = client[MONGODB_DB]
         gates = db.gate
+        card_collection = db.card
         cardtests = db.card_test
 
         self.request.settimeout(5)
@@ -394,6 +397,9 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                     all_data.pop()
                 logger.info(f'format: LOG 流水号;卡片编号;卡片号码;卡片类型;进出标志;进出机号;是否通过;是否测试;RSG;手腕带检测;左脚检测;右脚检测;ERG')
                 logger.info(f'raw data: {all_data}')
+
+                # 卡片号码 set, 用于之后查找卡片信息用
+                card_number_set = set()
                 for data in all_data:
                     data = data.split(',')
 
@@ -411,16 +417,67 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                         'left_foot': data[10],
                         'right_foot': data[11],
                         'after_erg': data[12],
+                        'test_datetime': datetime.datetime.fromtimestamp(int(data[0]), tz=datetime.timezone.utc),
+                        'is_copied_to_other_database': False,
                     }
 
                     all_cardtests.append(temp_dict)
+                    card_number_set.add(temp_dict['card_number'])
 
-                for cardtest in all_cardtests:
-                    cardtest['test_datetime'] = datetime.datetime.fromtimestamp(
-                        int(cardtest['log_id']), tz=datetime.timezone.utc)
-                    cardtest['is_copied_to_other_database'] = False
-
+                # save all logs to database
                 cardtests.insert_many(all_cardtests)
+
+                # prepare the all cards info
+                all_cards = [x for x in card_collection.find({'card_number': {'$in': list(card_number_set)}})]
+                all_logs_needed_to_send_to_frontend = copy.deepcopy(all_cardtests)
+                for log in all_logs_needed_to_send_to_frontend:
+                    if log['card_category'] == '0':
+                        log['card_category'] = 'VIP'
+                    if log['card_category'] == '1':
+                        log['card_category'] = '只测手'
+                    if log['card_category'] == '2':
+                        log['card_category'] = '只测脚'
+                    if log['card_category'] == '3':
+                        log['card_category'] = '手脚都测'
+
+                    if log['in_out_symbol'] == '0':
+                        log['in_out_symbol'] = '出'
+                    if log['in_out_symbol'] == '1':
+                        log['in_out_symbol'] = '进'
+
+                    local_tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+                    log['test_datetime'] = log['test_datetime'].replace(tzinfo=local_tz).isoformat()
+
+                    if log['test_result'] == '0':
+                        log['test_result'] = '不通过'
+                    if log['test_result'] == '1':
+                        log['test_result'] = '通过'
+
+                    if log['is_tested'] == '0':
+                        log['is_tested'] = '不测试'
+                    if log['is_tested'] == '1':
+                        log['is_tested'] = '测试'
+
+                    log['name'] = ''
+                    log['job_number'] = ''
+                    try:
+                        card = filter(lambda x: x['card_number'] == log['card_number'], all_cards)[0]
+                        log['name'] = card['name']
+                        log['job_number'] = card['job_number']
+
+                    except:
+                        pass
+
+                # send all logs to frontend using socketio
+                socket_io = SocketIO(message_queue=REDIS_URL)
+                socket_io.emit('send_all_cards_data_to_frontend_from_tasks', all_logs_needed_to_send_to_frontend)
+                
+                # from flask_socketio import SocketIO
+                # s = SocketIO(message_queue='redis://127.0.0.1')
+                # s.emit('send_all_cards_data_to_frontend_from_tasks', [{'log_id': '1', 'name': 'name1'}, {'log_id': '2', 'name': 'name2'}])
+
+
+
             except:
                 logger.exception('error from: {} {}'.format(mc_client, self.client_address))
 
