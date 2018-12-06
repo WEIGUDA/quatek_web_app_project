@@ -423,39 +423,40 @@ def upload_cards_excel():
             job_number=str(card[3]).strip()
         )
 
-        if card1.first():
-            card_tmp = card1.first()
-            card_tmp.card_category = str(card[1]).strip()
-            card_tmp.name = str(card[2]).strip()
-            card_tmp.department = str(card[4]).strip()
-            card_tmp.gender = str(card[5]).strip()
-            card_tmp.note = str(card[6]).strip()
-            card_tmp.classes = str(card[7]).strip().split(',')
-            card_tmp.save()
-            return_list.append(card_tmp.to_json())
-            continue
-
-        c1 = Card(
-            card_number=str(card[0]).upper().rjust(8, '0').strip(),
-            card_category=str(card[1]).strip(),
-            name=str(card[2]).strip(),
-            job_number=str(card[3]).strip(),
-            department=str(card[4]).strip(),
-            gender=str(card[5]).strip(),
-            note=str(card[6]).strip(),
-            classes=str(card[7]).strip().split(',')
-        )
-
-        if len(c1.card_number) > 8:
-            c1.card_number = hex(int(c1.card_number))[2:].upper().rjust(8, '0')
-
-        if not c1.note:
-            c1.note = 'default'
-
-        if not c1.class_time:
-            c1.class_time = 'default'
-
         try:
+            # 如果数据库中找到卡号和工号相同的卡, 则覆盖原来的信息
+            if card1.first():
+                card_tmp = card1.first()
+                card_tmp.card_category = str(card[1]).strip()
+                card_tmp.name = str(card[2]).strip()
+                card_tmp.department = str(card[4]).strip()
+                card_tmp.gender = str(card[5]).strip()
+                card_tmp.note = str(card[6]).strip()
+                card_tmp.classes = str(card[7]).strip().split(',')
+                card_tmp.save()
+                return_list.append(card_tmp.to_json())
+                continue
+
+            c1 = Card(
+                card_number=str(card[0]).upper().rjust(8, '0').strip(),
+                card_category=str(card[1]).strip(),
+                name=str(card[2]).strip(),
+                job_number=str(card[3]).strip(),
+                department=str(card[4]).strip(),
+                gender=str(card[5]).strip(),
+                note=str(card[6]).strip(),
+                classes=str(card[7]).strip().split(',')
+            )
+
+            if len(c1.card_number) > 8:
+                c1.card_number = hex(int(c1.card_number))[2:].upper().rjust(8, '0')
+
+            if not c1.note:
+                c1.note = 'default'
+
+            if not c1.class_time:
+                c1.class_time = 'default'
+
             c1.save()
         except Exception as e:
             failed_list.append((c1.to_json(), str(e)))
