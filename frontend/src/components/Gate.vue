@@ -2,7 +2,7 @@
   <div class="col-md-3 text-center gate-box">
     <p class="text-right gate-indicator-row">
       <span class="badge gate-badge">
-        <font-awesome-icon icon="circle" />
+        <font-awesome-icon icon="circle"/>
       </span>
     </p>
 
@@ -10,14 +10,24 @@
     <div class="w-100"></div>
     <p class="gate_name w-100">{{ gate.category }}: {{ gate.name }}</p>
     <div class="btn-group btn-group-sm text-center" role="group" aria-label="On OFF Buttons">
-      <button type="button" class="btn gate-btn-on-off" :class="{ 'btn-dark': isOn }" @click.prevent="toggleIsOn()">ON</button>
-      <button type="button" class="btn gate-btn-on-off" :class="{ 'btn-dark': !isOn }" @click.prevent="toggleIsOn()">OFF</button>
+      <button
+        type="button"
+        class="btn gate-btn-on-off"
+        :class="{ 'btn-dark': isOn }"
+        @click.prevent="toggleIsOn()"
+      >ON</button>
+      <button
+        type="button"
+        class="btn gate-btn-on-off"
+        :class="{ 'btn-dark': !isOn }"
+        @click.prevent="toggleIsOn()"
+      >OFF</button>
     </div>
     <div class="w-100">
       <table class="gate-table">
         <tr>
           <td rowspan="2" class="text-center align-middle gate-icon">
-            <font-awesome-icon icon="shoe-prints" :transform="{ rotate: 270 }" size="1x" />
+            <font-awesome-icon icon="shoe-prints" :transform="{ rotate: 270 }" size="1x"/>
           </td>
 
           <td class="gate-max-min-left-td text-small">max</td>
@@ -27,7 +37,7 @@
           <td class="gate-max-min-right-td text-small">max</td>
 
           <td rowspan="2" class="text-center align-middle gate-icon">
-            <font-awesome-icon icon="hand-paper" size="1x" />
+            <font-awesome-icon icon="hand-paper" size="1x"/>
           </td>
         </tr>
         <tr>
@@ -39,27 +49,26 @@
         </tr>
       </table>
     </div>
-
   </div>
 </template>
 <script>
 export default {
-  name: 'Gate',
+  name: "Gate",
   data() {
     return {
-      isOn: this.gate.is_on,
+      isOn: this.gate.is_on
     };
   },
   props: {
-    gate: null,
+    gate: null
   },
   methods: {
     toggleIsOn() {
       this.isOn = !this.isOn;
-    },
+    }
   },
   components: {},
-  created() {},
+  created() {}
 };
 </script>
 

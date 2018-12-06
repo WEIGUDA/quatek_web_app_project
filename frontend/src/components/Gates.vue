@@ -2,43 +2,64 @@
   <div class="container">
     <div class="row search-row">
       <div class="input-group">
-        <input type="text" class="form-control" aria-label="Search string" aria-describedby="basic-addon2" v-model.trim="query_string" placeholder="可搜索门禁类别">
+        <input
+          v-model.trim="query_string"
+          type="text"
+          class="form-control"
+          aria-label="Search string"
+          aria-describedby="basic-addon2"
+          placeholder="可搜索门禁类别"
+        >
         <div class="input-group-append">
-          <button class="btn btn-outline-success btn-outline-quatek" type="button" @click="search()">
-            <font-awesome-icon icon="search" /> Search</button>
+          <button
+            class="btn btn-outline-success btn-outline-quatek"
+            type="button"
+            @click="search()"
+          >
+            <font-awesome-icon icon="search"/>Search
+          </button>
         </div>
       </div>
     </div>
 
     <div class="row btn-row">
       <p class="w-100 text-right">
-        <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="上传" @click="upload_show()">
-          <font-awesome-icon icon="upload" />
+        <button
+          type="button"
+          class="btn btn-secondary btn-row-btn btn-sm"
+          title="上传"
+          @click="upload_show()"
+        >
+          <font-awesome-icon icon="upload"/>
         </button>
-        <button type="button" class="btn btn-secondary btn-row-btn btn-sm" title="导出" @click="download_csv()">
-          <font-awesome-icon icon="download" />
+        <button
+          type="button"
+          class="btn btn-secondary btn-row-btn btn-sm"
+          title="导出"
+          @click="download_csv()"
+        >
+          <font-awesome-icon icon="download"/>
         </button>
       </p>
     </div>
 
     <hr v-if="gates.length">
-    <div class="row" v-if="!gates.length">
+    <div v-if="!gates.length" class="row">
       <p class="w-100 text-center no-result">没有搜索到结果</p>
     </div>
-    <div class="row" v-if="gates.length">
-      <AppGate v-for="gate in gates" :gate=gate :key="gate._id.$oid"></AppGate>
+    <div v-if="gates.length" class="row">
+      <AppGate v-for="gate in gates" :gate="gate" :key="gate._id.$oid"/>
     </div>
-    <nav aria-label="Page navigation" v-if="gates.length">
+    <nav v-if="gates.length" aria-label="Page navigation">
       <ul class="pagination justify-content-center">
-        <li class="page-item" :class="{disabled: currentPage<=1}">
+        <li :class="{disabled: currentPage<=1}" class="page-item">
           <a class="page-link" href="#" aria-label="Previous" @click="prevPage()">
             <span aria-hidden="true">&laquo;</span>
             <span class="sr-only">上一页</span>
           </a>
-
         </li>
         <li class="page-item disabled">
-          <a class="page-link">第 {{currentPage}} 页</a>
+          <a class="page-link">第 {{ currentPage }} 页</a>
         </li>
 
         <li class="page-item">
@@ -47,55 +68,74 @@
             <span class="sr-only">下一页</span>
           </a>
         </li>
-
       </ul>
     </nav>
-    <b-modal v-model="show_modal" title="上传闸机信息" ok-only ok-title="上传" :lazy="true" @ok="upload2()" ok-variant="success">
+    <b-modal
+      v-model="show_modal"
+      :lazy="true"
+      title="上传闸机信息"
+      ok-only
+      ok-title="上传"
+      ok-variant="success"
+      @ok="upload2()"
+    >
       <b-container fluid>
         <b-row>
-          <a class="template_download" href="" @click.prevent="download_gates_upload_template2()">闸机上传模版.xlsx</a>
+          <a
+            class="template_download"
+            href
+            @click.prevent="download_gates_upload_template2()"
+          >闸机上传模版.xlsx</a>
         </b-row>
         <br>
         <b-row>
-          <input type="file" name="excel_file" id="excel_file" ref="excel_file">
+          <input id="excel_file" ref="excel_file" type="file" name="excel_file">
         </b-row>
-
       </b-container>
-
     </b-modal>
 
-    <b-modal v-model="show_modal2" title="上传闸机信息" ok-only ok-title="查看详情" :lazy="true" @ok="routeToFailedUploadPage()" ok-variant="success">
+    <b-modal
+      v-model="show_modal2"
+      :lazy="true"
+      title="上传闸机信息"
+      ok-only
+      ok-title="查看详情"
+      ok-variant="success"
+      @ok="routeToFailedUploadPage()"
+    >
       <b-container fluid>
-        <b-row>
-          {{this.last_upload_result.result}} 台闸机上传成功
-        </b-row>
+        <b-row>{{ this.last_upload_result.result }} 台闸机上传成功</b-row>
         <br>
-        <b-row>
-          {{this.last_upload_result.failed_numbers}} 台失败
-        </b-row>
-
+        <b-row>{{ this.last_upload_result.failed_numbers }} 台失败</b-row>
       </b-container>
     </b-modal>
   </div>
-
 </template>
 
 <script>
-import axios from 'axios';
-import fileDownload from 'js-file-download';
-import Gate from '@/components/Gate';
+import axios from "axios";
+import fileDownload from "js-file-download";
+import Gate from "@/components/Gate";
 
 export default {
-  name: 'Gates',
+  name: "Gates",
+  components: {
+    AppGate: Gate,
+    FileReader
+  },
   data() {
     return {
       currentPage: 1,
       gates: [],
-      query_string: '',
+      query_string: "",
       show_modal: false,
       show_modal2: false,
-      last_upload_result: {},
+      last_upload_result: {}
     };
+  },
+
+  created() {
+    this.get_gates();
   },
 
   methods: {
@@ -105,11 +145,11 @@ export default {
 
       axios
         .get(`gates?q=${this.query_string}`)
-        .then((response) => {
+        .then(response => {
           console.log(response);
           this.gates = response.data;
         })
-        .catch((response) => {
+        .catch(response => {
           console.log(response);
         });
     },
@@ -121,43 +161,43 @@ export default {
     upload2() {
       let formData = new FormData();
       let excel_file = this.$refs.excel_file.files[0];
-      formData.append('excel_file', excel_file);
+      formData.append("excel_file", excel_file);
       console.log(formData);
       axios
-        .post('upload_gates_excel', formData, {
+        .post("upload_gates_excel", formData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+            "Content-Type": "multipart/form-data"
+          }
         })
-        .then((response) => {
+        .then(response => {
           console.log(response);
           this.last_upload_result = response.data;
-          this.$store.commit('setLastFailedUpload', response.data.failed);
+          this.$store.commit("setLastFailedUpload", response.data.failed);
           this.show_modal2 = true;
         })
-        .catch((response) => {
+        .catch(response => {
           console.log(response);
         });
     },
 
     routeToFailedUploadPage() {
-      this.$router.push({ name: 'LastFailedUpload' });
+      this.$router.push({ name: "LastFailedUpload" });
     },
 
     download_gates_upload_template2() {
       axios
-        .get('download_gates_upload_template', {
-          responseType: 'blob',
+        .get("download_gates_upload_template", {
+          responseType: "blob"
         })
-        .then((response) => {
+        .then(response => {
           console.log(response);
           fileDownload(
             response.data,
-            '闸机上传模版.xlsx',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            "闸机上传模版.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           );
         })
-        .catch((response) => {
+        .catch(response => {
           console.log(response);
         });
     },
@@ -165,12 +205,12 @@ export default {
       let offset = (this.currentPage - 2) * 50;
       axios
         .get(`gates?offset=${offset}&q=${this.query_string}`)
-        .then((response) => {
+        .then(response => {
           console.log(response);
           this.gates = response.data;
           this.currentPage--;
         })
-        .catch((response) => {
+        .catch(response => {
           console.log(response);
         });
     },
@@ -178,26 +218,26 @@ export default {
       let offset = this.currentPage * 50;
       axios
         .get(`gates?offset=${offset}&q=${this.query_string}`)
-        .then((response) => {
+        .then(response => {
           if (response.data.length !== 0) {
             console.log(response);
             this.gates = response.data;
             this.currentPage++;
           } else {
-            alert('已经到达最后一页!');
+            alert("已经到达最后一页!");
           }
         })
-        .catch((response) => {
+        .catch(response => {
           console.log(response);
         });
     },
 
     download_csv() {
       try {
-        let title = 'gates_page_' + this.currentPage;
+        let title = "gates_page_" + this.currentPage;
         let gate_array = [];
         let csv_header =
-          'id,name,number,category,mc_id,hand_max,hand_min,foot_max,foot_min,created_time,is_on,is_online\n';
+          "id,name,number,category,mc_id,hand_max,hand_min,foot_max,foot_min,created_time,is_on,is_online\n";
         let csv = [];
 
         for (let gate of this.gates) {
@@ -214,23 +254,23 @@ export default {
               gate.foot_min,
               this.$moment(gate.created_time.$date).format(),
               gate.is_on,
-              gate.is_online,
-            ].join(','),
+              gate.is_online
+            ].join(",")
           );
         }
-        csv = gate_array.join('\n');
+        csv = gate_array.join("\n");
 
-        let uri = 'data:text/csv;charset=utf-8,' + csv_header + encodeURI(csv);
+        let uri = "data:text/csv;charset=utf-8," + csv_header + encodeURI(csv);
 
-        let link = document.createElement('a');
+        let link = document.createElement("a");
 
-        link.id = 'csv-download-id';
+        link.id = "csv-download-id";
         link.href = uri;
 
         document.body.appendChild(link);
 
-        document.getElementById(link.id).style.visibility = 'hidden';
-        document.getElementById(link.id).download = title + '.csv';
+        document.getElementById(link.id).style.visibility = "hidden";
+        document.getElementById(link.id).download = title + ".csv";
 
         document.body.appendChild(link);
         document.getElementById(link.id).click();
@@ -245,24 +285,16 @@ export default {
     },
     get_gates() {
       axios
-        .get('gates')
-        .then((response) => {
+        .get("gates")
+        .then(response => {
           console.log(response);
           this.gates = response.data;
         })
-        .catch((response) => {
+        .catch(response => {
           console.log(response);
         });
-    },
-  },
-  components: {
-    AppGate: Gate,
-    FileReader,
-  },
-
-  created() {
-    this.get_gates();
-  },
+    }
+  }
 };
 </script>
 
