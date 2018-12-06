@@ -419,14 +419,14 @@ def upload_cards_excel():
             continue
 
         card1 = Card.objects.filter(
-            card_number=str(card[0]).upper().rjust(8, '0').strip(),
             job_number=str(card[3]).strip()
         )
 
         try:
-            # 如果数据库中找到卡号和工号相同的卡, 则覆盖原来的信息
+            # 如果数据库中找到工号相同的卡, 则覆盖原来的信息
             if card1.first():
                 card_tmp = card1.first()
+                card_tmp.card_number = str(card[0]).upper().rjust(8, '0').strip(),
                 card_tmp.card_category = str(card[1]).strip()
                 card_tmp.name = str(card[2]).strip()
                 card_tmp.department = str(card[4]).strip()
