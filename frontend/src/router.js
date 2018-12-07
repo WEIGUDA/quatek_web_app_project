@@ -23,7 +23,7 @@ import real_time_data from "@/components/real_time_data";
 Vue.use(Router);
 
 export const router = new Router({
-  mode: "history",
+  // mode: "history",
   routes: [
     {
       path: "/",
