@@ -431,6 +431,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                 all_cards = [x for x in card_collection.find({'card_number': {'$in': list(card_number_set)}})]
                 all_logs_needed_to_send_to_frontend = copy.deepcopy(all_cardtests)
                 for log in all_logs_needed_to_send_to_frontend:
+                    log['_id'] = str(log['_id'])
                     if log['card_category'] == '0':
                         log['card_category'] = 'VIP'
                     if log['card_category'] == '1':
