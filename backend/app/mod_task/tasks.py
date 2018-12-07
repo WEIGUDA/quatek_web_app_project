@@ -470,6 +470,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
 
                 # send all logs to frontend using socketio
                 # try:
+                logger.info('got all_logs_needed_to_send_to_frontend: ' + str(all_logs_needed_to_send_to_frontend))
                 socket_io = SocketIO(message_queue=REDIS_URL)
                 socket_io.emit('send_all_cards_data_to_frontend_from_tasks', all_logs_needed_to_send_to_frontend)
                 # except:
