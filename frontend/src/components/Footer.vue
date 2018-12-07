@@ -1,10 +1,8 @@
 <template>
-    <p class="text-center text-muted">Professional technology. Successful partnership.</p>
+  <p class="text-center text-muted">Professional technology. Successful partnership.</p>
 </template>
 <script>
-export default {
-    
-}
+export default {};
 </script>
 <style scoped>
 /* Extra small devices (portrait phones, less than 576px)

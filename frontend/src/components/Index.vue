@@ -1,24 +1,18 @@
 <template>
   <div class="container">
-    <p class="text-center ">ESD 检测门禁系统</p>
+    <p class="text-center">ESD 检测门禁系统</p>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'index',
+  name: "index",
   data: function() {
-      return {
-          
-      };
+    return {};
   },
-  props: {
- 
-  },
-  components: {
-      
-  }
-}
+  props: {},
+  components: {}
+};
 </script>
 
 <style scoped>

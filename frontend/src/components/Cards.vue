@@ -16,7 +16,8 @@
             type="button"
             @click="search()"
           >
-            <font-awesome-icon icon="search" /> Search</button>
+            <font-awesome-icon icon="search"/>Search
+          </button>
         </div>
       </div>
     </div>
@@ -28,7 +29,7 @@
           title="上传"
           @click="upload_show()"
         >
-          <font-awesome-icon icon="upload" />
+          <font-awesome-icon icon="upload"/>
         </button>
         <button
           type="button"
@@ -36,7 +37,7 @@
           title="下载"
           @click="download_excel()"
         >
-          <font-awesome-icon icon="download" />
+          <font-awesome-icon icon="download"/>
         </button>
         <button
           type="button"
@@ -44,20 +45,14 @@
           title="添加卡片"
           @click="cardAdd()"
         >
-          <font-awesome-icon icon="user-plus" />
+          <font-awesome-icon icon="user-plus"/>
         </button>
       </p>
     </div>
-    <div
-      class="row"
-      v-if="!cards.length"
-    >
+    <div class="row" v-if="!cards.length">
       <p class="w-100 text-center no-result">没有搜索到结果</p>
     </div>
-    <div
-      class="row"
-      v-if="cards.length"
-    >
+    <div class="row" v-if="cards.length">
       <table class="table table-striped table-responsive-md">
         <thead>
           <tr>
@@ -72,11 +67,7 @@
           </tr>
         </thead>
         <tbody>
-
-          <tr
-            v-for="card in computed_cards"
-            :key="card._id.$oid"
-          >
+          <tr v-for="card in computed_cards" :key="card._id.$oid">
             <td>{{card.name}}</td>
             <td>{{card.job_number}}</td>
             <td>{{card.card_number}}</td>
@@ -89,7 +80,7 @@
                 class="btn btn-secondary btn-quatek btn-sm"
                 @click="edit_card(card._id.$oid)"
               >
-                <font-awesome-icon icon="pencil-alt" />
+                <font-awesome-icon icon="pencil-alt"/>
               </button>
             </td>
             <td>
@@ -98,50 +89,31 @@
                 class="btn btn-secondary btn-quatek btn-sm"
                 @click="delete_cards([card._id.$oid,])"
               >
-                <font-awesome-icon icon="trash-alt" />
+                <font-awesome-icon icon="trash-alt"/>
               </button>
             </td>
           </tr>
         </tbody>
-
       </table>
     </div>
-    <nav
-      aria-label="Page navigation"
-      v-if="cards.length"
-    >
+    <nav aria-label="Page navigation" v-if="cards.length">
       <ul class="pagination justify-content-center">
-        <li
-          class="page-item"
-          :class="{disabled: currentPage<=1}"
-        >
-          <a
-            class="page-link"
-            href="#"
-            aria-label="Previous"
-            @click="prevPage()"
-          >
+        <li class="page-item" :class="{disabled: currentPage<=1}">
+          <a class="page-link" href="#" aria-label="Previous" @click="prevPage()">
             <span aria-hidden="true">&laquo;</span>
             <span class="sr-only">上一页</span>
           </a>
-
         </li>
         <li class="page-item disabled">
           <a class="page-link">第 {{currentPage}} 页</a>
         </li>
 
         <li class="page-item">
-          <a
-            class="page-link"
-            href="#"
-            aria-label="Next"
-            @click="nextPage()"
-          >
+          <a class="page-link" href="#" aria-label="Next" @click="nextPage()">
             <span aria-hidden="true">&raquo;</span>
             <span class="sr-only">下一页</span>
           </a>
         </li>
-
       </ul>
     </nav>
     <b-modal
@@ -157,20 +129,14 @@
         <b-row>
           <a
             class="template_download"
-            href=""
+            href
             @click.prevent="download_cards_upload_template2()"
           >卡片上传模版.xlsx</a>
         </b-row>
         <br>
         <b-row>
-          <input
-            type="file"
-            name="excel_file"
-            id="excel_file"
-            ref="excel_file"
-          >
+          <input type="file" name="excel_file" id="excel_file" ref="excel_file">
         </b-row>
-
       </b-container>
     </b-modal>
 
@@ -184,14 +150,9 @@
       ok-variant="success"
     >
       <b-container fluid>
-        <b-row>
-          {{this.last_upload_result.result}} 张卡片上传成功
-        </b-row>
+        <b-row>{{this.last_upload_result.result}} 张卡片上传成功</b-row>
         <br>
-        <b-row>
-          {{this.last_upload_result.failed_numbers}} 张失败
-        </b-row>
-
+        <b-row>{{this.last_upload_result.failed_numbers}} 张失败</b-row>
       </b-container>
     </b-modal>
   </div>

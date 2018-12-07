@@ -6,12 +6,7 @@
       <small>请将 HID 卡号放在 Excel 文件的第一列</small>
       <br>
       <br>
-      <input
-        type="file"
-        name="hid_excel_file"
-        id="hid_excel_file"
-        ref="hid_excel_file"
-      >
+      <input type="file" name="hid_excel_file" id="hid_excel_file" ref="hid_excel_file">
       <button @click.prevent.stop="submit_hid_excel_file()">提交</button>
     </div>
   </div>

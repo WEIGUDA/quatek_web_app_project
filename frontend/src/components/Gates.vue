@@ -120,8 +120,7 @@ import Gate from "@/components/Gate";
 export default {
   name: "Gates",
   components: {
-    AppGate: Gate,
-    FileReader
+    AppGate: Gate
   },
   data() {
     return {
