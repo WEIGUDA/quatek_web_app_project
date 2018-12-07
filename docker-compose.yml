@@ -24,7 +24,7 @@ services:
     restart: always
     ports:
       - "5858:5858"
-    command: celery -A app.mod_task.tasks worker
+    command: celery worker -A app.mod_task.tasks -P eventlet
     depends_on:
       - flask
     deploy:

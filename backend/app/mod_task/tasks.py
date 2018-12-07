@@ -469,14 +469,16 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                         pass
 
                 # send all logs to frontend using socketio
-                socket_io = SocketIO(message_queue=REDIS_URL)
-                socket_io.emit('send_all_cards_data_to_frontend_from_tasks', all_logs_needed_to_send_to_frontend)
-                
-                # from flask_socketio import SocketIO
+                try:
+                    socket_io = SocketIO(message_queue=REDIS_URL)
+                    socket_io.emit('send_all_cards_data_to_frontend_from_tasks', all_logs_needed_to_send_to_frontend)
+                except:
+                    pass
+
+                # for test use
                 # s = SocketIO(message_queue='redis://127.0.0.1')
-                # s.emit('send_all_cards_data_to_frontend_from_tasks', [{'log_id': '1', 'name': 'name1'}, {'log_id': '2', 'name': 'name2'}])
-
-
+                # s.emit('send_all_cards_data_to_frontend_from_tasks', [
+                #        {'log_id': '1', 'name': 'name1'}, {'log_id': '2', 'name': 'name2'}])
 
             except:
                 logger.exception('error from: {} {}'.format(mc_client, self.client_address))

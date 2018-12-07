@@ -1,13 +1,17 @@
-import os
-from pprint import pprint
-from flask import Flask
-from flask_mongoengine import MongoEngine
-from flask_socketio import SocketIO
-from flask_cors import CORS
-import flask_excel
+try:
+    import eventlet
+    eventlet.monkey_patch()
+except:
+    pass
+
 from flask_jwt_extended import JWTManager
-import eventlet
-eventlet.monkey_patch()
+import flask_excel
+from flask_cors import CORS
+from flask_socketio import SocketIO
+from flask_mongoengine import MongoEngine
+from flask import Flask
+from pprint import pprint
+import os
 
 
 db = MongoEngine()
