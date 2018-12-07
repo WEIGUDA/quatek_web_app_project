@@ -70,7 +70,8 @@ Vue.config.productionTip = false;
 
 Vue.use(
   new VueSocketIO({
-    debug: process.env.NODE_ENV === "production" ? false : true,
+    // debug: process.env.NODE_ENV === "production" ? false : true,
+    debug: true,
     connection: `http://${IP_ADDRESS}:${PORT}`,
     vuex: {
       store,
