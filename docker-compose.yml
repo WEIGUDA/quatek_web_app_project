@@ -80,7 +80,7 @@ services:
     image: "mongo:4"
     restart: always
     ports:
-      - "5005:27017"
+      - "27017:27017"
     deploy:
       replicas: 1
       update_config:
@@ -97,6 +97,8 @@ services:
   redis:
     image: "redis:4-alpine"
     restart: always
+    ports:
+      - "6379:6379"
     deploy:
       replicas: 1
       update_config:
