@@ -55,7 +55,7 @@ app.conf.update({
     'CELERY_MONGODB_SCHEDULER_DB': MONGODB_DB,
     'CELERY_MONGODB_SCHEDULER_COLLECTION': "schedules",
     'CELERY_MONGODB_SCHEDULER_URL': f"mongodb://{MONGODB_HOST}:{MONGODB_PORT}",
-    'enable_utc': True,
+    'enable_utc': False,
 })
 
 
@@ -447,7 +447,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                         log['in_out_symbol'] = '进'
 
                     local_tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
-                    log['test_datetime'] = log['test_datetime'].replace(tzinfo=local_tz).isoformat()
+                    log['test_datetime'] = log['test_datetime'].replace(tzinfo=local_tz).timestamp() * 1000
 
                     if log['test_result'] == '0':
                         log['test_result'] = '不通过'
