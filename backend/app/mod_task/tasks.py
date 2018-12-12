@@ -55,7 +55,7 @@ app.conf.update({
     'CELERY_MONGODB_SCHEDULER_DB': MONGODB_DB,
     'CELERY_MONGODB_SCHEDULER_COLLECTION': "schedules",
     'CELERY_MONGODB_SCHEDULER_URL': f"mongodb://{MONGODB_HOST}:{MONGODB_PORT}",
-    'enable_utc': False,
+    'enable_utc': True,
 })
 
 
