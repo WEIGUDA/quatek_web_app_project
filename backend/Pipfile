@@ -21,6 +21,7 @@ pyexcel-xlsx = "*"
 pyexcel-xls = "*"
 pyexcel = "*"
 flask-excel = "*"
+flask-pymongo = "*"
 
 [dev-packages]
 pylint = "*"

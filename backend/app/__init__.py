@@ -4,6 +4,7 @@ try:
 except:
     pass
 
+import os
 from flask_jwt_extended import JWTManager
 import flask_excel
 from flask_cors import CORS
@@ -11,13 +12,14 @@ from flask_socketio import SocketIO
 from flask_mongoengine import MongoEngine
 from flask import Flask
 from pprint import pprint
-import os
+from flask_pymongo import PyMongo
 
 
 db = MongoEngine()
 socketio = SocketIO()
 cors = CORS()
 jwt = JWTManager()
+mongo = PyMongo()
 
 
 def create_app():
@@ -34,6 +36,9 @@ def create_app():
     app.config['SOCKET_HOST'] = os.environ.get('SOCKET_HOST', '0.0.0.0')
     app.config['SOCKET_PORT'] = os.environ.get('SOCKET_PORT', 5858)
     app.config['JWT_SECRET_KEY'] = app.config['SECRET_KEY']
+    app.config["MONGO_URI"] = "mongodb://{}:{}/{}".format(app.config['MONGODB_HOST'],
+                                                          app.config['MONGODB_PORT'],
+                                                          app.config['MONGODB_DB'])
 
     # init extentions
     db.init_app(app)
@@ -41,6 +46,7 @@ def create_app():
     cors.init_app(app)
     jwt.init_app(app)
     flask_excel.init_excel(app)
+    mongo.init_app(app)
 
     # register blueprints
     from app.mod_gate.routers import bp as mod_gate_bp
@@ -59,7 +65,28 @@ def create_app():
 
     @app.shell_context_processor
     def make_shell_context():
-        return {'app': app, 'User': User, 'CardTest': CardTest, 'Gate': Gate, 'Card': Card, 'CardClassTime': CardClassTime}
+        return {
+            'app': app,
+            'User': User,
+            'CardTest': CardTest,
+            'Gate': Gate,
+            'Card': Card,
+            'CardClassTime': CardClassTime,
+            'user_collection': mongo.db.user,
+            'card_collection': mongo.db.card,
+            'card_class_time_collection': mongo.db.card_class_time,
+            'gate_collection': mongo.db.gate,
+            'system_config_collection': mongo.db.system_config,
+            'schedules_collection': mongo.db.schedules, }
+
+    # middleware T初始化 user 数据表
+
+    @app.before_first_request
+    def init_app():
+        user_collection = mongo.db.user
+        if user_collection.count_documents({}) == 0:
+            user_collection.insert_one({'username': 'quatek', 'password': 'quatek'})
+            app.logger.info('created a default user for user collection')
 
     if app.config['DEBUG']:
         pprint(app.config)
