@@ -424,9 +424,9 @@ def upload_cards_excel():
 
         try:
             # 如果数据库中找到工号相同的卡, 则覆盖原来的信息
-            if card1.first():
+            if card1:
                 card_tmp = card1.first()
-                card_tmp.card_number = str(card[0]).upper().rjust(8, '0').strip(),
+                card_tmp.card_number = str(card[0]).upper().rjust(8, '0').strip()
                 card_tmp.card_category = str(card[1]).strip()
                 card_tmp.name = str(card[2]).strip()
                 card_tmp.department = str(card[4]).strip()
@@ -454,12 +454,16 @@ def upload_cards_excel():
             if not c1.note:
                 c1.note = 'default'
 
-            if not c1.class_time:
-                c1.class_time = 'default'
+            if not c1.classes:
+                c1.classes = 'default'
 
             c1.save()
+
         except Exception as e:
-            failed_list.append((c1.to_json(), str(e)))
+            if card_tmp:
+                failed_list.append((card_tmp.to_json(), str(e)))
+            else:
+                failed_list.append((c1.to_json(), str(e)))
         else:
             return_list.append(c1.to_json())
 
