@@ -20,6 +20,7 @@
       "stopOnEntry": false,
       "pythonPath": "${config:python.pythonPath}",
       "module": "flask",
+      "gevent": true,
       "cwd": "${workspaceFolder}/backend",
       "env": {
         "FLASK_APP": "app"
