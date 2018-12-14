@@ -2,8 +2,8 @@
 FROM node:alpine as build-stage
 WORKDIR /app
 COPY . /app
-RUN npm --registry https://registry.npm.taobao.org install && \
-    npm run build
+RUN npm --registry https://registry.npm.taobao.org install 
+RUN npm run build
 
 
 # production stage

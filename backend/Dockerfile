@@ -12,10 +12,11 @@ ENV LD_LIBRARY_PATH=/app/oracle/instantclient_18_3
 
 WORKDIR /app
 COPY . /app
+COPY sources.list /etc/apt/
 
 RUN apt-get update 
 RUN apt-get install -y libaio1 
-RUN pip3 install -i https://mirrors.aliyun.com/pypi/simple/ pipenv --trusted-host mirrors.aliyun.com 
+RUN pip3 install -i https://mirrors.aliyun.com/pypi/simple pipenv --trusted-host mirrors.aliyun.com 
 RUN pipenv install --system --verbose --ignore-pipfile --deploy
 
 CMD python run_pro.py
