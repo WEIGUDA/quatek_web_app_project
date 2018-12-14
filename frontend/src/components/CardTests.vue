@@ -189,6 +189,7 @@ export default {
     computed_cardtests: function() {
       let computed_cardtests = lodash.cloneDeep(this.cardtests);
       for (let cardtest of computed_cardtests) {
+        // 先使用卡号匹配 log 和 card
         let card = this.cards.filter(
           obj => obj.card_number === cardtest.card_number
         );
@@ -197,13 +198,14 @@ export default {
           cardtest.job_number = card[0].job_number;
           cardtest.department = card[0].department;
         } else {
+          // 再使用 卡片编号 匹配
           let card2 = this.cards.filter(
             obj => String(obj.card_counter) === String(cardtest.card_counter)
           );
           if (card2.length > 0) {
             cardtest.name = card2[0].name;
             cardtest.job_number = card2[0].job_number;
-            cardtest.department = card[0].department;
+            cardtest.department = card2[0].department;
           } else {
             cardtest.name = "未找到姓名";
             cardtest.job_number = "未找到工号";
@@ -421,7 +423,7 @@ export default {
     axios
       .get("/cards?offset=0&limit=50000")
       .then(response => {
-        console.log(response);
+        console.log("get cards: ", response.data);
         this.cards = response.data;
       })
       .catch(response => {
