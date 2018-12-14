@@ -50,7 +50,7 @@ logger.addHandler(fileHandler)
 
 
 # celery
-app = Celery('quatek-task', broker=REDIS_URL, result_backend=REDIS_URL)
+app = Celery('quatek-task', broker=REDIS_URL, backend=REDIS_URL)
 app.conf.update({
     'CELERY_MONGODB_SCHEDULER_DB': MONGODB_DB,
     'CELERY_MONGODB_SCHEDULER_COLLECTION': "schedules",
