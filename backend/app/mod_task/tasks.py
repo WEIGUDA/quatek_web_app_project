@@ -334,6 +334,10 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
             self.request.sendall(b'GET MCID\r\n')
             data = re.sub(r'CSN.*\r\n|\r|LOG ', '', self.request.recv(1024).decode())
             mc_client_id = data.replace('\r', '').replace('\n', '').split(' ')[1]
+            mc_clients = gates.find({'mc_id': mc_client_id})
+            if mc_clients.count() == 0:
+                raise Exception(f'数据库中无法找到 mc: {mc_client_id}')
+
             mc_client = gates.find({'mc_id': mc_client_id})[0]
 
             if 'MCID' not in data:
@@ -392,11 +396,15 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
             try:
                 all_data = ''.join(all_data)
                 all_data = re.sub(r'CSN.*\r\n|\r|LOG ', '', all_data).split('\n')
+                all_data = [x for x in all_data if len(x) > 2]  # 修复 有0时数据错误:
+                #  '1547164299,268,0015E7AD,2,1,2,1,1,NO,NO,3369,6105,OK', '547164299', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1547164307,1301,001592AD,2,1,2,1,1,NO,NO,7879,5189,OK', '1547164327,1348,001591F0,2,1,2,1,1,NO,NO,2347,2235,OK', '1547164332,942,001592B8,2,1,2,0,0,NO,NO,NO,NO,NO',
 
                 if not all_data[-1]:
                     all_data.pop()
-                logger.info(f'format: LOG 流水号;卡片编号;卡片号码;卡片类型;进出标志;进出机号;是否通过;是否测试;RSG;手腕带检测;左脚检测;右脚检测;ERG')
-                logger.info(f'raw data: {all_data}')
+                logger.info('format: LOG 流水号;卡片编号;卡片号码;卡片类型;进出标志;进出机号;是否通过;是否测试;RSG;手腕带检测;左脚检测;右脚检测;ERG\n')
+                logger.info(f'raw data:\n')
+                for x in all_data:
+                    logger.info(x + '\n')
 
                 # 卡片号码 set, 用于之后查找卡片信息用
                 card_number_set = set()
@@ -467,6 +475,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                         log['job_number'] = card['job_number']
 
                     except:
+                        logger.exception('cannot find card')
                         pass
 
                 # send all logs to frontend using socketio
