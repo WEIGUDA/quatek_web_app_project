@@ -470,7 +470,9 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                     log['name'] = ''
                     log['job_number'] = ''
                     try:
-                        card = filter(lambda x: x['card_number'] == log['card_number'], all_cards)[0]
+                        r = filter(lambda x: x['card_number'] == log['card_number'], all_cards)
+                        card = next(r)
+                        del r
                         log['name'] = card['name']
                         log['job_number'] = card['job_number']
 
