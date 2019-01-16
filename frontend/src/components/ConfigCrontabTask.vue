@@ -135,7 +135,7 @@
                 {{task.task}}
                 <span v-if="task.args[0]!== ''">: {{task.args[0]}} 班别</span>
               </td>
-              <td>{{task.crontab.minute}} | {{task.crontab.hour - new Date().getTimezoneOffset()/60}} | {{task.crontab.day_of_month}} | {{task.crontab.month_of_year}} | {{task.crontab.day_of_week}}</td>
+              <td>{{task.crontab.minute}} | {{task.crontab.hour==='*'? '*' : (task.crontab.hour - new Date().getTimezoneOffset()/60)}} | {{task.crontab.day_of_month}} | {{task.crontab.month_of_year}} | {{task.crontab.day_of_week}}</td>
               <td>
                 <button
                   type=" button"
@@ -230,10 +230,13 @@ export default {
               .post("/task-crontab-add-one", {
                 task: this.crontab_task.task,
                 minute: this.crontab_task.minute,
-                hour: String(
-                  Number(this.crontab_task.hour) +
-                    new Date().getTimezoneOffset() / 60
-                ),
+                hour:
+                  this.crontab_task.hour === "*"
+                    ? "*"
+                    : String(
+                        Number(this.crontab_task.hour) +
+                          new Date().getTimezoneOffset() / 60
+                      ),
                 day_of_month: this.crontab_task.day_of_month,
                 month_of_year: this.crontab_task.month_of_year,
                 day_of_week: this.crontab_task.day_of_week
