@@ -20,7 +20,7 @@
       <label class="form-check-label" for="smtp_need_auth">需要验证</label>
     </div>
 
-    <div class="form-group" v-show="config.smtp_need_auth">
+    <div class="form-group">
       <label for="smtp_username">SMTP 用户名</label>
       <input type="text" class="form-control" id="smtp_username" v-model="config.smtp_username">
     </div>
