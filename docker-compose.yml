@@ -112,27 +112,6 @@ services:
       - quatek_net
     volumes:
       - "redis:/data"
-  mongo-express:
-    image: mongo-express
-    restart: always
-    environment:
-      - ME_CONFIG_BASICAUTH_USERNAME=quatek
-      - ME_CONFIG_BASICAUTH_PASSWORD=quatek
-    ports:
-      - "8081:8081"
-    depends_on:
-      - mongo
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 2
-        delay: 10s
-      restart_policy:
-        condition: any
-        delay: 10s
-        window: 60s
-    networks:
-      - quatek_net
 volumes:
   redis: null
   mongodb: null
