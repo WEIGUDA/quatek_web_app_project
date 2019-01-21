@@ -118,7 +118,7 @@ def cards():
                 )
 
                 if len(c1.card_number) > 8:
-                    c1.card_number = hex(int(c1.card_number))[2:].upper().rjust(8, '0')
+                    c1.card_number = hex(int(c1.card_number))[4:].upper().rjust(8, '0')
 
                 if not c1.note:
                     c1.note = 'default'
@@ -170,7 +170,7 @@ def card_create():
                       classes=data['classes'].split(','))
 
             if len(c1.card_number) > 8:
-                c1.card_number = hex(int(c1.card_number))[2:].upper().rjust(8, '0')
+                c1.card_number = hex(int(c1.card_number))[4:].upper().rjust(8, '0')
 
             if not c1.note:
                 c1.note = 'default'
@@ -448,6 +448,7 @@ def upload_cards_excel():
                 classes=str(card[7]).strip().split(',')
             )
 
+            # 卡号大于8位,
             if len(c1.card_number) > 8:
                 c1.card_number = hex(int(c1.card_number))[2:].upper().rjust(8, '0')
 
