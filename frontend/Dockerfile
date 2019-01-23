@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . /app
 RUN npm --registry http://registry.npm.taobao.org install
 # RUN npm install 
-RUN npm run build
+RUN ["npm", "run", "build"]
 
 
 # production stage

@@ -6,17 +6,10 @@ services:
     restart: always
     ports:
       - "5001:5001"
-    depends_on:
-      - mongo
     deploy:
-      replicas: 1
-      update_config:
-        parallelism: 2
-        delay: 10s
+      mode: global
       restart_policy:
         condition: any
-        delay: 10s
-        window: 60s
     networks:
       - quatek_net
   celery_worker:
@@ -25,36 +18,20 @@ services:
     ports:
       - "5858:5858"
     command: celery worker -A app.mod_task.tasks -P eventlet
-    depends_on:
-      - flask
     deploy:
-      replicas: 1
-      update_config:
-        parallelism: 2
-        delay: 10s
+      mode: global
       restart_policy:
         condition: any
-        delay: 10s
-        window: 60s
     networks:
       - quatek_net
   celery_beat:
     image: registry.cn-shanghai.aliyuncs.com/weiguda/quatek_esd_backend
     restart: always
-    command: >-
-      celery -A app.mod_task.tasks beat -S
-      celerybeatmongo.schedulers.MongoScheduler
-    depends_on:
-      - flask
+    command: celery -A app.mod_task.tasks beat -S celerybeatmongo.schedulers.MongoScheduler
     deploy:
-      replicas: 1
-      update_config:
-        parallelism: 2
-        delay: 10s
+      mode: global
       restart_policy:
         condition: any
-        delay: 10s
-        window: 60s
     networks:
       - quatek_net
   vue:
@@ -63,17 +40,10 @@ services:
     restart: always
     ports:
       - "80:80"
-    depends_on:
-      - flask
     deploy:
-      replicas: 1
-      update_config:
-        parallelism: 2
-        delay: 10s
+      mode: global
       restart_policy:
         condition: any
-        delay: 10s
-        window: 60s
     networks:
       - quatek_net
   mongo:
@@ -82,14 +52,9 @@ services:
     ports:
       - "27017:27017"
     deploy:
-      replicas: 1
-      update_config:
-        parallelism: 2
-        delay: 10s
+      mode: global
       restart_policy:
         condition: any
-        delay: 10s
-        window: 60s
     networks:
       - quatek_net
     volumes:
@@ -100,20 +65,15 @@ services:
     ports:
       - "6379:6379"
     deploy:
-      replicas: 1
-      update_config:
-        parallelism: 2
-        delay: 10s
+      mode: global
       restart_policy:
         condition: any
-        delay: 10s
-        window: 60s
     networks:
       - quatek_net
     volumes:
       - "redis:/data"
 volumes:
-  redis: null
-  mongodb: null
+  redis:
+  mongodb:
 networks:
-  quatek_net: null
+  quatek_net:
