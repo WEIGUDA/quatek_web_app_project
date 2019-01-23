@@ -1,8 +1,13 @@
 version: "3"
 services:
   flask:
-    image: registry.cn-shanghai.aliyuncs.com/weiguda/quatek_esd_backend
-    build: ./backend
+    image: quatek_esd_backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile-debug
+    command: python run.py
+    volumes:
+      - ./backend:/app
     restart: always
     ports:
       - "5001:5001"
@@ -13,7 +18,7 @@ services:
     networks:
       - quatek_net
   celery_worker:
-    image: registry.cn-shanghai.aliyuncs.com/weiguda/quatek_esd_backend
+    image: quatek_esd_backend
     restart: always
     ports:
       - "5858:5858"
@@ -25,7 +30,7 @@ services:
     networks:
       - quatek_net
   celery_beat:
-    image: registry.cn-shanghai.aliyuncs.com/weiguda/quatek_esd_backend
+    image: quatek_esd_backend
     restart: always
     command: celery -A app.mod_task.tasks beat -S celerybeatmongo.schedulers.MongoScheduler
     deploy:
@@ -35,11 +40,16 @@ services:
     networks:
       - quatek_net
   vue:
-    image: registry.cn-shanghai.aliyuncs.com/weiguda/quatek_esd_frontend
-    build: ./frontend
+    image: quatek_esd_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile-debug
     restart: always
+    command: npm run serve
+    volumes:
+      - ./frontend:/app
     ports:
-      - "80:80"
+      - "80:8080"
     deploy:
       mode: global
       restart_policy:
@@ -72,19 +82,6 @@ services:
       - quatek_net
     volumes:
       - "redis:/data"
-  mongo-express:
-    image: mongo-express
-    environment:
-      - ME_CONFIG_BASICAUTH_USERNAME=quatek
-      - ME_CONFIG_BASICAUTH_PASSWORD=quatek
-    ports:
-      - "8081:8081"
-    deploy:
-      mode: global
-      restart_policy:
-        condition: any
-    networks:
-      - quatek_net
 volumes:
   redis:
   mongodb:
