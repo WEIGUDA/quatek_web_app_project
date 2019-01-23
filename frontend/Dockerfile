@@ -2,7 +2,7 @@
 FROM node:10 as build-stage
 WORKDIR /app
 COPY . /app
-RUN npm --registry http://registry.npm.taobao.org install
+RUN npm --registry https://registry.npm.taobao.org install
 # RUN npm install 
 RUN ["npm", "run", "build"]
 
