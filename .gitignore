@@ -744,3 +744,4 @@ paket-files/
 .vscode/
 backend/celerybeat-schedule
 *.http
+test_ground/
