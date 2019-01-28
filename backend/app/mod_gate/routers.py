@@ -252,7 +252,7 @@ def cardtests():
 
         if card_number:
             if len(card_number) > 8:
-                card_number = hex(int(card_number))[2:].upper().rjust(8, '0')
+                card_number = hex(int(card_number))[4:].upper().rjust(8, '0')
 
             q_object = q_object & Q(card_number__icontains=card_number)
 
@@ -450,7 +450,7 @@ def upload_cards_excel():
 
             # 卡号大于8位,
             if len(c1.card_number) > 8:
-                c1.card_number = hex(int(c1.card_number))[2:].upper().rjust(8, '0')
+                c1.card_number = hex(int(c1.card_number))[4:].upper().rjust(8, '0')
 
             if not c1.note:
                 c1.note = 'default'
