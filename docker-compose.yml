@@ -10,8 +10,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-      update_config:
-        parallelism: 1
     networks:
       - quatek_net
   celery_worker:
@@ -24,8 +22,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-      update_config:
-        parallelism: 1
     networks:
       - quatek_net
   celery_beat:
@@ -36,8 +32,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-        update_config:
-          parallelism: 1
     networks:
       - quatek_net
   vue:
@@ -50,8 +44,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-        update_config:
-          parallelism: 1
     networks:
       - quatek_net
   mongo:
@@ -63,8 +55,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-      update_config:
-        parallelism: 1
     networks:
       - quatek_net
     volumes:
@@ -78,8 +68,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-      update_config:
-        parallelism: 1
     networks:
       - quatek_net
     volumes:
@@ -95,8 +83,6 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-      update_config:
-        parallelism: 1
     networks:
       - quatek_net
 volumes:
