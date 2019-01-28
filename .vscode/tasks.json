@@ -6,7 +6,7 @@
     {
       "label": "Flask",
       "type": "shell",
-      "command": "pipenv run python run.py",
+      "command": "${workspaceFolder}/${config:python.pythonPath} run.py",
       "presentation": {
         "reveal": "always",
         "panel": "new"
