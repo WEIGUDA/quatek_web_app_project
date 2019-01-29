@@ -73,7 +73,7 @@ services:
     volumes:
       - "redis:/data"
   mongo-express:
-    image: mongo-express
+    image: mongo-express:latest
     environment:
       - ME_CONFIG_BASICAUTH_USERNAME=quatek
       - ME_CONFIG_BASICAUTH_PASSWORD=quatek
