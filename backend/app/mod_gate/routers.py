@@ -7,6 +7,7 @@ from flask import (Blueprint, abort, current_app, jsonify, make_response,
 from mongoengine.queryset.visitor import Q
 
 from app.mod_gate.models import Card, CardClassTime, CardTest, Gate
+from app.mod_system_config.models import SystemConfig
 from app.mod_task.tasks import (delete_a_card_from_mc_task,
                                 update_a_card_to_all_mc_task,
                                 update_all_cards_to_mc_task)
@@ -291,7 +292,9 @@ def cardtests():
                     if log['in_out_symbol'] == '1':
                         card_category = '进'
 
-                    local_tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+                    # 获得系统时区
+                    system_config_timezone = int(SystemConfig.objects.get().timezone)
+                    local_tz = datetime.timezone(datetime.timedelta(hours=system_config_timezone))
                     test_datetime = log['test_datetime'].replace(tzinfo=local_tz).isoformat()
 
                     test_result = ''
