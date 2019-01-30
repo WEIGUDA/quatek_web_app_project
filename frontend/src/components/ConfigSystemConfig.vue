@@ -62,6 +62,13 @@
       <small id="work_hours_help" class="form-text text-muted">格式: 8:00-18:00</small>
     </div>
 
+    <hr>
+    <div class="form-group">
+      <label for="timezone">系统时区</label>
+      <input type="text" class="form-control" id="timezone" v-model="config.timezone">
+      <small id="timezone_help" class="form-text text-muted">例如: +8</small>
+    </div>
+
     <button type="button" class="btn btn-success btn-quatek" @click.prevent.stop="submit()">确定</button>
   </div>
 </template>
@@ -80,7 +87,8 @@ export default {
         smtp_password: "",
         emails: "",
         work_hours: "8:00-18:00",
-        smtp_need_auth: true
+        smtp_need_auth: true,
+        timezone: "+8"
       }
     };
   },

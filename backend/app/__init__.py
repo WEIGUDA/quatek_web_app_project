@@ -61,6 +61,7 @@ def create_app():
     app.register_blueprint(mod_socketio_bp)
 
     from app.mod_gate.models import Card, CardTest, Gate, CardClassTime
+    from app.mod_system_config.models import SystemConfig
     from app.mod_auth.models import User
 
     @app.shell_context_processor
@@ -72,6 +73,7 @@ def create_app():
             'Gate': Gate,
             'Card': Card,
             'CardClassTime': CardClassTime,
+            'SystemConfig': SystemConfig,
             'user_collection': mongo.db.user,
             'card_collection': mongo.db.card,
             'card_class_time_collection': mongo.db.card_class_time,

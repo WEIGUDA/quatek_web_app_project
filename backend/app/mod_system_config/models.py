@@ -20,3 +20,4 @@ class SystemConfig(db.DynamicDocument):
     db_username = db.StringField(default='')
     db_password = db.StringField(default='')
     smtp_need_auth = db.BooleanField(default=True)
+    timezone = db.StringField(default='+8')

@@ -36,6 +36,7 @@ def update_system_config():
     system_config.emails = request.json['emails']
     system_config.work_hours = request.json['work_hours']
     system_config.smtp_need_auth = request.json['smtp_need_auth']
+    system_config.timezone = request.json['timezone']
 
     system_config.save()
 
