@@ -454,8 +454,7 @@ class GetCardTestLogHandler(socketserver.BaseRequestHandler):
                     if log['in_out_symbol'] == '1':
                         log['in_out_symbol'] = '进'
 
-                    local_tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
-                    log['test_datetime'] = log['test_datetime'].replace(tzinfo=local_tz).timestamp() * 1000
+                    log['test_datetime'] = log['test_datetime'].timestamp() * 1000
 
                     if log['test_result'] == '0':
                         log['test_result'] = '不通过'
@@ -666,7 +665,10 @@ def send_email_of_logs(card_class_time=''):
                             card_class_time=card_class_time)
 
     # sending email
-    local_tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+
+    # 获得系统时区
+    system_config_timezone = int(config['timezone'])
+    local_tz = datetime.timezone(datetime.timedelta(hours=system_config_timezone))
 
     file_name_utf = f"report_generated_at_{datetime.datetime.now().replace(tzinfo=local_tz)}_for_{card_class['name']}_{card_class['working_time_from']}_{card_class['working_time_to']}"
     file_name = f"report_generated_at_{datetime.datetime.now().replace(tzinfo=local_tz)}"
