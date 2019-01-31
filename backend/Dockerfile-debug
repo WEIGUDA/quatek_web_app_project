@@ -17,7 +17,7 @@ COPY ./sources.list /etc/apt
 RUN apt-get update 
 RUN apt-get install -y libaio1 
 RUN pip3 install -i https://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com pipenv 
-RUN pipenv install --system --ignore-pipfile --deploy
+RUN pipenv install --system --ignore-pipfile --deploy --dev
 
 CMD ["python", "run.py"]
 
