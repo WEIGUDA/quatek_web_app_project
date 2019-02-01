@@ -1,5 +1,7 @@
 import datetime
 from pymongo import MongoClient
+from app.mod_system_config.models import SystemConfig
+
 
 # TODO: change to aggregate
 #  logs.aggregate([{'$lookup': {'from': 'card', 'localField': 'card_number', 'foreignField': 'card_number', 'as': 'cards'}}])
@@ -31,7 +33,8 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
     wb = {}
 
     # 当前时区 和 时间
-    local_tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+    system_config_timezone = int(SystemConfig.objects.get().timezone)
+    local_tz = datetime.timezone(datetime.timedelta(hours=system_config_timezone))
     now = datetime.datetime.now().replace(tzinfo=local_tz)
 
     # 设定 筛选时间段
