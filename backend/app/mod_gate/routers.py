@@ -6,11 +6,15 @@ from flask import (Blueprint, abort, current_app, jsonify, make_response,
                    request, send_file)
 from mongoengine.queryset.visitor import Q
 
+import pymongo
+
+from app import mongo
 from app.mod_gate.models import Card, CardClassTime, CardTest, Gate
 from app.mod_system_config.models import SystemConfig
 from app.mod_task.tasks import (delete_a_card_from_mc_task,
                                 update_a_card_to_all_mc_task,
                                 update_all_cards_to_mc_task)
+from app.mod_gate.utils import normlize_card_number
 
 bp = Blueprint('mod_gate', __name__)
 
@@ -109,20 +113,14 @@ def cards():
                     continue
 
                 c1 = Card(
-                    card_number=card[0].upper().rjust(8, '0').strip(),
+                    card_number=normlize_card_number(card[0]),
                     card_category=card[1].strip(),
                     name=card[2].strip(),
                     job_number=card[3].strip(),
                     department=card[4].strip(),
                     gender=card[5].strip(),
-                    note=card[6].strip(),
+                    note=card[6].strip() if card[6] else 'default',
                 )
-
-                if len(c1.card_number) > 8:
-                    c1.card_number = hex(int(c1.card_number))[4:].upper().rjust(8, '0')
-
-                if not c1.note:
-                    c1.note = 'default'
 
                 c1.save()
 
@@ -160,21 +158,15 @@ def card_create():
     if request.method == 'POST':
         data = request.json
         try:
-            c1 = Card(card_number=data['card_number'].upper().rjust(8, '0').strip(),
+            c1 = Card(card_number=normlize_card_number(data['card_number']),
                       card_category=data['card_category'].strip(),
                       name=data['name'].strip(),
                       job_number=data['job_number'].strip(),
                       department=data['department'].strip(),
                       gender=data['gender'].strip(),
-                      note=data['note'].strip(),
+                      note=data['note'].strip() if data['note'] else 'default',
                       belong_to_mc=data['belong_to_mc'].strip(),
                       classes=data['classes'].split(','))
-
-            if len(c1.card_number) > 8:
-                c1.card_number = hex(int(c1.card_number))[4:].upper().rjust(8, '0')
-
-            if not c1.note:
-                c1.note = 'default'
 
             c1.save()
 
@@ -189,7 +181,7 @@ def card_create():
         data = request.json
         try:
             card = Card.objects.get(id=data['id'])
-            card.card_number = data['card_number'].upper().rjust(8, '0').strip()
+            card.card_number = normlize_card_number(data['card_number'])
             card.card_category = data['card_category'].strip()
             card.name = data['name'].strip()
             card.job_number = data['job_number'].strip()
@@ -253,7 +245,7 @@ def cardtests():
 
         if card_number:
             if len(card_number) > 8:
-                card_number = hex(int(card_number))[4:].upper().rjust(8, '0')
+                card_number = normlize_card_number(card_number)
 
             q_object = q_object & Q(card_number__icontains=card_number)
 
@@ -413,63 +405,69 @@ def download_cards_upload_template():
 
 @bp.route('/upload_cards_excel', methods=['POST', ])
 def upload_cards_excel():
+    card_collection = mongo.db.card
     cards_list = request.get_array(field_name='excel_file')
     return_list = []
     failed_list = []
 
     for index, card in enumerate(cards_list):
+        # 忽略第一行
         if index == 0:
             continue
 
-        card1 = Card.objects.filter(
-            job_number=str(card[3]).strip()
-        )
+        card_number = normlize_card_number(card[0])
+        card_category = str(card[1]).strip()
+        name = str(card[2]).strip()
+        job_number = str(card[3]).strip()
+        department = str(card[4]).strip()
+        gender = str(card[5]).strip()
+        note = str(card[6]).strip() if card[6] else 'default'
+        classes = str(card[7]).strip().split(',') if card[7] else 'default'
+        hid_card_number = ''
+        try:
+            hid_card_number = str(card[8]).strip()
+        except:
+            pass
+
+        card_dict = {'card_number': card_number,
+                     'card_category': card_category,
+                     'name': name,
+                     'job_number': job_number,
+                     'department': department,
+                     'gender': gender,
+                     'note': note,
+                     'classes': classes,
+                     'hid_card_number': hid_card_number
+                     }
 
         try:
-            # 如果数据库中找到工号相同的卡, 则覆盖原来的信息
-            if card1:
-                card_tmp = card1.first()
-                card_tmp.card_number = str(card[0]).upper().rjust(8, '0').strip()
-                card_tmp.card_category = str(card[1]).strip()
-                card_tmp.name = str(card[2]).strip()
-                card_tmp.department = str(card[4]).strip()
-                card_tmp.gender = str(card[5]).strip()
-                card_tmp.note = str(card[6]).strip()
-                card_tmp.classes = str(card[7]).strip().split(',')
-                card_tmp.save()
-                return_list.append(card_tmp.to_json())
-                continue
+            card_collection.update_one(
+                {'job_number': job_number},
+                {'$set': card_dict},
+                **{'upsert': True})
 
-            c1 = Card(
-                card_number=str(card[0]).upper().rjust(8, '0').strip(),
-                card_category=str(card[1]).strip(),
-                name=str(card[2]).strip(),
-                job_number=str(card[3]).strip(),
-                department=str(card[4]).strip(),
-                gender=str(card[5]).strip(),
-                note=str(card[6]).strip(),
-                classes=str(card[7]).strip().split(',')
-            )
+        except pymongo.errors.DuplicateKeyError:
+            card_dict_2 = {'card_category': card_category,
+                           'name': name,
+                           'department': department,
+                           'gender': gender,
+                           'note': note,
+                           'classes': classes,
+                           'hid_card_number': hid_card_number
+                           }
+            try:
+                card_collection.update_one(
+                    {'job_number': job_number},
+                    {'$set': card_dict_2},
+                    **{'upsert': True})
+            except:
+                failed_list.append(card_dict)
 
-            # 卡号大于8位,
-            if len(c1.card_number) > 8:
-                c1.card_number = hex(int(c1.card_number))[4:].upper().rjust(8, '0')
+        except:
+            failed_list.append(card_dict)
 
-            if not c1.note:
-                c1.note = 'default'
-
-            if not c1.classes:
-                c1.classes = 'default'
-
-            c1.save()
-
-        except Exception as e:
-            if card_tmp:
-                failed_list.append((card_tmp.to_json(), str(e)))
-            else:
-                failed_list.append((c1.to_json(), str(e)))
         else:
-            return_list.append(c1.to_json())
+            return_list.append(card_dict)
 
     return jsonify({'result': len(return_list), 'failed': failed_list, 'failed_numbers': len(failed_list)}), {'Content-Type': 'application/json'}
 

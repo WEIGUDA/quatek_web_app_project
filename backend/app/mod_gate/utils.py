@@ -351,3 +351,21 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
     # pprint(wb)
 
     return wb
+
+
+def normlize_card_number(card_number):
+    """如果 card_number 大于8位, 则将10进制的卡号, 转化为16进制, 并取其后六位, 最后用0补
+    全为8位大写16进制. 否则将其转换为8位大写16进制
+
+    Arguments:
+        card_number {int|string} -- 卡号
+
+    Returns:
+        str -- 处理后的卡号
+    """
+    card_number = str(card_number).strip()
+
+    if len(card_number) > 8:
+        card_number = hex(int(card_number))[-6:]
+
+    return card_number.upper().rjust(8, '0')
