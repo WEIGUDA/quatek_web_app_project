@@ -1,8 +1,6 @@
-try:
-    import eventlet
-    eventlet.monkey_patch()
-except:
-    pass
+import eventlet
+eventlet.monkey_patch()
+
 import copy
 import datetime
 import io
