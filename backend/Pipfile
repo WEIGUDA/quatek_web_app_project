@@ -32,6 +32,7 @@ rope = "*"
 ptvsd = "*"
 ipython = "*"
 pytest = "*"
+selenium = "*"
 
 [requires]
 python_version = "3.6"
