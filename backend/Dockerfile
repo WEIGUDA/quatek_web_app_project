@@ -12,7 +12,7 @@ ENV LD_LIBRARY_PATH=/app/oracle/instantclient_18_3
 
 WORKDIR /app
 COPY . /app
-COPY ./sources.list /etc/apt
+# COPY ./sources.list /etc/apt
 
 RUN apt-get update 
 RUN apt-get install -y libaio1 
