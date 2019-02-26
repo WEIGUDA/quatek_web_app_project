@@ -1,6 +1,5 @@
 import datetime
 from pymongo import MongoClient
-from app.mod_system_config.models import SystemConfig
 
 
 # TODO: change to aggregate
@@ -28,12 +27,14 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
     cards = db.card
     cardtests = db.card_test
     gate_collection = db.gate
+    system_config = db.system_config
 
     # 初始化 excel dict
     wb = {}
 
     # 当前时区 和 时间
-    system_config_timezone = int(SystemConfig.objects.get().timezone)
+    config = system_config.find()[0]
+    system_config_timezone = int(config['timezone'])
     local_tz = datetime.timezone(datetime.timedelta(hours=system_config_timezone))
     now = datetime.datetime.now().replace(tzinfo=local_tz)
 
