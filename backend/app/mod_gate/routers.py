@@ -32,7 +32,8 @@ def gates():
         limit = request.args.get('limit', 50)
 
         try:
-            gates = Gate.objects.filter(q_object).order_by('-created_time').skip(int(offset)).limit(int(limit))
+            gates = Gate.objects.filter(q_object).order_by(
+                '-created_time').skip(int(offset)).limit(int(limit))
         except:
             current_app.logger.exception('get gates failed')
             abort(500)
@@ -94,7 +95,8 @@ def cards():
         limit = request.args.get('limit', 50)
 
         try:
-            cards = Card.objects.filter(q_object).order_by('-created_time').skip(int(offset)).limit(int(limit))
+            cards = Card.objects.filter(q_object).order_by(
+                '-created_time').skip(int(offset)).limit(int(limit))
 
         except:
             current_app.logger.exception('get cards failed')
