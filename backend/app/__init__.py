@@ -26,8 +26,10 @@ def create_app():
 
     # load default config
     app.config['ENV'] = os.environ.get('ENV', 'production')
-    app.config['DEBUG'] = os.environ.get('DEBUG', 'False').lower() == 'True'.lower()
-    app.config['TESTING'] = os.environ.get('TESTING', 'False').lower() == 'True'.lower()
+    app.config['DEBUG'] = os.environ.get(
+        'DEBUG', 'False').lower() == 'True'.lower()
+    app.config['TESTING'] = os.environ.get(
+        'TESTING', 'False').lower() == 'True'.lower()
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(24))
     app.config['MONGODB_DB'] = os.environ.get('MONGODB_DB', 'quatek_web_app')
     app.config['MONGODB_HOST'] = os.environ.get('MONGODB_HOST', '127.0.0.1')
@@ -36,9 +38,10 @@ def create_app():
     app.config['SOCKET_HOST'] = os.environ.get('SOCKET_HOST', '0.0.0.0')
     app.config['SOCKET_PORT'] = int(os.environ.get('SOCKET_PORT', '5858'))
     app.config['JWT_SECRET_KEY'] = app.config['SECRET_KEY']
-    app.config["MONGO_URI"] = "mongodb://{}:{}/{}".format(app.config['MONGODB_HOST'],
-                                                          app.config['MONGODB_PORT'],
-                                                          app.config['MONGODB_DB'])
+    app.config["MONGO_URI"] = "mongodb://{}:{}/{}".format(
+        app.config['MONGODB_HOST'],
+        app.config['MONGODB_PORT'],
+        app.config['MONGODB_DB'])
 
     # init extentions
     db.init_app(app)
@@ -91,11 +94,13 @@ def create_app():
     def init_app():
         user_collection = mongo.db.user
         if user_collection.count_documents({}) == 0:
-            user_collection.insert_one({'username': 'quatek', 'password': 'quatek'})
+            user_collection.insert_one(
+                {'username': 'quatek', 'password': 'quatek'})
             app.logger.info('created a default user for user collection')
 
     if app.config['DEBUG']:
         pprint({k: v for k, v in app.config.items() if k in [
-               'DEBUG', 'ENV', 'TESTING', 'MONGO_URI', 'REDIS_URL', 'SOCKET_HOST', 'SOCKET_PORT']})
+               'DEBUG', 'ENV', 'TESTING', 'MONGO_URI', 'REDIS_URL',
+               'SOCKET_HOST', 'SOCKET_PORT']})
 
     return app
