@@ -25,6 +25,15 @@
       "args": []
     },
     {
+      "name": "Debug Celery Worker",
+      "type": "python",
+      "request": "launch",
+      "module": "celery",
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal",
+      "args": ["worker", "-A=app.mod_task.tasks", "--pool=solo"]
+    },
+    {
       "type": "chrome",
       "request": "launch",
       "name": "Debug Vue",
