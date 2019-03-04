@@ -212,121 +212,118 @@ def download_cards():
     return excel.make_response_from_array(cards, 'xlsx')
 
 
-@bp.route('/cardtests', methods=['GET', 'POST'])
+@bp.route('/cardtests', methods=['GET', ])
 def cardtests():
-    if request.method == 'GET':
-        q_object = Q()
+    q_object = Q()
 
-        query_string = request.args.get('q', None)
-        datetime_from = request.args.get('datetime_from', None)
-        datetime_to = request.args.get('datetime_to', None)  # '2018-07-20T07:15:00.000Z'
-        job_number = request.args.get('job_number', None)
-        card_number = request.args.get('card_number', None)
-        department = request.args.get('department', None)
-        is_downloading_excel = request.args.get('is_downloading_excel', None)
+    query_string = request.args.get('q', None)
+    datetime_from = request.args.get('datetime_from', None)
+    datetime_to = request.args.get('datetime_to', None)  # '2018-07-20T07:15:00.000Z'
+    job_number = request.args.get('job_number', None)
+    card_number = request.args.get('card_number', None)
+    department = request.args.get('department', None)
+    is_downloading_excel = request.args.get('is_downloading_excel', None)
 
-        if datetime_from:
-            datetime_from = datetime.datetime.strptime(
-                datetime_from, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=datetime.timezone.utc)
-            q_object = q_object & Q(test_datetime__gte=datetime_from)
+    if datetime_from:
+        datetime_from = datetime.datetime.strptime(
+            datetime_from, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=datetime.timezone.utc)
+        q_object = q_object & Q(test_datetime__gte=datetime_from)
 
-        if datetime_to:
-            datetime_to = datetime.datetime.strptime(
-                datetime_to, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=datetime.timezone.utc)
-            q_object = q_object & Q(test_datetime__lte=datetime_to)
+    if datetime_to:
+        datetime_to = datetime.datetime.strptime(
+            datetime_to, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=datetime.timezone.utc)
+        q_object = q_object & Q(test_datetime__lte=datetime_to)
 
-        if query_string:
-            gates = Gate.objects.filter(name__icontains=query_string)
-            gates_mc_ids = []
-            if gates:
-                for gate in gates:
-                    gates_mc_ids.append(gate['mc_id'])
+    if query_string:
+        gates = Gate.objects.filter(name__icontains=query_string)
+        gates_mc_ids = []
+        if gates:
+            for gate in gates:
+                gates_mc_ids.append(gate['mc_id'])
 
-            q_object = (q_object & Q(card_number__icontains=query_string)) \
-                | (q_object & Q(mc_id__in=gates_mc_ids))
+        q_object = (q_object & Q(card_number__icontains=query_string)) \
+            | (q_object & Q(mc_id__in=gates_mc_ids))
 
-        if card_number:
-            if len(card_number) > 8:
-                card_number = normlize_card_number(card_number)
+    if card_number:
+        if len(card_number) > 8:
+            card_number = normlize_card_number(card_number)
 
-            q_object = q_object & Q(card_number__icontains=card_number)
+        q_object = q_object & Q(card_number__icontains=card_number)
 
-        if job_number:
-            cards = Card.objects.filter(job_number__icontains=job_number)
-            q_object = q_object & Q(card_number__in=[card.card_number for card in cards])
+    if job_number:
+        cards = Card.objects.filter(job_number__icontains=job_number)
+        q_object = q_object & Q(card_number__in=[card.card_number for card in cards])
 
-        if department:
-            cards = Card.objects.filter(department__icontains=department)
-            q_object = q_object & Q(card_number__in=[card.card_number for card in cards])
+    if department:
+        cards = Card.objects.filter(department__icontains=department)
+        q_object = q_object & Q(card_number__in=[card.card_number for card in cards])
 
-        offset = request.args.get('offset', 0)
-        limit = request.args.get('limit', 50)
+    offset = request.args.get('offset', 0)
+    limit = request.args.get('limit', 50)
 
-        try:
-            if is_downloading_excel:
-                results = [['log_id', '卡片编号', '卡片号码', '卡片分类', '进出标志', 'mc id',
-                            '测试时间', '测试结果', '是否测试', '手测试值(KΩ)', '左脚测试值(KΩ)', '右脚测试值(KΩ)', 'erg后数值',
-                            'rsg', '姓名', '工号'], ]
-                logs = CardTest.objects.filter(q_object).order_by('-test_datetime').skip(0).limit(100000)
+    try:
+        if is_downloading_excel:
+            results = [['log_id', '卡片编号', '卡片号码', '卡片分类', '进出标志', 'mc id',
+                        '测试时间', '测试结果', '是否测试', '手测试值(KΩ)', '左脚测试值(KΩ)', '右脚测试值(KΩ)', 'erg后数值',
+                        'rsg', '姓名', '工号'], ]
+            logs = CardTest.objects.filter(q_object).order_by('-test_datetime').skip(0).limit(100000)
 
-                for log in logs:
-                    card_category = ''
-                    if log['card_category'] == '0':
-                        card_category = 'VIP'
-                    if log['card_category'] == '1':
-                        card_category = '只测手'
-                    if log['card_category'] == '2':
-                        card_category = '只测脚'
-                    if log['card_category'] == '3':
-                        card_category = '手脚都测'
+            for log in logs:
+                card_category = ''
+                if log['card_category'] == '0':
+                    card_category = 'VIP'
+                if log['card_category'] == '1':
+                    card_category = '只测手'
+                if log['card_category'] == '2':
+                    card_category = '只测脚'
+                if log['card_category'] == '3':
+                    card_category = '手脚都测'
 
-                    in_out_symbol = ''
-                    if log['in_out_symbol'] == '0':
-                        card_category = '出'
-                    if log['in_out_symbol'] == '1':
-                        card_category = '进'
+                in_out_symbol = ''
+                if log['in_out_symbol'] == '0':
+                    card_category = '出'
+                if log['in_out_symbol'] == '1':
+                    card_category = '进'
 
-                    # 获得系统时区
-                    system_config_timezone = int(SystemConfig.objects.get().timezone)
-                    local_tz = datetime.timezone(datetime.timedelta(hours=system_config_timezone))
-                    test_datetime = log['test_datetime'].replace(tzinfo=local_tz).isoformat()
+                # 获得系统时区
+                system_config_timezone = int(SystemConfig.objects.get().timezone)
+                local_tz = datetime.timezone(datetime.timedelta(hours=system_config_timezone))
+                test_datetime = log['test_datetime'].replace(
+                    tzinfo=datetime.timezone.utc).astimezone(local_tz).isoformat()
 
-                    test_result = ''
-                    if log['test_result'] == '0':
-                        test_result = '不通过'
-                    if log['test_result'] == '1':
-                        test_result = '通过'
+                test_result = ''
+                if log['test_result'] == '0':
+                    test_result = '不通过'
+                if log['test_result'] == '1':
+                    test_result = '通过'
 
-                    is_tested = ''
-                    if log['is_tested'] == '0':
-                        is_tested = '不测试'
-                    if log['is_tested'] == '1':
-                        is_tested = '测试'
+                is_tested = ''
+                if log['is_tested'] == '0':
+                    is_tested = '不测试'
+                if log['is_tested'] == '1':
+                    is_tested = '测试'
 
-                    name = ''
-                    job_number = ''
-                    try:
-                        card = Card.objects.filter(card_number=log['card_number']).first()
-                        name = card['name']
-                        job_number = card['job_number']
+                name = ''
+                job_number = ''
+                try:
+                    card = Card.objects.filter(card_number=log['card_number']).first()
+                    name = card['name']
+                    job_number = card['job_number']
 
-                    except:
-                        pass
+                except:
+                    pass
 
-                    results.append([log['log_id'], log['card_counter'], log['card_number'], card_category,
-                                    in_out_symbol, log['mc_id'], test_datetime, test_result, is_tested, log['hand'],
-                                    log['left_foot'], log['right_foot'], log['after_erg'], log['rsg'], name,
-                                    job_number])
-                return excel.make_response_from_array(results, "xlsx")
+                results.append([log['log_id'], log['card_counter'], log['card_number'], card_category,
+                                in_out_symbol, log['mc_id'], test_datetime, test_result, is_tested, log['hand'],
+                                log['left_foot'], log['right_foot'], log['after_erg'], log['rsg'], name,
+                                job_number])
+            return excel.make_response_from_array(results, "xlsx")
 
-            cards = CardTest.objects.filter(q_object).order_by('-test_datetime').skip(int(offset)).limit(int(limit))
-            return cards.to_json(), {'Content-Type': 'application/json'}
-        except:
-            current_app.logger.exception('get cardtests failed')
-            abort(500)
-
-    elif request.method == 'POST':
-        pass
+        cards = CardTest.objects.filter(q_object).order_by('-test_datetime').skip(int(offset)).limit(int(limit))
+        return cards.to_json(), {'Content-Type': 'application/json'}
+    except:
+        current_app.logger.exception('get cardtests failed')
+        abort(500)
 
 
 @bp.route('/get-card-by-id', methods=['GET', ])
