@@ -1,5 +1,6 @@
 import datetime
 import json
+import re
 
 import flask_excel as excel
 from flask import (Blueprint, abort, current_app, jsonify, make_response,
@@ -281,9 +282,9 @@ def cardtests():
 
                 in_out_symbol = ''
                 if log['in_out_symbol'] == '0':
-                    card_category = '出'
+                    in_out_symbol = '出'
                 if log['in_out_symbol'] == '1':
-                    card_category = '进'
+                    in_out_symbol = '进'
 
                 # 获得系统时区
                 system_config_timezone = int(SystemConfig.objects.get().timezone)
@@ -321,6 +322,150 @@ def cardtests():
 
         cards = CardTest.objects.filter(q_object).order_by('-test_datetime').skip(int(offset)).limit(int(limit))
         return cards.to_json(), {'Content-Type': 'application/json'}
+    except:
+        current_app.logger.exception('get cardtests failed')
+        abort(500)
+
+
+@bp.route('/cardtests2', methods=['GET', ])
+def cardtests2():
+    # get query strings
+    datetime_from = request.args.get('datetime_from', None)
+    datetime_to = request.args.get('datetime_to', None)  # '2018-07-20T07:15:00.000Z'
+    job_number = request.args.get('job_number', None)
+    card_number = request.args.get('card_number', None)
+    department = request.args.get('department', None)
+
+    query_string_dict = {}
+
+    if datetime_from:
+        query_string_dict.setdefault('$and', []).append(
+            {'test_datetime': {'$gte': datetime.datetime.strptime(datetime_from, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=datetime.timezone.utc)}})
+
+    if datetime_to:
+        query_string_dict.setdefault('$and', []).append(
+            {'test_datetime': {'$lte': datetime.datetime.strptime(datetime_to, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=datetime.timezone.utc)}})
+
+    if card_number:
+        query_string_dict['card_number'] = card_number
+
+    if job_number:
+        query_string_dict['job_number'] = job_number
+
+    if department:
+        query_string_dict['department'] = department
+
+    # define collections
+    log_collection = mongo.db.card_test
+    card_collection = mongo.db.card
+    system_config_collection = mongo.db.system_config
+
+    # batch query cards
+    card_numbers = list(log_collection.find(query_string_dict).distinct('card_number'))
+    cards = list(card_collection.find({'card_number': {'$in': card_numbers}}))
+
+    # batch query all in logs related to out logs:
+    # 1 找到所以条件下, 为出, 为成功 的 卡号
+    query_string_dict_updated_with_out_and_test_succeed = {}
+    query_string_dict_updated_with_out_and_test_succeed.update(query_string_dict)
+    query_string_dict_updated_with_out_and_test_succeed['in_out_symbol'] = '0'
+    query_string_dict_updated_with_out_and_test_succeed['test_result'] = '1'
+    out_logs_card_numbers = list(log_collection.find(
+        query_string_dict_updated_with_out_and_test_succeed).distinct('card_number'))
+
+    # 1 找到所以条件下, 为进, 为成功, 有出卡号的 logs
+    query_string_dict_updated_with_in_and_test_succeed = {}
+    query_string_dict_updated_with_in_and_test_succeed.update(query_string_dict)
+    query_string_dict_updated_with_in_and_test_succeed['in_out_symbol'] = '1'
+    query_string_dict_updated_with_in_and_test_succeed['card_number'] = {'$in': out_logs_card_numbers}
+    query_string_dict_updated_with_in_and_test_succeed['test_result'] = '1'
+    all_in_logs = list(log_collection.find(query_string_dict_updated_with_in_and_test_succeed).sort('test_datetime'))
+
+    # 获得系统时区
+    system_config_timezone = int(system_config_collection.find_one()['timezone'])
+    local_tz = datetime.timezone(datetime.timedelta(hours=system_config_timezone))
+
+    try:
+        results = [[
+            '日期时间(进)', '日期时间(出)', '部门', '工号', '姓名', '机器号(进)', '机器号(出)', '卡类型', '通行结果', '是否检测',
+            '手腕带检测(KΩ)', '左脚检测(KΩ)', '右脚检测(KΩ)',
+        ], ]
+        logs = log_collection.find(query_string_dict)
+        for log in logs:
+            card_category = ''
+            if log['card_category'] == '0':
+                card_category = 'VIP'
+            if log['card_category'] == '1':
+                card_category = '只测手'
+            if log['card_category'] == '2':
+                card_category = '只测脚'
+            if log['card_category'] == '3':
+                card_category = '手脚都测'
+
+            in_out_symbol = ''
+            if log['in_out_symbol'] == '0':
+                in_out_symbol = '出'
+            if log['in_out_symbol'] == '1':
+                in_out_symbol = '进'
+
+            test_datetime = log['test_datetime'].replace(
+                tzinfo=datetime.timezone.utc).astimezone(local_tz).strftime('%Y-%m-%d %H:%M:%S')
+
+            test_result = ''
+            if log['test_result'] == '0':
+                test_result = '不通过'
+            if log['test_result'] == '1':
+                test_result = '通过'
+
+            is_tested = ''
+            if log['is_tested'] == '0':
+                is_tested = '不测试'
+            if log['is_tested'] == '1':
+                is_tested = '测试'
+
+            # combine card and log
+            job_number = ''
+            name = ''
+            department = ''
+            try:
+                card = list(filter(lambda card: card['card_number'] == log['card_number'], cards))[0]
+                name = card['name']
+                job_number = card['job_number']
+                department = card['department']
+            except:
+                pass
+
+            if in_out_symbol == '进':
+                results.append([
+                    test_datetime, '', department, job_number, name, log['mc_id'], '', card_category, test_result, is_tested,
+                    log['hand'], log['left_foot'], log['right_foot'],
+                ])
+
+            elif in_out_symbol == '出' and test_result == '通过':
+                last_in_log = {}
+                try:
+                    last_in_log = list(
+                        filter(lambda in_log: in_log['card_number'] == log['card_number'] and log['test_datetime'] >= in_log['test_datetime'], all_in_logs))[-1]
+                except:
+                    pass
+
+                if last_in_log:
+                    results.append([
+                        last_in_log[
+                            'test_datetime'].replace(
+                                tzinfo=datetime.timezone.utc).astimezone(
+                                    local_tz).strftime('%Y-%m-%d %H:%M:%S'), test_datetime, department, job_number,
+                        name, last_in_log['mc_id'], log['mc_id'], card_category, test_result, is_tested, log['hand'],
+                        log['left_foot'], log['right_foot'],
+                    ])
+            else:
+                results.append([
+                    '', test_datetime, department, job_number, name, '', log['mc_id'], card_category, test_result, is_tested,
+                    log['hand'], log['left_foot'], log['right_foot'],
+                ])
+
+        return excel.make_response_from_array(results, "xlsx")
+
     except:
         current_app.logger.exception('get cardtests failed')
         abort(500)

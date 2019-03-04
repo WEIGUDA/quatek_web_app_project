@@ -76,6 +76,15 @@
           <!-- <font-awesome-icon icon="envelope" /> -->
           <font-awesome-icon icon="download"/>
         </button>
+        <button
+          type="button"
+          class="btn btn-secondary btn-row-btn btn-sm"
+          title="下载"
+          @click="download_excel2()"
+        >
+          <!-- <font-awesome-icon icon="envelope" /> -->
+          <font-awesome-icon icon="download"/>
+        </button>
       </p>
     </div>
     <div class="row" v-if="!cardtests.length">
@@ -257,7 +266,6 @@ export default {
           }&card_number=${this.card_number}&department=${this.department}`
         )
         .then(response => {
-          console.log(response.data);
           this.cardtests = response.data;
         })
         .catch(response => {
@@ -342,6 +350,33 @@ export default {
           fileDownload(
             response.data,
             "静电测试数据.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          );
+        })
+        .catch(response => {
+          console.log(response);
+        });
+    },
+
+    download_excel2() {
+      axios
+        .get(
+          `/cardtests2?q=${this.query_string}&datetime_from=${
+            this.datetime_from
+          }&datetime_to=${this.datetime_to}&job_number=${
+            this.job_number
+          }&card_number=${this.card_number}&department=${
+            this.department
+          }&is_downloading_excel=true`,
+          {
+            responseType: "blob"
+          }
+        )
+        .then(response => {
+          console.log(response);
+          fileDownload(
+            response.data,
+            "静电测试数据2.xlsx",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           );
         })
