@@ -21,7 +21,7 @@ import {
   faCaretSquareLeft,
   faCaretSquareRight,
   faSearch,
-  faEnvelope,
+  faEnvelope
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import vueMoment from "vue-moment";
@@ -29,19 +29,11 @@ import Datetime from "vue-datetime";
 import "vue-datetime/dist/vue-datetime.css";
 import axios from "axios";
 import { IP_ADDRESS, PORT } from "@/config";
-import Vuetify from "vuetify";
-// import 'vuetify/dist/vuetify.min.css';
-import "material-design-icons-iconfont/dist/material-design-icons.css";
-import "@mdi/font/css/materialdesignicons.css";
-import WebFontLoader from "webfontloader";
 import VueSocketIO from "vue-socket.io";
 
 Vue.use(BootstrapVue);
 Vue.use(vueMoment);
 Vue.use(Datetime);
-Vue.use(Vuetify, {
-  iconfont: "mdi", // 'md' || 'mdi' || 'fa' || 'fa4'
-});
 
 axios.defaults.baseURL = `http://${IP_ADDRESS}:${PORT}`;
 console.log("backend: " + `http://${IP_ADDRESS}:${PORT}`);
@@ -61,7 +53,7 @@ library.add(
   faCaretSquareLeft,
   faCaretSquareRight,
   faSearch,
-  faEnvelope,
+  faEnvelope
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
@@ -75,13 +67,13 @@ Vue.use(
     vuex: {
       store,
       actionPrefix: "SOCKETIO_",
-      mutationPrefix: "SOCKETIO_",
-    },
-  }),
+      mutationPrefix: "SOCKETIO_"
+    }
+  })
 );
 
 new Vue({
   router,
   store,
-  render: (h) => h(App),
+  render: h => h(App)
 }).$mount("#app");
