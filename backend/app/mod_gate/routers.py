@@ -442,21 +442,23 @@ def cardtests2():
                 ])
 
             elif in_out_symbol == '出' and test_result == '通过':
+
                 last_in_log = {}
                 try:
                     last_in_log = list(
                         filter(lambda in_log: in_log['card_number'] == log['card_number'] and log['test_datetime'] >= in_log['test_datetime'], all_in_logs))[-1]
                 except:
                     pass
-
+                # 如果找到 进 的 log, 则使用进log的 hand, left_foot, right_foot值
+                # TODO: 删除该 进 log
                 if last_in_log:
                     results.append([
                         last_in_log[
                             'test_datetime'].replace(
                                 tzinfo=datetime.timezone.utc).astimezone(
                                     local_tz).strftime('%Y-%m-%d %H:%M:%S'), test_datetime, department, job_number,
-                        name, last_in_log['mc_id'], log['mc_id'], card_category, test_result, is_tested, log['hand'],
-                        log['left_foot'], log['right_foot'],
+                        name, last_in_log['mc_id'], log['mc_id'], card_category, test_result, is_tested, last_in_log['hand'],
+                        last_in_log['left_foot'], last_in_log['right_foot'],
                     ])
             else:
                 results.append([
