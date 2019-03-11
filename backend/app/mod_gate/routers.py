@@ -15,7 +15,7 @@ from app.mod_system_config.models import SystemConfig
 from app.mod_task.tasks import (delete_a_card_from_mc_task,
                                 update_a_card_to_all_mc_task,
                                 update_all_cards_to_mc_task)
-from app.mod_gate.utils import normlize_card_number
+from app.mod_gate.utils import normalize_card_number
 
 bp = Blueprint('mod_gate', __name__)
 
@@ -116,7 +116,7 @@ def cards():
                     continue
 
                 c1 = Card(
-                    card_number=normlize_card_number(card[0]),
+                    card_number=normalize_card_number(card[0]),
                     card_category=card[1].strip(),
                     name=card[2].strip(),
                     job_number=card[3].strip(),
@@ -161,15 +161,17 @@ def card_create():
     if request.method == 'POST':
         data = request.json
         try:
-            c1 = Card(card_number=normlize_card_number(data['card_number']),
-                      card_category=data['card_category'].strip(),
-                      name=data['name'].strip(),
-                      job_number=data['job_number'].strip(),
-                      department=data['department'].strip(),
-                      gender=data['gender'].strip(),
-                      note=data['note'].strip() if data['note'] else 'default',
-                      belong_to_mc=data['belong_to_mc'].strip(),
-                      classes=data['classes'].split(','))
+            c1 = Card(
+                card_number=normalize_card_number(data['card_number']),
+                card_category=data['card_category'].strip(),
+                name=data['name'].strip(),
+                job_number=data['job_number'].strip(),
+                department=data['department'].strip(),
+                gender=data['gender'].strip(),
+                note=data['note'].strip() if data['note'] else 'default',
+                belong_to_mc=data['belong_to_mc'].strip(),
+                classes=str(data['classes']).strip().split(',') if data['classes'] else ['default']
+            )
 
             c1.save()
 
@@ -184,7 +186,7 @@ def card_create():
         data = request.json
         try:
             card = Card.objects.get(id=data['id'])
-            card.card_number = normlize_card_number(data['card_number'])
+            card.card_number = normalize_card_number(data['card_number'])
             card.card_category = data['card_category'].strip()
             card.name = data['name'].strip()
             card.job_number = data['job_number'].strip()
@@ -192,7 +194,7 @@ def card_create():
             card.gender = data['gender'].strip()
             card.note = data['note'].strip()
             card.belong_to_mc = data['belong_to_mc'].strip()
-            card.classes = data['classes'].split(',')
+            card.classes = str(data['classes']).strip().split(',') if data['classes'] else ['default']
             card.save()
 
         except:
@@ -247,7 +249,7 @@ def cardtests():
 
     if card_number:
         if len(card_number) > 8:
-            card_number = normlize_card_number(card_number)
+            card_number = normalize_card_number(card_number)
 
         q_object = q_object & Q(card_number__icontains=card_number)
 
@@ -561,7 +563,7 @@ def upload_cards_excel():
         if index == 0:
             continue
 
-        card_number = normlize_card_number(card[0])
+        card_number = normalize_card_number(card[0])
         card_category = str(card[1]).strip()
         name = str(card[2]).strip()
         job_number = str(card[3]).strip()

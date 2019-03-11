@@ -357,7 +357,7 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
     return wb
 
 
-def normlize_card_number(card_number):
+def normalize_card_number(card_number):
     """如果 card_number 大于8位, 则将10进制的卡号, 转化为16进制, 并取其后六位, 最后用0补
     全为8位大写16进制. 否则将其转换为8位大写16进制
 
