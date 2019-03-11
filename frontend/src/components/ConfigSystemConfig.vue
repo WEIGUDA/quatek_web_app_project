@@ -88,7 +88,7 @@ export default {
         emails: "",
         work_hours: "8:00-18:00",
         smtp_need_auth: true,
-        timezone: "+8"
+        timezone: ""
       }
     };
   },
