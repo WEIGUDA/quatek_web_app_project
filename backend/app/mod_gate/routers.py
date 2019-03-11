@@ -450,7 +450,7 @@ def cardtests2():
                 except:
                     pass
                 # 如果找到 进 的 log, 则使用进log的 hand, left_foot, right_foot值
-                # TODO: 删除该 进 log
+                # TODO: 删除该 进 log?
                 if last_in_log:
                     results.append([
                         last_in_log[
@@ -551,7 +551,7 @@ def download_cards_upload_template():
 
 @bp.route('/upload_cards_excel', methods=['POST', ])
 def upload_cards_excel():
-    card_collection = mongo.db.card
+    card_collection = Card._get_collection()
     cards_list = request.get_array(field_name='excel_file')
     return_list = []
     failed_list = []
@@ -575,45 +575,41 @@ def upload_cards_excel():
         except:
             pass
 
-        card_dict = {'card_number': card_number,
-                     'card_category': card_category,
-                     'name': name,
-                     'job_number': job_number,
-                     'department': department,
-                     'gender': gender,
-                     'note': note,
-                     'classes': classes,
-                     'hid_card_number': hid_card_number
-                     }
-
-        try:
-            card_collection.update_one(
-                {'job_number': job_number},
-                {'$set': card_dict},
-                **{'upsert': True})
-
-        except pymongo.errors.DuplicateKeyError:
-            card_dict_2 = {'card_category': card_category,
-                           'name': name,
-                           'department': department,
-                           'gender': gender,
-                           'note': note,
-                           'classes': classes,
-                           'hid_card_number': hid_card_number
-                           }
+        card_tmp = list(card_collection.find({'job_number': job_number}).limit(1))
+        # 如果数据库中找到工号相同的卡, 则覆盖原来的信息
+        if card_tmp:
+            card_existed = Card(**card_tmp[0])
+            card_existed.card_number = card_number
+            card_existed.card_category = card_category
+            card_existed.name = name
+            card_existed.department = department
+            card_existed.gender = gender
+            card_existed.note = note
+            card_existed.classes = classes
+            card_existed.hid_card_number = hid_card_number
             try:
-                card_collection.update_one(
-                    {'job_number': job_number},
-                    {'$set': card_dict_2},
-                    **{'upsert': True})
-            except:
-                failed_list.append(card_dict)
-
-        except:
-            failed_list.append(card_dict)
+                card_existed.save()
+                return_list.append(card_existed.to_json())
+            except Exception as e:
+                failed_list.append((card_existed.to_json(), str(e)))
 
         else:
-            return_list.append(card_dict)
+            new_card = Card(
+                job_number=job_number,
+                card_number=card_number,
+                card_category=card_category,
+                name=name,
+                department=department,
+                gender=gender,
+                note=note,
+                classes=classes,
+                hid_card_number=hid_card_number,
+            )
+            try:
+                new_card.save()
+                return_list.append(new_card.to_json())
+            except Exception as e:
+                failed_list.append((new_card.to_json(), str(e)))
 
     return jsonify({'result': len(return_list), 'failed': failed_list, 'failed_numbers': len(failed_list)}), {'Content-Type': 'application/json'}
 
