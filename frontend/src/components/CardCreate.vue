@@ -225,7 +225,7 @@ export default {
       axios
         .get(`/get-card-by-id?q=${this.card.id}`)
         .then(response => {
-          console.log(response);
+          console.log("card: ", response.data);
           this.card.card_number = response.data[0].card_number;
           this.card.card_category = response.data[0].card_category;
           this.card.name = response.data[0].name;
@@ -235,7 +235,7 @@ export default {
           this.card.note = response.data[0].note;
           this.card.belong_to_mc = response.data[0].belong_to_mc;
           this.card.number_in_mc = response.data[0].number_in_mc;
-          this.card.classes = response.data[0].classes;
+          this.card.classes = String(response.data[0].classes);
           console.log(this.card);
         })
         .catch(response => {
