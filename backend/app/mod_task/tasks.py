@@ -115,7 +115,10 @@ class UploadAllCardsHandler(socketserver.BaseRequestHandler):
         try:
             commands = []
             for card in cards.find():
-                belong_to_mc = card['belong_to_mc']
+                belong_to_mc = 'all'
+                if 'belong_to_mc' in card:
+                    belong_to_mc = card['belong_to_mc'] 
+
                 # add to all mc
                 if belong_to_mc == 'all' or not belong_to_mc:
                     # command = 'SET CARD {card_counter},{card_number},{job_number},{name},{department},{gender},{card_category},0,{note}\r\n'.format(
@@ -211,7 +214,9 @@ class UpdateACardHandler(socketserver.BaseRequestHandler):
             logger.exception('error in UpdateACardHandler')
 
         try:
-            belong_to_mc = card['belong_to_mc']
+            belong_to_mc = 'all'
+            if 'belong_to_mc' in card:
+                belong_to_mc = card['belong_to_mc']
 
             # add to all mc
             if belong_to_mc == 'all' or not belong_to_mc:

@@ -37,6 +37,7 @@ selenium = "*"
 pytest-cov = "*"
 pytest-mock = "*"
 jupyter = "*"
+yapf = "*"
 
 [requires]
 python_version = "3.6"

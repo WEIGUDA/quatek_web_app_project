@@ -276,11 +276,12 @@ def card_log_calculate(MONGODB_HOST, MONGODB_PORT, MONGODB_DB, hours_start, hour
                         or gate['foot_near_min'] < int(log['right_foot']) < gate['foot_min'] \
                         or gate['foot_max'] < int(log['right_foot']) < gate['foot_near_max']:
                     near_failure_logs.append(log)
-    else:
+    else:  # 没有传入了班别名称:
         for log in cardtests.find({'test_datetime': {'$gte': work_hours_start, '$lte': work_hours_end}}):
             gates = [g for g in all_gates if g['mc_id'] == log['mc_id']]
             if gates:
                 gate = gates[0]
+                # FIXME: 按照卡片的类型, 进行一一判断
                 if gate['hand_max'] < int(log['hand']) < gate['hand_near_max'] \
                         or gate['hand_near_min'] < int(log['hand']) < gate['hand_min'] \
                         or gate['foot_near_min'] < int(log['left_foot']) < gate['foot_min'] \
