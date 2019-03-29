@@ -11,7 +11,7 @@ export default new Vuex.Store({
     lastFailedUpload: [],
     jwt_token: localStorage.getItem("jwt_token") || "",
     all_cards: [],
-    logs: [],
+    logs: []
   },
 
   getters: {
@@ -45,8 +45,8 @@ export default new Vuex.Store({
     },
     // 获取实时 logs
     get_logs(state) {
-      return state.logs;
-    },
+      return state.logs.slice(0, 100);
+    }
   },
 
   mutations: {
@@ -74,7 +74,9 @@ export default new Vuex.Store({
     // 根据 jwt_woken, 设定 localStorage 和 axios headers
     set_jwt_token_to_localStorage_and_axios_headers(state) {
       localStorage.setItem("jwt_token", state.jwt_token);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${state.jwt_token}`;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${
+        state.jwt_token
+      }`;
     },
 
     // 删除 jwt_woken, localStorage 和 axios headers
@@ -86,10 +88,10 @@ export default new Vuex.Store({
 
     // 将 socketio 发送来的 logs 加到 logs 中:
     unshift_to_logs(state, payload) {
-      payload.mc_logs.forEach((log) => {
+      payload.mc_logs.forEach(log => {
         state.logs.unshift(log);
       });
-    },
+    }
   },
 
   actions: {
@@ -119,13 +121,13 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios
           .post("/login", user)
-          .then((resp) => {
+          .then(resp => {
             const jwt_token = resp.data.access_token;
             commit("set_jwt_token", jwt_token);
             router.push({ name: "Index" });
             resolve(resp);
           })
-          .catch((err) => {
+          .catch(err => {
             commit("delete_jwt_token");
             reject(err);
           });
@@ -137,13 +139,13 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios
           .post("/register", user)
-          .then((resp) => {
+          .then(resp => {
             const jwt_token = resp.data.access_token;
             commit("set_jwt_token", jwt_token);
             router.push({ name: "Index" });
             resolve(resp);
           })
-          .catch((err) => {
+          .catch(err => {
             commit("delete_jwt_token");
             reject(err);
           });
@@ -158,8 +160,11 @@ export default new Vuex.Store({
 
     // socketio event send_all_cards_data_to_frontend_from_tasks
     SOCKETIO_send_all_cards_data_to_frontend_from_tasks({ commit }, message) {
-      console.log("got message from send_all_cards_data_to_frontend_from_tasks: ", message);
+      console.log(
+        "got message from send_all_cards_data_to_frontend_from_tasks: ",
+        message
+      );
       commit("unshift_to_logs", { mc_logs: message });
-    },
-  },
+    }
+  }
 });
