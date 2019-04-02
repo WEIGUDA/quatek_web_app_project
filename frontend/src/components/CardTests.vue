@@ -58,31 +58,73 @@
           >
         </div>
 
-        <button
-          type="submit"
-          class="btn btn-success mb-2 btn_quatek"
-          @click.prevent.stop="search()"
-        >搜索</button>
+        <label class="sr-only" for="hid_number">HID卡号</label>
+        <div class="input-group mb-2 mr-sm-2">
+          <input
+            name="hid_number"
+            type="text"
+            class="form-control"
+            v-model.trim="hid_number"
+            placeholder="HID卡号"
+          >
+        </div>
       </div>
+
+      <div class="w-100">
+        <br>
+      </div>
+
+      <div class="form-inline">
+        <label class="sr-only" for="department">姓名</label>
+        <div class="input-group mb-2 mr-sm-2">
+          <input name="name" type="text" class="form-control" v-model.trim="name" placeholder="姓名">
+        </div>
+
+        <label class="sr-only" for="department">闸机ID</label>
+        <div class="input-group mb-2 mr-sm-2">
+          <input
+            name="mc_id"
+            type="text"
+            class="form-control"
+            v-model.trim="mc_id"
+            placeholder="闸机ID"
+          >
+        </div>
+
+        <label class="sr-only" for="department">卡类型</label>
+        <div class="input-group mb-2 mr-sm-2">
+          <select name="card_cat" class="form-control" v-model.trim="card_cat" placeholder="卡类型">
+            <option value="----------"></option>
+            <option value="vip">vip</option>
+            <option value="hand_only">只测手</option>
+            <option value="foot_only">只测脚</option>
+            <option value="both">手脚都测</option>
+          </select>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-success mb-2 btn_quatek"
+        @click.prevent.stop="search()"
+      >搜索</button>
     </div>
     <div class="row btn-row">
       <p class="w-100 text-right">
         <button
           type="button"
           class="btn btn-secondary btn-row-btn btn-sm"
-          title="下载"
+          title="下载1"
           @click="download_excel()"
         >
-          <!-- <font-awesome-icon icon="envelope" /> -->
           <font-awesome-icon icon="download"/>
         </button>
         <button
           type="button"
           class="btn btn-secondary btn-row-btn btn-sm"
-          title="下载"
+          title="下载2"
           @click="download_excel2()"
         >
-          <!-- <font-awesome-icon icon="envelope" /> -->
           <font-awesome-icon icon="download"/>
         </button>
       </p>
@@ -191,7 +233,11 @@ export default {
       job_number: "",
       go_to_page_number: "",
       card_number: "",
-      department: ""
+      department: "",
+      name: "",
+      mc_id: "",
+      card_cat: "",
+      hid_number: ""
     };
   },
   computed: {
@@ -252,18 +298,17 @@ export default {
   },
   methods: {
     search() {
-      console.log(this.query_string);
-      console.log(this.datetime_from);
-      console.log(this.datetime_to);
       this.currentPage = 1;
 
       axios
         .get(
-          `/cardtests?q=${this.query_string}&datetime_from=${
-            this.datetime_from
-          }&datetime_to=${this.datetime_to}&job_number=${
-            this.job_number
-          }&card_number=${this.card_number}&department=${this.department}`
+          `/cardtests?datetime_from=${this.datetime_from}&datetime_to=${
+            this.datetime_to
+          }&job_number=${this.job_number}&card_number=${
+            this.card_number
+          }&department=${this.department}&name=${this.name}&mc_id=${
+            this.mc_id
+          }&card_cat=${this.card_cat}&hid_number=${this.hid_number}`
         )
         .then(response => {
           this.cardtests = response.data;
@@ -273,74 +318,14 @@ export default {
         });
     },
 
-    download_csv() {
-      if (this.cardtests.length > 0) {
-        try {
-          let title = "cardtests_page_" + this.currentPage;
-          let cardtest_array = [];
-          let csv_header =
-            "id,card_number,name,job_number,card_category,in_out_symbol,gate_name,test_time,test_result,is_tested,hand_value,left_foot_value,right_foot_value\n";
-          let csv = [];
-
-          for (let cardtest of this.computed_cardtests) {
-            cardtest_array.push(
-              [
-                cardtest._id.$oid,
-                cardtest.card_number,
-                cardtest.name,
-                cardtest.job_number,
-                cardtest.card_category,
-                cardtest.in_out_symbol,
-                cardtest.mc_id,
-                this.$moment(cardtest.test_datetime.$date).format(),
-                cardtest.test_result,
-                cardtest.is_tested,
-                cardtest.hand,
-                cardtest.left_foot,
-                cardtest.right_foot
-              ].join(",")
-            );
-          }
-          csv = cardtest_array.join("\n");
-
-          let uri =
-            "data:text/csv;charset=utf-8," + csv_header + encodeURI(csv);
-
-          let link = document.createElement("a");
-
-          link.id = "csv-download-id";
-          link.href = uri;
-
-          document.body.appendChild(link);
-
-          document.getElementById(link.id).style.visibility = "hidden";
-          document.getElementById(link.id).download = title + ".csv";
-
-          document.body.appendChild(link);
-          document.getElementById(link.id).click();
-
-          setTimeout(function() {
-            document.body.removeChild(link);
-          });
-          return true;
-        } catch (err) {
-          return false;
-        }
-      } else {
-        alert("没有数据可供下载!");
-      }
-    },
-
     download_excel() {
       axios
         .get(
-          `/cardtests?q=${this.query_string}&datetime_from=${
-            this.datetime_from
-          }&datetime_to=${this.datetime_to}&job_number=${
-            this.job_number
-          }&card_number=${this.card_number}&department=${
-            this.department
-          }&is_downloading_excel=true`,
+          `/cardtests?datetime_from=${this.datetime_from}&datetime_to=${
+            this.datetime_to
+          }&job_number=${this.job_number}&card_number=${
+            this.card_number
+          }&department=${this.department}&is_downloading_excel=true`,
           {
             responseType: "blob"
           }
@@ -361,13 +346,13 @@ export default {
     download_excel2() {
       axios
         .get(
-          `/cardtests2?q=${this.query_string}&datetime_from=${
-            this.datetime_from
-          }&datetime_to=${this.datetime_to}&job_number=${
-            this.job_number
-          }&card_number=${this.card_number}&department=${
-            this.department
-          }&is_downloading_excel=true`,
+          `/cardtests2?datetime_from=${this.datetime_from}&datetime_to=${
+            this.datetime_to
+          }&job_number=${this.job_number}&card_number=${
+            this.card_number
+          }&department=${this.department}&name=${this.name}&mc_id=${
+            this.mc_id
+          }&card_cat=${this.card_cat}&hid_number=${this.hid_number}`,
           {
             responseType: "blob"
           }
