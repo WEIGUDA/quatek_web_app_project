@@ -12,14 +12,14 @@ def convertor1(number1):
         len_number1 = len(number1)
 
         # 将 number1 分为前半部分, 和后5位部分
-        part1 = "{:X}".format(int(number1[0:len_number1-5]))
-        part2 = "{:X}".format(int(number1[len_number1-5:len_number1]))
+        part1 = "{:X}".format(int(number1[0 : len_number1 - 5]))
+        part2 = "{:X}".format(int(number1[len_number1 - 5 : len_number1]))
 
         # 最后 将前半部分补足至4位, 后半部分也补足至4位
         number2 = "{:0>4}{:0>4}".format(part1, part2)
 
     except:
-        return 'cannot convert'
+        return "cannot convert"
 
     else:
         return number2

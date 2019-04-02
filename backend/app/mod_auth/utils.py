@@ -1,6 +1,10 @@
 from functools import wraps
 from flask import jsonify
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_claims, get_jwt_identity
+from flask_jwt_extended import (
+    verify_jwt_in_request,
+    get_jwt_claims,
+    get_jwt_identity,
+)
 
 from app.mod_auth.models import User
 
@@ -10,8 +14,9 @@ def admin_required(fn):
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         claims = get_jwt_claims()
-        if claims['roles'] != 'admin':
-            return jsonify(msg='Admins only!'), 403
+        if claims["roles"] != "admin":
+            return jsonify(msg="Admins only!"), 403
         else:
             return fn(*args, **kwargs)
+
     return wrapper
