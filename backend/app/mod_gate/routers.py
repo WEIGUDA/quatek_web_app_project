@@ -316,16 +316,16 @@ def cardtests():
         q_object = q_object & Q(mc_id__icontains=mc_id)
 
     if card_cat:
-        query_string_dict = ""
+        cat_string = ""
         if card_cat == "vip":
-            query_string_dict["card_cat"] = "0"
+            cat_string = "0"
         elif card_cat == "hand_only":
-            query_string_dict["card_cat"] = "1"
+            cat_string = "1"
         elif card_cat == "foot_only":
-            query_string_dict["card_cat"] = "2"
+            cat_string = "2"
         elif card_cat == "both":
-            query_string_dict["card_cat"] = "3"
-        cards = Card.objects.filter(card_category=query_string_dict)
+            cat_string = "3"
+        cards = Card.objects.filter(card_category=cat_string)
         q_object = q_object & Q(
             card_number__in=[card.card_number for card in cards]
         )
