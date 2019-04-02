@@ -273,6 +273,7 @@ def cardtests():
     name = request.args.get("name", None)
     mc_id = request.args.get("mc_id", None)
     card_cat = request.args.get("card_cat", None)
+    hid_number = request.args.get("hid_number", None)
 
     if datetime_from:
         datetime_from = datetime.datetime.strptime(
@@ -286,7 +287,11 @@ def cardtests():
         ).replace(tzinfo=datetime.timezone.utc)
         q_object = q_object & Q(test_datetime__lte=datetime_to)
 
-    if card_number:
+    if hid_number:
+        card_number = hid_to_normal(hid_number)
+        q_object = q_object & Q(card_number__icontains=card_number)
+
+    elif card_number:
         card_number = normalize_card_number(card_number)
         q_object = q_object & Q(card_number__icontains=card_number)
 
@@ -324,7 +329,7 @@ def cardtests():
         q_object = q_object & Q(
             card_number__in=[card.card_number for card in cards]
         )
-
+    
     offset = request.args.get("offset", 0)
     limit = request.args.get("limit", 50)
 
@@ -348,6 +353,7 @@ def cardtests():
                     "rsg",
                     "姓名",
                     "工号",
+                    "HID 卡号"
                 ]
             ]
             logs = CardTest.objects.filter(q_object).order_by("-test_datetime")
@@ -425,6 +431,7 @@ def cardtests():
                         log["rsg"],
                         name,
                         job_number,
+                        hid_number
                     ]
                 )
             return excel.make_response_from_array(results, "xlsx")
@@ -454,6 +461,7 @@ def cardtests2():
     name = request.args.get("name", None)
     mc_id = request.args.get("mc_id", None)
     card_cat = request.args.get("card_cat", None)
+    hid_number = request.args.get("hid_number", None)
 
     query_string_dict = {}
 
@@ -479,9 +487,13 @@ def cardtests2():
             }
         )
 
-    if card_number:
+    if hid_number:
+        card_number = hid_to_normal(hid_number)
         query_string_dict["card_number"] = card_number
 
+    elif card_number:
+        query_string_dict["card_number"] = card_number
+    
     if job_number:
         query_string_dict["job_number"] = job_number
 
@@ -503,7 +515,7 @@ def cardtests2():
             query_string_dict["card_cat"] = "2"
         elif card_cat == "both":
             query_string_dict["card_cat"] = "3"
-
+    
     # define collections
     log_collection = CardTest._get_collection()
     card_collection = Card._get_collection()
@@ -643,7 +655,6 @@ def cardtests2():
                 )
 
             elif in_out_symbol == "出" and test_result == "通过":
-
                 last_in_log = {}
                 try:
                     last_in_log = list(
