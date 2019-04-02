@@ -140,6 +140,7 @@
             <th scope="col">姓名</th>
             <th scope="col">工号</th>
             <th scope="col">卡号</th>
+            <th scope="col">HID卡号</th>
             <th scope="col">部门</th>
             <th scope="col">测试类型</th>
             <th scope="col">进出标志</th>
@@ -157,6 +158,7 @@
             <td>{{cardtest.name}}</td>
             <td>{{cardtest.job_number}}</td>
             <td>{{cardtest.card_number}}</td>
+            <td>{{cardtest.hid_number}}</td>
             <td>{{cardtest.department}}</td>
             <td>{{cardtest.card_category}}</td>
             <td>{{cardtest.in_out_symbol}}</td>
