@@ -856,7 +856,6 @@ def upload_cards_excel():
             except Exception as e:
                 failed_list.append((new_card.to_json(), str(e)))
         else:
-            card_existed = Card.objects.filter(job_number=job_number)
             card_existed.card_number = card_number
             card_existed.card_category = card_category
             card_existed.name = name
