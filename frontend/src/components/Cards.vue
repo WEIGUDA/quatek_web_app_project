@@ -62,6 +62,7 @@
             <th scope="col">卡类型</th>
             <th scope="col">部门</th>
             <th scope="col">班别</th>
+            <th scope="col">HID卡号</th>
             <th scope="col">修改</th>
             <th scope="col">删除</th>
           </tr>
@@ -74,6 +75,7 @@
             <td>{{card.card_category}}</td>
             <td>{{card.department}}</td>
             <td>{{card.classes}}</td>
+            <td>{{card.hid_card_number}}</td>
             <td>
               <button
                 type="button"
