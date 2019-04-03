@@ -92,6 +92,7 @@ def gates():
 def cards():
     if request.method == "GET":
         query_string = request.args.get("q", None)
+        hid_number = request.args.get("hid_number", None)
 
         q_object = Q()
 
@@ -104,6 +105,9 @@ def cards():
                 | Q(job_number__icontains=query_string)
                 | Q(department__icontains=query_string)
             )
+
+        if hid_number:
+            q_object = q_object | Q(hid_card_number__icontains=hid_number)
 
         offset = request.args.get("offset", 0)
         limit = request.args.get("limit", 50)
@@ -176,7 +180,7 @@ def cards():
 @bp.route("/cards/create", methods=["POST", "PATCH"])
 def card_create():
     data = request.json
-    card_number = ''
+    card_number = ""
     if data["hid_number"].strip():
         card_number = hid_to_normal(data["hid_number"].strip())
     else:
