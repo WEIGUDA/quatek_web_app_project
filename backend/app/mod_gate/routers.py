@@ -513,7 +513,6 @@ def cardtests2():
     # define collections
     log_collection = CardTest._get_collection()
     card_collection = Card._get_collection()
-    system_config_collection = SystemConfig._get_collection()
 
     # batch query cards
     card_numbers = list(
@@ -550,11 +549,16 @@ def cardtests2():
     )
 
     # 获得系统时区
-    system_config_timezone = int(
-        system_config_collection.find_one()["timezone"]
-    )
+    system_config_timezone = None
+    try:
+        system_config_timezone = SystemConfig.objects.get().timezone
+    except DoesNotExist:
+        sc = system_config_timezone().save()
+        system_config_timezone = sc.timezone
+        pass
+
     local_tz = datetime.timezone(
-        datetime.timedelta(hours=system_config_timezone)
+        datetime.timedelta(hours=int(system_config_timezone))
     )
 
     try:
@@ -665,7 +669,7 @@ def cardtests2():
 
                 # 如果找到 进 的 log, 则使用进log的 hand, left_foot, right_foot值
                 if last_in_log:
-                    logs_needed_deleteing.append(last_in_log)
+                    results.pop()  # 去除 重复 的 log
                     results.append(
                         [
                             last_in_log["test_datetime"]
@@ -704,10 +708,6 @@ def cardtests2():
                         log["right_foot"],
                     ]
                 )
-
-        # 去除 重复 的 log
-        for log in logs_needed_deleteing:
-            results.remove(log)
 
         return excel.make_response_from_array(results, "xlsx")
 

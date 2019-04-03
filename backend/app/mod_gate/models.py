@@ -23,7 +23,7 @@ class Gate(db.DynamicDocument):
     foot_near_min = db.IntField(null=True, default=None)  # 脚近失效下限值
 
     def __str__(self):
-        return f"<Gate (name={self.name}, number={self.number}, category={self.category}, mc_id={self.mc_id}, hand_max={self.hand_max}, hand_min={self.hand_min}, foot_max={self.foot_max}, foot_min={self.foot_min}, is_on={self.is_on}, is_online={self.is_online}, ip={self.ip}, port={self.port}, created_time={self.created_time})>"
+        return self.to_json()
 
 
 class Card(db.DynamicDocument):
@@ -48,7 +48,7 @@ class Card(db.DynamicDocument):
     hid_card_number = db.StringField(default="")  # HID 号码
 
     def __str__(self):
-        return f"{self.to_json()}>"
+        return self.to_json()
 
 
 class CardTest(db.DynamicDocument):
@@ -76,4 +76,4 @@ class CardClassTime(db.DynamicDocument):
     working_time_to = db.StringField()
 
     def __str__(self):
-        return f"<CardClassTime> {self.to_json()}"
+        return self.to_json()
