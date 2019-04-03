@@ -10,6 +10,14 @@
           v-model.trim="query_string"
           placeholder="可搜索卡号, 卡类别, 姓名, 工号和部门"
         >
+        <input
+          type="text"
+          class="form-control"
+          aria-label="Search string"
+          aria-describedby="basic-addon2"
+          v-model.trim="hid_number"
+          placeholder="HID 卡号"
+        >
         <div class="input-group-append">
           <button
             class="btn btn-outline-success btn-outline-quatek"
@@ -175,7 +183,8 @@ export default {
       cards_file: "",
       excel_file: "",
       show_modal2: false,
-      last_upload_result: {}
+      last_upload_result: {},
+      hid_number: ""
     };
   },
   computed: {
@@ -207,7 +216,7 @@ export default {
       this.currentPage = 1;
 
       axios
-        .get(`cards?q=${this.query_string}`)
+        .get(`cards?q=${this.query_string}&hid_number=${this.hid_number}`)
         .then(response => {
           console.log(response);
           this.cards = response.data;
