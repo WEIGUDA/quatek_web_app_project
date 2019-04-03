@@ -175,11 +175,17 @@ def cards():
 
 @bp.route("/cards/create", methods=["POST", "PATCH"])
 def card_create():
+    data = request.json
+    card_number = ''
+    if data["hid_number"].strip():
+        card_number = hid_to_normal(data["hid_number"].strip())
+    else:
+        card_number = normalize_card_number(data["card_number"])
+
     if request.method == "POST":
-        data = request.json
         try:
             c1 = Card(
-                card_number=normalize_card_number(data["card_number"]),
+                card_number=card_number,
                 card_category=data["card_category"].strip(),
                 name=data["name"].strip(),
                 job_number=data["job_number"].strip(),
@@ -187,9 +193,12 @@ def card_create():
                 gender=data["gender"].strip(),
                 note=data["note"].strip() if data["note"] else "default",
                 belong_to_mc=data["belong_to_mc"].strip(),
-                classes=str(data["classes"]).strip().split(",")
-                if data["classes"]
-                else ["default"],
+                classes=(
+                    str(data["classes"]).strip().split(",")
+                    if data["classes"]
+                    else ["default"]
+                ),
+                hid_card_number=data["hid_number"],
             )
 
             c1.save()
@@ -202,10 +211,9 @@ def card_create():
             return make_response(c1.to_json())
 
     elif request.method == "PATCH":
-        data = request.json
         try:
             card = Card.objects.get(id=data["id"])
-            card.card_number = normalize_card_number(data["card_number"])
+            card.card_number = card_number
             card.card_category = data["card_category"].strip()
             card.name = data["name"].strip()
             card.job_number = data["job_number"].strip()
@@ -218,6 +226,7 @@ def card_create():
                 if data["classes"]
                 else ["default"]
             )
+            card.hid_card_number = data["hid_number"]
             card.save()
 
         except:
@@ -496,7 +505,7 @@ def cardtests2():
 
     if card_cat:
         query_string_dict["card_category"] = card_cat
-      
+
     # define collections
     log_collection = CardTest._get_collection()
     card_collection = Card._get_collection()
@@ -649,7 +658,7 @@ def cardtests2():
                     )[-1]
                 except:
                     pass
-                    
+
                 # 如果找到 进 的 log, 则使用进log的 hand, left_foot, right_foot值
                 if last_in_log:
                     logs_needed_deleteing.append(last_in_log)
@@ -691,7 +700,7 @@ def cardtests2():
                         log["right_foot"],
                     ]
                 )
-        
+
         # 去除 重复 的 log
         for log in logs_needed_deleteing:
             results.remove(log)

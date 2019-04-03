@@ -9,6 +9,13 @@
       </div>
 
       <div class="form-group row">
+        <label for="hid_number" class="col-sm-2 col-form-label">HID 卡号</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="hid_number" v-model="card.hid_number">
+        </div>
+      </div>
+
+      <div class="form-group row">
         <label for="card_category" class="col-sm-2 col-form-label">卡类别 *</label>
         <div class="col-sm-10">
           <select class="form-control" id="card_category" v-model="card.card_category">
@@ -123,7 +130,7 @@
 import axios from "axios";
 export default {
   name: "",
-  data: function() {
+  data() {
     return {
       card: {
         id: "",
@@ -135,7 +142,8 @@ export default {
         gender: "",
         note: "",
         belong_to_mc: "",
-        classes: ""
+        classes: "",
+        hid_number: ""
       },
       submit_is_disabled: false,
       show_modal: false,
@@ -143,7 +151,7 @@ export default {
     };
   },
   computed: {
-    computed_rights: function() {
+    computed_rights() {
       let computed_rights = [];
       if (this.card.id) {
         for (let gate_right of this.card.belong_to_mc.split("|")) {
@@ -171,7 +179,6 @@ export default {
       this.submit_is_disabled = true;
       console.log(this.card);
       if (
-        this.card.card_number &&
         this.card.card_category &&
         this.card.name &&
         this.card.job_number &&
@@ -207,6 +214,7 @@ export default {
         }
       } else {
         alert("带*的信息不能为空!");
+        this.submit_is_disabled = false;
       }
     },
     confirm() {
@@ -236,6 +244,7 @@ export default {
           this.card.belong_to_mc = response.data[0].belong_to_mc;
           this.card.number_in_mc = response.data[0].number_in_mc;
           this.card.classes = String(response.data[0].classes);
+          this.card.hid_number = String(response.data[0].hid_card_number);
           console.log(this.card);
         })
         .catch(response => {
