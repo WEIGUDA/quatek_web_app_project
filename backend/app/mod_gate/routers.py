@@ -509,7 +509,7 @@ def cardtests2():
     cards = list(card_collection.find({"card_number": {"$in": card_numbers}}))
 
     # batch query all in logs related to out logs:
-    # 1 找到所以条件下, 为出, 为成功 的 卡号
+    # 1 找到所有条件下, 为出, 为成功 的 卡号
     query_string_dict_updated_with_out_and_test_succeed = {}
     query_string_dict_updated_with_out_and_test_succeed.update(
         query_string_dict
@@ -522,7 +522,7 @@ def cardtests2():
         ).distinct("card_number")
     )
 
-    # 1 找到所以条件下, 为进, 为成功, 有出卡号的 logs
+    # 1 找到所有条件下, 为进, 为成功, 有出卡号的 logs
     query_string_dict_updated_with_in_and_test_succeed = {}
     query_string_dict_updated_with_in_and_test_succeed.update(query_string_dict)
     query_string_dict_updated_with_in_and_test_succeed["in_out_symbol"] = "1"
@@ -563,6 +563,7 @@ def cardtests2():
             ]
         ]
         logs = log_collection.find(query_string_dict)
+        logs_needed_deleteing = []
         for log in logs:
             card_category = ""
             if log["card_category"] == "0":
@@ -648,9 +649,10 @@ def cardtests2():
                     )[-1]
                 except:
                     pass
+                    
                 # 如果找到 进 的 log, 则使用进log的 hand, left_foot, right_foot值
-                # TODO: 删除该 进 log?
                 if last_in_log:
+                    logs_needed_deleteing.append(last_in_log)
                     results.append(
                         [
                             last_in_log["test_datetime"]
@@ -689,6 +691,10 @@ def cardtests2():
                         log["right_foot"],
                     ]
                 )
+        
+        # 去除 重复 的 log
+        for log in logs_needed_deleteing:
+            results.remove(log)
 
         return excel.make_response_from_array(results, "xlsx")
 
