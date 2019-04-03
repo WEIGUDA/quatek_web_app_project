@@ -316,20 +316,8 @@ def cardtests():
         q_object = q_object & Q(mc_id__icontains=mc_id)
 
     if card_cat:
-        cat_string = ""
-        if card_cat == "vip":
-            cat_string = "0"
-        elif card_cat == "hand_only":
-            cat_string = "1"
-        elif card_cat == "foot_only":
-            cat_string = "2"
-        elif card_cat == "both":
-            cat_string = "3"
-        cards = Card.objects.filter(card_category=cat_string)
-        q_object = q_object & Q(
-            card_number__in=[card.card_number for card in cards]
-        )
-    
+        q_object = q_object & Q(card_category=card_cat)
+
     offset = request.args.get("offset", 0)
     limit = request.args.get("limit", 50)
 
@@ -353,7 +341,7 @@ def cardtests():
                     "rsg",
                     "姓名",
                     "工号",
-                    "HID 卡号"
+                    "HID 卡号",
                 ]
             ]
             logs = CardTest.objects.filter(q_object).order_by("-test_datetime")
@@ -431,7 +419,7 @@ def cardtests():
                         log["rsg"],
                         name,
                         job_number,
-                        hid_number
+                        hid_number,
                     ]
                 )
             return excel.make_response_from_array(results, "xlsx")
@@ -493,7 +481,7 @@ def cardtests2():
 
     elif card_number:
         query_string_dict["card_number"] = card_number
-    
+
     if job_number:
         query_string_dict["job_number"] = job_number
 
@@ -507,15 +495,9 @@ def cardtests2():
         query_string_dict["mc_id"] = mc_id
 
     if card_cat:
-        if card_cat == "vip":
-            query_string_dict["card_cat"] = "0"
-        elif card_cat == "hand_only":
-            query_string_dict["card_cat"] = "1"
-        elif card_cat == "foot_only":
-            query_string_dict["card_cat"] = "2"
-        elif card_cat == "both":
-            query_string_dict["card_cat"] = "3"
-    
+        query_string_dict["card_category"] = card_cat
+      
+
     # define collections
     log_collection = CardTest._get_collection()
     card_collection = Card._get_collection()

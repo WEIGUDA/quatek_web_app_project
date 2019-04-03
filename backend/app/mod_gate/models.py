@@ -45,7 +45,7 @@ class Card(db.DynamicDocument):
     )  # 卡号编号
     class_time = db.StringField(default="")  # 班别
     classes = db.ListField(default=[])  # 多班别
-    hid_number = db.StringField(default="")  # HID 号码
+    hid_card_number = db.StringField(default="")  # HID 号码
 
     def __str__(self):
         return f"{self.to_json()}>"

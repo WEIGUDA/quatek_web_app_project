@@ -94,11 +94,11 @@
         <label class="sr-only" for="department">卡类型</label>
         <div class="input-group mb-2 mr-sm-2">
           <select name="card_cat" class="form-control" v-model.trim="card_cat" placeholder="卡类型">
-            <option value="----------"></option>
-            <option value="vip">vip</option>
-            <option value="hand_only">只测手</option>
-            <option value="foot_only">只测脚</option>
-            <option value="both">手脚都测</option>
+            <option>----------</option>
+            <option value="0">vip</option>
+            <option value="1">只测手</option>
+            <option value="2">只测脚</option>
+            <option value="3">手脚都测</option>
           </select>
         </div>
       </div>
