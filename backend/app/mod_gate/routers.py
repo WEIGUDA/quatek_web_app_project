@@ -12,7 +12,7 @@ from flask import (
     send_file,
 )
 from mongoengine.queryset.visitor import Q
-from mongoengine.errors import DoesNotExist, MultipleObjectsReturned
+from mongoengine.errors import DoesNotExist
 
 
 from app.mod_gate.models import Card, CardClassTime, CardTest, Gate
@@ -497,7 +497,6 @@ def cardtests2():
     if card_cat:
         query_string_dict["card_category"] = card_cat
       
-
     # define collections
     log_collection = CardTest._get_collection()
     card_collection = Card._get_collection()

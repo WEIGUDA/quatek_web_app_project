@@ -52,7 +52,7 @@ def create_app():
 
     @app.route("/")
     def index():
-        return jsonify({"version": "2018.02.02.1"})
+        return jsonify({"version": "2019-04-03 10:38"})
 
     # register blueprints
     from app.mod_gate.routers import bp as mod_gate_bp
